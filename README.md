@@ -52,3 +52,4 @@ python3 -m http.server 8000
 | 게임 | 만든 사람 | 설명 |
 | --- | --- | --- |
 | [⛏️ 곡괭이 봉우리](https://leewonyoungethan.github.io/Rock/) ([저장소](https://github.com/leewonyoungethan/Rock)) | leewonyoungethan | 블록 산을 파고 들어가는 1인칭 3D 채굴 게임 |
+| [🚗 Wander Road](https://leewonyoungethan.github.io/road/) ([저장소](https://github.com/leewonyoungethan/Road)) | leewonyoungethan | 끝없는 절차적 도로를 달리는 힐링 드라이브 게임 |
