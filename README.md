@@ -2,7 +2,7 @@
 
 앱개발부에서 만든 게임들을 모아 두는 저장소입니다.
 
-🎮 **바로 플레이:** https://leewonyoungethan.github.io/game/
+🎮 **바로 플레이:** https://leewonyoungethan.github.io/Game/
 
 `main` 브랜치에 푸시하면 GitHub Actions가 자동으로 사이트를 다시 배포합니다.
 
