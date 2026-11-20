@@ -31,6 +31,12 @@
 { "id": "space-shooter", "title": "스페이스 슈터", "author": "홍길동", "description": "우주에서 운석을 피하는 게임" }
 ```
 
+다른 저장소에 이미 올라가 있는 게임은 `url` 을 넣으면 그 주소로 연결됩니다.
+
+```json
+{ "id": "rock", "title": "곡괭이 봉우리", "author": "...", "description": "...", "url": "https://leewonyoungethan.github.io/Rock/" }
+```
+
 ## 실행하는 방법
 
 `games.json` 을 불러오기 때문에 로컬 서버로 여는 것이 좋습니다.
@@ -45,4 +51,4 @@ python3 -m http.server 8000
 
 | 게임 | 만든 사람 | 설명 |
 | --- | --- | --- |
-| (아직 없음) | | |
+| [⛏️ 곡괭이 봉우리](https://leewonyoungethan.github.io/Rock/) ([저장소](https://github.com/leewonyoungethan/Rock)) | leewonyoungethan | 블록 산을 파고 들어가는 1인칭 3D 채굴 게임 |

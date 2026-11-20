@@ -34,7 +34,7 @@
         for (const g of games) {
           const a = document.createElement('a');
           a.className = 'card';
-          a.href = 'games/' + encodeURIComponent(g.id) + '/';
+          a.href = g.url || ('games/' + encodeURIComponent(g.id) + '/');
           const h = document.createElement('h2'); h.textContent = g.title;
           const au = document.createElement('div'); au.className = 'author'; au.textContent = g.author || '';
           const d = document.createElement('p'); d.textContent = g.description || '';

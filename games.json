@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "id": "rock",
+    "title": "⛏️ 곡괭이 봉우리",
+    "author": "leewonyoungethan",
+    "description": "블록으로 된 거대한 산을 한 칸씩 파고 들어가는 1인칭 3D 채굴 게임",
+    "url": "https://leewonyoungethan.github.io/Rock/"
+  }
+]
