@@ -66,7 +66,14 @@
     .chip:hover { border-color: var(--accent); }
     .chip.on { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 3px 0 #9e0000; }
     .chip:focus-visible, .search .clear:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
-    .count { font-size: 13px; color: var(--muted); margin: 6px 2px 0; }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 6px; }
+    .count { font-size: 13px; color: var(--muted); margin: 0 2px; }
+    .sort { display: flex; background: var(--card); border: 2px solid rgba(127,127,127,.3); border-radius: 999px; padding: 2px; flex: none; }
+    .sort button { font: inherit; font-size: 13px; font-weight: 800; border: 0; background: none; color: var(--muted); padding: 5px 11px; border-radius: 999px; cursor: pointer; white-space: nowrap; }
+    .sort button.on { background: var(--text); color: var(--bg); }
+    .sort button:focus-visible { outline: 3px solid var(--gold); outline-offset: 1px; }
+    .medal { font-size: 12px; font-weight: 900; color: #fff; background: linear-gradient(90deg, #ff1e1e, #ff8a00); padding: 2px 8px; border-radius: 999px; margin-right: 6px; }
+    .plays { display: inline-flex; align-items: center; gap: 3px; margin-top: 8px; font-size: 12px; font-weight: 800; color: #e8590c; }
     .count b { color: var(--accent); }
     .genres { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
     .genres span { font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: rgba(127,127,127,.14); color: var(--muted); }
@@ -90,14 +97,26 @@
         <button class="clear" id="clear" type="button" aria-label="검색어 지우기" hidden>✕</button>
       </label>
       <div class="chips" id="chips" role="group" aria-label="장르"></div>
-      <p class="count" id="count"></p>
+      <div class="row">
+        <p class="count" id="count"></p>
+        <div class="sort" id="sort" role="group" aria-label="정렬">
+          <button type="button" data-s="popular">🔥 인기순</button>
+          <button type="button" data-s="new">🆕 최신순</button>
+          <button type="button" data-s="name">가나다순</button>
+        </div>
+      </div>
     </div>
     <div class="grid" id="list"></div>
   </main>
   <script>
     const $ = id => document.getElementById(id);
     const list = $('list'), qEl = $('q'), chipsEl = $('chips'), countEl = $('count'), clearEl = $('clear');
-    let games = [], genre = '전체';
+    let games = [], genre = '전체', sort = 'popular';
+    // 클릭 수: counterapi.dev 에 게임별로 저장 (모두가 같이 보는 숫자)
+    const COUNTER = 'https://api.counterapi.dev/v1/leewonyoungethan-appdevclub';
+    const plays = new Map();      // id -> 클릭 수 (불러온 것만)
+    let playsLoaded = false, playsFailed = false;
+    const SORTS = ['popular', 'new', 'name'];
     const norm = s => (s || '').toLowerCase().replace(/\s+/g, '');
 
     function highlight(el, text, q) {
@@ -133,9 +152,56 @@
       for (const x of g.genres || []) { const s = document.createElement('span'); s.textContent = '#' + x; gs.append(s); }
       const body = document.createElement('div'); body.className = 'body';
       body.append(h, name, au, d, gs);
+      if (plays.has(g.id)) {
+        const pl = document.createElement('div'); pl.className = 'plays';
+        const rank = topRank(g.id);
+        if (rank) { const m = document.createElement('span'); m.className = 'medal'; m.textContent = `${['🥇', '🥈', '🥉'][rank - 1]} 인기 ${rank}위`; pl.append(m); }
+        pl.append(`🔥 ${plays.get(g.id).toLocaleString('ko-KR')}회 플레이`);
+        body.append(pl);
+      }
       a.append(img, body);
+      a.addEventListener('click', () => countPlay(g.id));
       return a;
     }
+    function topRank(id) {
+      if (!playsLoaded) return 0;
+      const ranked = games.filter(g => (plays.get(g.id) || 0) > 0).sort((a, b) => plays.get(b.id) - plays.get(a.id));
+      const i = ranked.findIndex(g => g.id === id);
+      return i >= 0 && i < 3 ? i + 1 : 0;
+    }
+    function sorted(arr) {
+      const idx = new Map(games.map((g, i) => [g.id, i]));
+      const a = arr.slice();
+      if (sort === 'name') a.sort((x, y) => x.title.replace(/^\P{L}+/u, '').localeCompare(y.title.replace(/^\P{L}+/u, ''), 'ko'));
+      else if (sort === 'new') a.sort((x, y) => (y.added || '').localeCompare(x.added || '') || idx.get(y.id) - idx.get(x.id));
+      else a.sort((x, y) => (plays.get(y.id) || 0) - (plays.get(x.id) || 0) || idx.get(x.id) - idx.get(y.id));
+      return a;
+    }
+    function countPlay(id) {
+      // 같은 브라우저 창에서는 게임마다 한 번만 센다 (연타 방지)
+      try { if (sessionStorage.getItem('played:' + id)) return; sessionStorage.setItem('played:' + id, '1'); } catch (e) {}
+      try { fetch(`${COUNTER}/${encodeURIComponent(id)}/up`, { keepalive: true }).catch(() => {}); } catch (e) {}
+    }
+    async function loadPlays() {
+      const get = async id => {
+        const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 5000);
+        try {
+          const r = await fetch(`${COUNTER}/${encodeURIComponent(id)}`, { signal: ctl.signal });
+          if (r.status === 400 || r.status === 404) return 0;         // 아직 아무도 안 누른 게임
+          if (!r.ok) throw new Error(r.status);
+          const j = await r.json(); return Number(j.count) || 0;
+        } finally { clearTimeout(t); }
+      };
+      const res = await Promise.allSettled(games.map(g => get(g.id)));
+      if (res.every(r => r.status === 'rejected')) return;
+      res.forEach((r, i) => { if (r.status === 'fulfilled') plays.set(games[i].id, r.value); });
+      playsLoaded = true;
+      render();
+    }
+    function renderSort() {
+      for (const b of $('sort').children) { const on = b.dataset.s === sort; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); }
+    }
+    $('sort').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { sort = b.dataset.s; sync(); } });
     function renderChips() {
       const counts = new Map([['전체', games.length]]);
       for (const g of games) for (const x of g.genres || []) counts.set(x, (counts.get(x) || 0) + 1);
@@ -163,15 +229,18 @@
         e.innerHTML = '<b>😱</b>';
         e.append(raw ? `"${raw}" 검색 결과가 없어요. 다른 단어로 찾아보세요!` : '이 장르에는 아직 게임이 없어요.');
         list.append(e);
-      } else for (const g of shown) list.append(card(g, raw));
+      } else for (const g of sorted(shown)) list.append(card(g, raw));
       countEl.textContent = '';
       const b = document.createElement('b'); b.textContent = shown.length;
       countEl.append(genre === '전체' ? '' : `#${genre} · `, b, `개 게임`, raw ? ` · "${raw}" 검색 중` : '');
+      if (sort === 'popular' && !playsLoaded) countEl.append(playsFailed ? ' · 인기 집계를 못 불러와서 기본 순서로 보여요' : ' · 인기 집계 불러오는 중…');
+      renderSort();
     }
     function sync() {
       const p = new URLSearchParams();
       if (genre !== '전체') p.set('genre', genre);
       if (qEl.value.trim()) p.set('q', qEl.value.trim());
+      if (sort !== 'popular') p.set('sort', sort);
       history.replaceState(null, '', p.toString() ? '?' + p : location.pathname);
       renderChips(); render();
     }
@@ -191,7 +260,9 @@
         qEl.value = p.get('q') || '';
         const want = p.get('genre');
         if (want && games.some(g => (g.genres || []).includes(want))) genre = want;
+        if (SORTS.includes(p.get('sort'))) sort = p.get('sort');
         renderChips(); render();
+        loadPlays().catch(() => {}).finally(() => { if (!playsLoaded) { playsFailed = true; render(); } });
       })
       .catch(() => { list.innerHTML = '<p class="empty">games.json 을 불러오지 못했어요. 로컬 서버로 열어 주세요.</p>'; });
   </script>
