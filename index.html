@@ -37,17 +37,19 @@
     @keyframes tick { to { transform: translateX(-100%); } }
     @media (prefers-reduced-motion: reduce) { .hero::before, .badge, .ticker span { animation: none; } .ticker span { padding-left: 16px; } }
 
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
-    a.card { display: block; background: var(--card); border-radius: 14px; overflow: hidden; color: inherit; text-decoration: none;
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
+    a.card { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 14px; align-items: start; padding: 14px; background: var(--card); border-radius: 20px; color: inherit; text-decoration: none;
       box-shadow: 0 2px 6px rgba(0,0,0,.12); transition: transform .15s ease, box-shadow .15s ease; }
-    a.card:hover { transform: translateY(-4px) rotate(-.5deg); box-shadow: 0 0 0 3px var(--accent), 0 12px 24px rgba(255,30,30,.25); }
-    .card img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #2a2d3a; }
-    .card .body { padding: 12px 14px 16px; }
-    .card h2 { margin: 0 0 8px; font-size: 17px; line-height: 1.35; font-weight: 800; }
-    .card h2 b { color: var(--accent); }
-    .card .name { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: rgba(255,30,30,.1); color: var(--accent); }
-    .card .author { color: var(--muted); font-size: 12px; margin-left: 6px; }
-    .card p { margin: 8px 0 0; font-size: 13px; color: var(--muted); }
+    a.card:hover { transform: translateY(-3px); box-shadow: 0 0 0 3px var(--accent), 0 12px 24px rgba(255,30,30,.2); }
+    a.card:hover .icon { transform: rotate(-6deg) scale(1.06); }
+    .card .icon { display: block; width: 104px; height: 104px; border-radius: 24px; box-shadow: 0 6px 14px rgba(0,0,0,.25); transition: transform .2s cubic-bezier(.3,1.6,.5,1); }
+    .card .body { min-width: 0; }
+    @media (max-width: 400px) { .grid { grid-template-columns: 1fr; } a.card { grid-template-columns: 84px minmax(0, 1fr); gap: 12px; } .card .icon { width: 84px; height: 84px; border-radius: 20px; } }
+    .card h2 { margin: 2px 0 2px; font-size: 19px; line-height: 1.25; font-weight: 900; }
+    .card .hook { margin: 0 0 4px; font-size: 13px; font-weight: 700; line-height: 1.35; color: var(--text); opacity: .85; }
+    .card .hook b { color: var(--accent); }
+    .card .author { color: var(--muted); font-size: 12px; }
+    .card p.desc { margin: 6px 0 0; font-size: 13px; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .tools { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 12px 0 10px; margin-bottom: 14px; }
     .search { position: relative; }
     .search input { width: 100%; font: inherit; font-size: 16px; padding: 13px 44px 13px 46px; border-radius: 999px; border: 3px solid var(--accent);
@@ -72,8 +74,8 @@
     .sort button { font: inherit; font-size: 13px; font-weight: 800; border: 0; background: none; color: var(--muted); padding: 5px 11px; border-radius: 999px; cursor: pointer; white-space: nowrap; }
     .sort button.on { background: var(--text); color: var(--bg); }
     .sort button:focus-visible { outline: 3px solid var(--gold); outline-offset: 1px; }
-    .medal { font-size: 12px; font-weight: 900; color: #fff; background: linear-gradient(90deg, #ff1e1e, #ff8a00); padding: 2px 8px; border-radius: 999px; margin-right: 6px; }
-    .plays { display: inline-flex; align-items: center; gap: 3px; margin-top: 8px; font-size: 12px; font-weight: 800; color: #e8590c; }
+    .medal { font-size: 12px; font-weight: 900; color: #fff; background: linear-gradient(90deg, #ff1e1e, #ff8a00); padding: 2px 8px; border-radius: 999px; margin-right: 2px; }
+    .plays { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; white-space: nowrap; margin-top: 8px; font-size: 12px; font-weight: 800; color: #e8590c; }
     .count b { color: var(--accent); }
     .genres { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
     .genres span { font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: rgba(127,127,127,.14); color: var(--muted); }
@@ -141,17 +143,19 @@
       a.className = 'card';
       a.href = g.url || ('games/' + encodeURIComponent(g.id) + '/');
       const img = document.createElement('img');
-      img.src = g.thumbnail || 'thumbnails/default.svg';
-      img.alt = g.title; img.loading = 'lazy';
-      img.onerror = () => { img.onerror = null; img.src = 'thumbnails/default.svg'; };
-      const h = document.createElement('h2'); hookTitle(h, g.hook || g.title, q);
-      const name = document.createElement('span'); name.className = 'name'; highlight(name, g.title, q);
-      const au = document.createElement('span'); au.className = 'author'; au.textContent = g.author || '';
-      const d = document.createElement('p'); highlight(d, g.description || '', q);
+      img.className = 'icon';
+      img.src = g.icon || 'icons/default.svg';
+      img.alt = ''; img.loading = 'lazy';
+      img.onerror = () => { img.onerror = null; img.src = 'icons/default.svg'; };
+      const h = document.createElement('h2'); highlight(h, g.title, q);
+      const hk = document.createElement('div'); hk.className = 'hook';
+      if (g.hook) hookTitle(hk, g.hook, q);
+      const au = document.createElement('div'); au.className = 'author'; au.textContent = g.author || '';
+      const d = document.createElement('p'); d.className = 'desc'; highlight(d, g.description || '', q);
       const gs = document.createElement('div'); gs.className = 'genres';
       for (const x of g.genres || []) { const s = document.createElement('span'); s.textContent = '#' + x; gs.append(s); }
       const body = document.createElement('div'); body.className = 'body';
-      body.append(h, name, au, d, gs);
+      body.append(h, au, hk, d, gs);
       if (plays.has(g.id)) {
         const pl = document.createElement('div'); pl.className = 'plays';
         const rank = topRank(g.id);

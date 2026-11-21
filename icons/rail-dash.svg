@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <clipPath id="sq"><rect width="512" height="512" rx="112"/></clipPath>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <radialGradient id="vig" cx="50%" cy="45%" r="70%"><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></radialGradient><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b1d5c"/><stop offset=".55" stop-color="#c2477e"/><stop offset="1" stop-color="#ff9a5c"/></linearGradient>
+  </defs>
+  <g clip-path="url(#sq)">
+    <rect width="512" height="512" fill="url(#bg)"/><path d="M256 200 L856 200 L841 334 Z M256 200 L797 460 L725 574 Z M256 200 L630 669 L516 741 Z M256 200 L390 785 L256 800 Z M256 200 L122 785 L-4 741 Z M256 200 L-118 669 L-213 574 Z M256 200 L-285 460 L-329 334 Z M256 200 L-344 200 L-329 66 Z M256 200 L-285 -60 L-213 -174 Z M256 200 L-118 -269 L-4 -341 Z M256 200 L122 -385 L256 -400 Z M256 200 L390 -385 L516 -341 Z M256 200 L630 -269 L725 -174 Z M256 200 L797 -60 L841 66 Z" fill="#ffd6f0" opacity="0.15"/><path d="M150 512 L240 230 L272 230 L362 512 Z" fill="#3b2c43"/><g stroke="#d9d2e8" stroke-width="8"><path d="M200 512 L250 230"/><path d="M312 512 L262 230"/></g><g stroke="#7a5a4a" stroke-width="10"><path d="M170 470 H342"/><path d="M196 390 H316"/><path d="M216 320 H296"/><path d="M230 270 H282"/></g>
+    <g transform="translate(256 210)" stroke="#1b1030" stroke-width="10" stroke-linejoin="round" stroke-linecap="round">
+    <rect x="-70" y="-60" width="140" height="130" rx="22" fill="#37a0ff"/>
+    <rect x="-50" y="-40" width="100" height="44" rx="8" fill="#1d2333"/>
+    <circle cx="-38" cy="40" r="12" fill="#fff6c4"/><circle cx="38" cy="40" r="12" fill="#fff6c4"/>
+  </g>
+  <g transform="translate(256 400)" stroke="#1b1030" stroke-width="10" stroke-linejoin="round" stroke-linecap="round">
+    <rect x="-110" y="-10" width="220" height="40" fill="#ffc93c"/>
+    <path d="M-80 -10 L-50 30 M-20 -10 L10 30 M40 -10 L70 30" stroke="#1b1030" stroke-width="14"/>
+  </g>
+  <g transform="translate(260 300) rotate(-10)" stroke="#1b1030" stroke-width="10" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M-30 30 L-80 70" stroke-width="22" stroke="#2b3a67"/><path d="M-80 70 L-60 100" stroke-width="22" stroke="#2b3a67"/>
+    <path d="M20 30 L70 50" stroke-width="22" stroke="#2b3a67"/><path d="M70 50 L80 90" stroke-width="22" stroke="#2b3a67"/>
+    <rect x="-50" y="-70" width="100" height="110" rx="34" fill="#37e2c8"/>
+    <rect x="-34" y="-52" width="68" height="70" rx="16" fill="#ff8a3d"/>
+    <path d="M-50 -40 L-100 -90" stroke-width="20" stroke="#37e2c8"/><path d="M50 -40 L100 -10" stroke-width="20" stroke="#37e2c8"/>
+    <circle cx="0" cy="-104" r="38" fill="#3a2416"/>
+    <path d="M-40 -108 A40 40 0 0 1 40 -108 L56 -100 L-40 -100 Z" fill="#ff5d8f"/>
+  </g>
+  <g fill="#ffc93c" stroke="#1b1030" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"><circle cx="110" cy="160" r="26"/><circle cx="410" cy="300" r="22"/></g>
+    <rect width="512" height="512" fill="url(#vig)"/>
+    <path d="M0 0 H512 V170 Q256 230 0 170 Z" fill="url(#gloss)"/>
+  </g>
+  <rect x="6" y="6" width="500" height="500" rx="106" fill="none" stroke="#ffffff" stroke-opacity=".5" stroke-width="12"/>
+</svg>

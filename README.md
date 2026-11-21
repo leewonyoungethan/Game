@@ -27,11 +27,11 @@
    (폴더 이름은 영어 소문자와 `-` 만 쓰는 걸 추천해요. 예: `space-shooter`)
 2. `index.html` 에 게임을 만듭니다.
 3. 폴더 안의 `README.md` 에 게임 설명, 조작법, 만든 사람을 적습니다.
-4. 썸네일 이미지(16:9, 예: 640×360)를 `thumbnails/<게임-이름>.svg` 또는 `.png` 로 넣습니다. 없으면 기본 썸네일이 나옵니다.
+4. 정사각형 게임 아이콘(예: 512×512)을 `icons/<게임-이름>.svg` 또는 `.png` 로 넣습니다. 모서리는 사이트에서 둥글게 잘라 줘요. 없으면 기본 아이콘이 나옵니다.
 5. 루트의 `games.json` 에 게임 정보를 한 줄 추가합니다.
 
 ```json
-{ "id": "space-shooter", "title": "스페이스 슈터", "genres": ["슈팅", "액션"], "added": "2026-12-01", "hook": "[충격] 운석 1000개 피하기 성공?", "author": "홍길동", "description": "우주에서 운석을 피하는 게임", "thumbnail": "thumbnails/space-shooter.png" }
+{ "id": "space-shooter", "title": "스페이스 슈터", "genres": ["슈팅", "액션"], "added": "2026-12-01", "hook": "[충격] 운석 1000개 피하기 성공?", "author": "홍길동", "description": "우주에서 운석을 피하는 게임", "icon": "icons/space-shooter.png" }
 ```
 
 `genres` 는 장르 목록이에요. 사이트 위쪽 장르 버튼이 이 값으로 자동으로 만들어집니다. 새 장르를 적으면 버튼도 새로 생겨요.
