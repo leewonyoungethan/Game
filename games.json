@@ -10,7 +10,6 @@
     "description": "블록으로 된 거대한 산을 한 칸씩 파고 들어가는 1인칭 3D 채굴 게임",
     "url": "https://leewonyoungethan.github.io/Rock/",
     "icon": "icons/rock.svg",
-    "thumbnail": "thumbnails/rock.svg",
     "added": "2026-11-20T02:00"
   },
   {
@@ -24,7 +23,6 @@
     "description": "깊은 밤 농장에서 잠든 새들의 알을 몰래 훔쳐 굴로 옮기는 잠입 게임",
     "url": "https://leewonyoungethan.github.io/Rock/eggsteal.html",
     "icon": "icons/eggsteal.svg",
-    "thumbnail": "thumbnails/eggsteal.svg",
     "added": "2026-11-21T01:10"
   },
   {
@@ -39,7 +37,6 @@
     "description": "끝없이 이어지는 절차적 생성 도로를 달리는 힐링 드라이브 게임",
     "url": "https://leewonyoungethan.github.io/road/",
     "icon": "icons/road.svg",
-    "thumbnail": "thumbnails/road.svg",
     "added": "2026-11-20T02:10"
   },
   {
@@ -53,7 +50,6 @@
     "description": "노을 지는 기차 선로를 3분 동안 달리며 장애물을 피하고 코인을 모으는 러닝 게임",
     "url": "https://claude.ai/artifact/WqVcJh2MKjki5b1KkkMJML",
     "icon": "icons/rail-dash.svg",
-    "thumbnail": "thumbnails/rail-dash.svg",
     "added": "2026-11-21T01:00"
   },
   {
@@ -67,7 +63,6 @@
     "description": "훔친 스포츠카로 한밤의 도시를 누비며 돈가방을 줍고 경찰을 따돌리는 추격전 게임",
     "url": "https://claude.ai/artifact/Th6Z3xiCuQwJPNAsSmBSsD",
     "icon": "icons/getaway.svg",
-    "thumbnail": "thumbnails/getaway.svg",
     "added": "2026-11-21T01:05"
   },
   {
@@ -81,7 +76,6 @@
     "description": "떨어지는 검은 건반을 순서대로 눌러 곡을 연주하는 피아노 타일 게임 (255곡, 2인 협동)",
     "url": "https://leewonyoungethan.github.io/piano-tiles/",
     "icon": "icons/piano-tiles.svg",
-    "thumbnail": "thumbnails/piano-tiles.svg",
     "added": "2026-11-21T01:15"
   },
   {
@@ -95,7 +89,6 @@
     "description": "아기 나율이를 돌보고 놀아주며 백 살까지 키우는 육성 시뮬레이션",
     "url": "https://claude.ai/artifact/5rvyqN2jFhFxz9HxUN83CT",
     "icon": "icons/nayul.svg",
-    "thumbnail": "thumbnails/nayul.svg",
     "added": "2026-11-21T01:16"
   }
 ]
