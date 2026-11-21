@@ -1,4 +1,6 @@
-# 앱개발부
+# 🔥 앱개발부 🔥
+
+> 여기 있는 게임 다 깨면 전설 인정 ㅋㅋ
 
 앱개발부에서 만든 게임들을 모아 두는 저장소입니다.
 
@@ -29,7 +31,12 @@
 5. 루트의 `games.json` 에 게임 정보를 한 줄 추가합니다.
 
 ```json
-{ "id": "space-shooter", "title": "스페이스 슈터", "author": "홍길동", "description": "우주에서 운석을 피하는 게임", "thumbnail": "thumbnails/space-shooter.png" }
+{ "id": "space-shooter", "title": "스페이스 슈터", "hook": "[충격] 운석 1000개 피하기 성공?", "author": "홍길동", "description": "우주에서 운석을 피하는 게임", "thumbnail": "thumbnails/space-shooter.png" }
+```
+
+`hook` 은 카드에 크게 나오는 어그로 제목이에요. `[대괄호]` 부분은 빨간 글씨로 나옵니다. 없으면 `title` 이 나와요.
+
+```json
 ```
 
 다른 저장소에 이미 올라가 있는 게임은 `url` 을 넣으면 그 주소로 연결됩니다.

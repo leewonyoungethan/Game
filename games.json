@@ -5,7 +5,8 @@
     "author": "leewonyoungethan",
     "description": "블록으로 된 거대한 산을 한 칸씩 파고 들어가는 1인칭 3D 채굴 게임",
     "url": "https://leewonyoungethan.github.io/Rock/",
-    "thumbnail": "thumbnails/rock.svg"
+    "thumbnail": "thumbnails/rock.svg",
+    "hook": "[역대급] 곡괭이 하나로 산 5,000칸을 통째로 파버렸습니다 ㅋㅋ"
   },
   {
     "id": "eggsteal",
@@ -13,7 +14,8 @@
     "author": "leewonyoungethan",
     "description": "깊은 밤 농장에서 잠든 새들의 알을 몰래 훔쳐 굴로 옮기는 잠입 게임",
     "url": "https://leewonyoungethan.github.io/Rock/eggsteal.html",
-    "thumbnail": "thumbnails/eggsteal.svg"
+    "thumbnail": "thumbnails/eggsteal.svg",
+    "hook": "[충격] 닭이 자는 사이 알을 몰래 훔쳤더니… 결말 실화?"
   },
   {
     "id": "road",
@@ -21,7 +23,8 @@
     "author": "leewonyoungethan",
     "description": "끝없이 이어지는 절차적 생성 도로를 달리는 힐링 드라이브 게임",
     "url": "https://leewonyoungethan.github.io/road/",
-    "thumbnail": "thumbnails/road.svg"
+    "thumbnail": "thumbnails/road.svg",
+    "hook": "[실화] 끝없는 도로를 시속 4000km로 밟아봤습니다"
   },
   {
     "id": "rail-dash",
@@ -29,7 +32,8 @@
     "author": "leewonyoungethan",
     "description": "노을 지는 기차 선로를 3분 동안 달리며 장애물을 피하고 코인을 모으는 러닝 게임",
     "url": "https://claude.ai/artifact/WqVcJh2MKjki5b1KkkMJML",
-    "thumbnail": "thumbnails/rail-dash.svg"
+    "thumbnail": "thumbnails/rail-dash.svg",
+    "hook": "[레전드] 기차 피하면서 3분 버티기… 이거 깨면 인정"
   },
   {
     "id": "getaway",
@@ -37,7 +41,8 @@
     "author": "leewonyoungethan",
     "description": "훔친 스포츠카로 한밤의 도시를 누비며 돈가방을 줍고 경찰을 따돌리는 추격전 게임",
     "url": "https://claude.ai/artifact/Th6Z3xiCuQwJPNAsSmBSsD",
-    "thumbnail": "thumbnails/getaway.svg"
+    "thumbnail": "thumbnails/getaway.svg",
+    "hook": "[역대급] 경찰차 9대한테 쫓기는데 끝까지 안 잡힘 ㅋㅋ"
   },
   {
     "id": "piano-tiles",
@@ -45,7 +50,8 @@
     "author": "leewonyoungethan",
     "description": "떨어지는 검은 건반을 순서대로 눌러 곡을 연주하는 피아노 타일 게임 (255곡, 2인 협동)",
     "url": "https://leewonyoungethan.github.io/piano-tiles/",
-    "thumbnail": "thumbnails/piano-tiles.svg"
+    "thumbnail": "thumbnails/piano-tiles.svg",
+    "hook": "[고인물 주의] 255곡 전부 깨는 사람 진짜 있음?"
   },
   {
     "id": "nayul",
@@ -53,6 +59,7 @@
     "author": "leewonyoungethan",
     "description": "아기 나율이를 돌보고 놀아주며 백 살까지 키우는 육성 시뮬레이션",
     "url": "https://claude.ai/artifact/5rvyqN2jFhFxz9HxUN83CT",
-    "thumbnail": "thumbnails/nayul.svg"
+    "thumbnail": "thumbnails/nayul.svg",
+    "hook": "[감동 주의] 아기 나율이를 100살까지 키워봤습니다… (눈물)"
   }
 ]
