@@ -1,5 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360">
   <defs>
+    <filter id="pop" x="0" y="0" width="1" height="1"><feColorMatrix type="saturate" values="1.55"/>
+      <feComponentTransfer><feFuncR type="linear" slope="1.12" intercept="-.03"/><feFuncG type="linear" slope="1.12" intercept="-.03"/><feFuncB type="linear" slope="1.12" intercept="-.03"/></feComponentTransfer></filter>
+    <radialGradient id="vig" cx="50%" cy="50%" r="75%"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".6"/></radialGradient>
+    <linearGradient id="tshade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>
+    <linearGradient id="bshade" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".6"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>
+    <radialGradient id="flare"><stop offset="0" stop-color="#fff6a0" stop-opacity=".75"/><stop offset="1" stop-color="#fff6a0" stop-opacity="0"/></radialGradient>
+  </defs>
+  <g filter="url(#pop)"><g transform="translate(320 180) scale(1.04) translate(-320 -180)">
+  <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe9ff"/><stop offset="1" stop-color="#e9f6dd"/></linearGradient>
   </defs>
   <rect width="640" height="360" fill="url(#bg)"/>
@@ -44,4 +53,19 @@
     <g transform="translate(480 0)"><circle r="20" stroke="#efe6d0"/><circle r="20" stroke="#59b88f" stroke-dasharray="115 126" transform="rotate(-90)"/></g>
   </g>
   <g font-size="18" text-anchor="middle" font-family="sans-serif"><text x="160" y="318">🍼</text><text x="240" y="318">💗</text><text x="320" y="318">🛁</text><text x="400" y="318">⚡</text><text x="480" y="318">🍀</text></g>
+</g></g>
+  <circle cx="320" cy="92" r="88" fill="url(#flare)"/>
+  <rect width="640" height="360" fill="url(#vig)"/>
+  <rect y="185" width="640" height="175" fill="url(#bshade)"/>
+  <circle cx="320" cy="92" r="52" fill="none" stroke="#fff" stroke-width="16"/>
+  <circle cx="320" cy="92" r="52" fill="none" stroke="#ff1e1e" stroke-width="9"/>
+  <g transform="translate(480 22) rotate(156.4)"><path d="M0 -9 L79 -9 L79 -26 L113 0 L79 26 L79 9 L0 9 Z" fill="#fff" stroke="#fff" stroke-width="10" stroke-linejoin="round"/><path d="M0 -9 L79 -9 L79 -26 L113 0 L79 26 L79 9 L0 9 Z" fill="#ff1e1e"/></g>
+  <text x="95" y="150" font-size="84" text-anchor="middle" dominant-baseline="central">🥹</text>
+  <text x="22" y="262" font-family="Black Han Sans, Jalnan, Pretendard, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-weight="900" font-size="72" letter-spacing="-1" fill="none" stroke="#000" stroke-width="16" stroke-linejoin="round">아기를</text><text x="22" y="262" font-family="Black Han Sans, Jalnan, Pretendard, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-weight="900" font-size="72" letter-spacing="-1" fill="#ffffff">아기를</text>
+  <text x="22" y="334" font-family="Black Han Sans, Jalnan, Pretendard, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-weight="900" font-size="54" letter-spacing="-1" fill="none" stroke="#000" stroke-width="16" stroke-linejoin="round">100살까지 키움</text><text x="22" y="334" font-family="Black Han Sans, Jalnan, Pretendard, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-weight="900" font-size="54" letter-spacing="-1" fill="#ffe14d">100살까지 키움</text>
+  <g transform="translate(490 14) rotate(4 68.0 20)">
+    <rect width="136" height="42" rx="8" fill="#ff1e1e" stroke="#fff" stroke-width="4"/>
+    <text x="68.0" y="30" text-anchor="middle" font-family="Black Han Sans, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-weight="900" font-size="24" fill="#fff">감동 주의</text>
+  </g>
+  <rect x="3" y="3" width="634" height="354" fill="none" stroke="#ffe14d" stroke-width="6"/>
 </svg>
