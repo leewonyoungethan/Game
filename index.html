@@ -12,8 +12,11 @@
     h1 { margin: 0 0 4px; }
     p.sub { margin: 0 0 24px; color: var(--muted); }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
-    a.card { display: block; background: var(--card); border-radius: 12px; padding: 16px; color: inherit; text-decoration: none; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+    a.card { display: block; background: var(--card); border-radius: 12px; overflow: hidden; color: inherit; text-decoration: none; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
     a.card:hover { outline: 2px solid var(--accent); }
+    .card img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #2a2d3a; }
+    .card .body { padding: 14px 16px 16px; }
+    .card p { margin: 8px 0 0; font-size: 14px; }
     .card h2 { margin: 0 0 6px; font-size: 18px; }
     .card .author { color: var(--muted); font-size: 13px; }
     .empty { color: var(--muted); }
@@ -38,7 +41,14 @@
           const h = document.createElement('h2'); h.textContent = g.title;
           const au = document.createElement('div'); au.className = 'author'; au.textContent = g.author || '';
           const d = document.createElement('p'); d.textContent = g.description || '';
-          a.append(h, au, d);
+          const img = document.createElement('img');
+          img.src = g.thumbnail || 'thumbnails/default.svg';
+          img.alt = '';
+          img.loading = 'lazy';
+          img.onerror = () => { img.onerror = null; img.src = 'thumbnails/default.svg'; };
+          const body = document.createElement('div'); body.className = 'body';
+          body.append(h, au, d);
+          a.append(img, body);
           list.append(a);
         }
       })

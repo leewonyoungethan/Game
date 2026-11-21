@@ -4,13 +4,15 @@
     "title": "⛏️ 곡괭이 봉우리",
     "author": "leewonyoungethan",
     "description": "블록으로 된 거대한 산을 한 칸씩 파고 들어가는 1인칭 3D 채굴 게임",
-    "url": "https://leewonyoungethan.github.io/Rock/"
+    "url": "https://leewonyoungethan.github.io/Rock/",
+    "thumbnail": "thumbnails/rock.svg"
   },
   {
     "id": "road",
     "title": "🚗 Wander Road",
     "author": "leewonyoungethan",
     "description": "끝없이 이어지는 절차적 생성 도로를 달리는 힐링 드라이브 게임",
-    "url": "https://leewonyoungethan.github.io/road/"
+    "url": "https://leewonyoungethan.github.io/road/",
+    "thumbnail": "thumbnails/road.svg"
   }
 ]

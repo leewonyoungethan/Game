@@ -25,10 +25,11 @@
    (폴더 이름은 영어 소문자와 `-` 만 쓰는 걸 추천해요. 예: `space-shooter`)
 2. `index.html` 에 게임을 만듭니다.
 3. 폴더 안의 `README.md` 에 게임 설명, 조작법, 만든 사람을 적습니다.
-4. 루트의 `games.json` 에 게임 정보를 한 줄 추가합니다.
+4. 썸네일 이미지(16:9, 예: 640×360)를 `thumbnails/<게임-이름>.svg` 또는 `.png` 로 넣습니다. 없으면 기본 썸네일이 나옵니다.
+5. 루트의 `games.json` 에 게임 정보를 한 줄 추가합니다.
 
 ```json
-{ "id": "space-shooter", "title": "스페이스 슈터", "author": "홍길동", "description": "우주에서 운석을 피하는 게임" }
+{ "id": "space-shooter", "title": "스페이스 슈터", "author": "홍길동", "description": "우주에서 운석을 피하는 게임", "thumbnail": "thumbnails/space-shooter.png" }
 ```
 
 다른 저장소에 이미 올라가 있는 게임은 `url` 을 넣으면 그 주소로 연결됩니다.
