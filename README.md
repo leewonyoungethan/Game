@@ -31,7 +31,7 @@
 5. 루트의 `games.json` 에 게임 정보를 한 줄 추가합니다.
 
 ```json
-{ "id": "space-shooter", "title": "스페이스 슈터", "genres": ["슈팅", "액션"], "added": "2026-12-01", "hook": "[충격] 운석 1000개 피하기 성공?", "author": "홍길동", "description": "우주에서 운석을 피하는 게임", "icon": "icons/space-shooter.png" }
+{ "id": "space-shooter", "title": "스페이스 슈터", "genres": ["슈팅", "액션"], "added": "2026-12-01", "author": "홍길동", "description": "우주에서 운석을 피하는 게임", "icon": "icons/space-shooter.png" }
 ```
 
 `genres` 는 장르 목록이에요. 사이트 위쪽 장르 버튼이 이 값으로 자동으로 만들어집니다. 새 장르를 적으면 버튼도 새로 생겨요.
@@ -39,8 +39,6 @@
 `added` 는 추가한 날짜예요. "최신순" 정렬에 쓰여요.
 
 "인기순"은 카드를 누른 횟수로 정렬해요. 횟수는 [counterapi.dev](https://counterapi.dev) 의 `leewonyoungethan-appdevclub` 카운터에 게임 `id` 별로 쌓이고, 같은 브라우저 창에서는 게임마다 한 번만 셉니다. 상위 3개 게임에는 🥇🥈🥉 메달이 붙어요.
-
-`hook` 은 카드에 크게 나오는 어그로 제목이에요. `[대괄호]` 부분은 빨간 글씨로 나옵니다. 없으면 `title` 이 나와요.
 
 ```json
 ```
