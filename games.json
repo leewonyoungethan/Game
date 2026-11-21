@@ -38,5 +38,21 @@
     "description": "훔친 스포츠카로 한밤의 도시를 누비며 돈가방을 줍고 경찰을 따돌리는 추격전 게임",
     "url": "https://claude.ai/artifact/Th6Z3xiCuQwJPNAsSmBSsD",
     "thumbnail": "thumbnails/getaway.svg"
+  },
+  {
+    "id": "piano-tiles",
+    "title": "🎹 건반 소나기",
+    "author": "leewonyoungethan",
+    "description": "떨어지는 검은 건반을 순서대로 눌러 곡을 연주하는 피아노 타일 게임 (255곡, 2인 협동)",
+    "url": "https://leewonyoungethan.github.io/piano-tiles/",
+    "thumbnail": "thumbnails/piano-tiles.svg"
+  },
+  {
+    "id": "nayul",
+    "title": "👶 나율이 키우기",
+    "author": "leewonyoungethan",
+    "description": "아기 나율이를 돌보고 놀아주며 백 살까지 키우는 육성 시뮬레이션",
+    "url": "https://claude.ai/artifact/5rvyqN2jFhFxz9HxUN83CT",
+    "thumbnail": "thumbnails/nayul.svg"
   }
 ]

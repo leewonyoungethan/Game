@@ -57,3 +57,5 @@ python3 -m http.server 8000
 | [🚗 Wander Road](https://leewonyoungethan.github.io/road/) ([저장소](https://github.com/leewonyoungethan/Road)) | leewonyoungethan | 끝없는 절차적 도로를 달리는 힐링 드라이브 게임 |
 | [🚆 Rail Dash](https://claude.ai/artifact/WqVcJh2MKjki5b1KkkMJML) | leewonyoungethan | 기차 선로를 3분 동안 달리는 러닝 게임 |
 | [🚨 도둑차 대탈주](https://claude.ai/artifact/Th6Z3xiCuQwJPNAsSmBSsD) | leewonyoungethan | 경찰을 따돌리며 도시를 질주하는 추격전 게임 |
+| [🎹 건반 소나기](https://leewonyoungethan.github.io/piano-tiles/) ([저장소](https://github.com/leewonyoungethan/piano-tiles)) | leewonyoungethan | 떨어지는 건반을 눌러 곡을 연주하는 피아노 타일 게임 |
+| [👶 나율이 키우기](https://claude.ai/artifact/5rvyqN2jFhFxz9HxUN83CT) | leewonyoungethan | 나율이를 백 살까지 키우는 육성 시뮬레이션 |
