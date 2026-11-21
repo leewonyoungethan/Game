@@ -8,11 +8,35 @@
     "thumbnail": "thumbnails/rock.svg"
   },
   {
+    "id": "eggsteal",
+    "title": "🦊 여우의 달걀 도둑",
+    "author": "leewonyoungethan",
+    "description": "깊은 밤 농장에서 잠든 새들의 알을 몰래 훔쳐 굴로 옮기는 잠입 게임",
+    "url": "https://leewonyoungethan.github.io/Rock/eggsteal.html",
+    "thumbnail": "thumbnails/eggsteal.svg"
+  },
+  {
     "id": "road",
     "title": "🚗 Wander Road",
     "author": "leewonyoungethan",
     "description": "끝없이 이어지는 절차적 생성 도로를 달리는 힐링 드라이브 게임",
     "url": "https://leewonyoungethan.github.io/road/",
     "thumbnail": "thumbnails/road.svg"
+  },
+  {
+    "id": "rail-dash",
+    "title": "🚆 Rail Dash",
+    "author": "leewonyoungethan",
+    "description": "노을 지는 기차 선로를 3분 동안 달리며 장애물을 피하고 코인을 모으는 러닝 게임",
+    "url": "https://claude.ai/artifact/WqVcJh2MKjki5b1KkkMJML",
+    "thumbnail": "thumbnails/rail-dash.svg"
+  },
+  {
+    "id": "getaway",
+    "title": "🚨 도둑차 대탈주",
+    "author": "leewonyoungethan",
+    "description": "훔친 스포츠카로 한밤의 도시를 누비며 돈가방을 줍고 경찰을 따돌리는 추격전 게임",
+    "url": "https://claude.ai/artifact/Th6Z3xiCuQwJPNAsSmBSsD",
+    "thumbnail": "thumbnails/getaway.svg"
   }
 ]
