@@ -455,6 +455,39 @@ ICONS["clearsky"] = icon(
 <circle cx="256" cy="280" r="9" fill="#e6eef7"/>
 ''')
 
+# ---------------------------------------------------------------- F16 스카이 스트라이커
+ICONS["f16"] = icon(
+    lg("bg", (0, "#1a3a8a"), (.6, "#0a1a3a"), (1, "#03081a"))
+    + lg("hull", (0, "#ffffff"), (.4, "#c8d4e6"), (1, "#6a7c98"), x2=1, y2=0)
+    + lg("wing", (0, "#9ab0cc"), (1, "#4a5c7a"), x2=1, y2=0)
+    + lg("canopy", (0, "#e0f6ff"), (.5, "#4ab8ff"), (1, "#0a3a80"))
+    + lg("flame", (0, "#ffffff"), (.25, "#7ae8ff"), (.6, "#2a7aff", .8), (1, "#2a7aff", 0))
+    + rg("boom", (0, "#fffbe0"), (.3, "#ffd23a"), (.65, "#ff6a1a"), (1, "#ff3a1a", 0))
+    + lg("shot", (0, "#fff6b0", 0), (1, "#fff6b0"))
+    + lg("enemy", (0, "#ff7a8a"), (1, "#a8102a")),
+    f'''<rect width="512" height="512" fill="url(#bg)"/>
+{stars(29, 60, (0, 0, 512, 512))}
+<g stroke="#9ab8ff" stroke-width="3" stroke-linecap="round" opacity=".35"><path d="M60 40 V110"/><path d="M450 120 V200"/><path d="M90 300 V360"/><path d="M420 330 V400"/><path d="M40 420 V480"/></g>
+<circle cx="120" cy="110" r="70" fill="url(#boom)"/>
+<g fill="#ffd23a" stroke="#7a2a00" stroke-width="3"><path d="M100 96 l10 -6 l4 10 Z"/><path d="M140 128 l8 6 l-8 4 Z"/></g>
+<g transform="translate(392 92) rotate(180)" filter="url(#sh2)" stroke="#3a0610" stroke-width="5" stroke-linejoin="round">
+  <path d="M0 -40 L14 -8 L46 8 L46 18 L12 14 L8 34 L-8 34 L-12 14 L-46 18 L-46 8 L-14 -8 Z" fill="url(#enemy)"/>
+</g>
+<g fill="url(#shot)"><rect x="218" y="40" width="10" height="70" rx="5"/><rect x="284" y="40" width="10" height="70" rx="5"/><rect x="218" y="140" width="10" height="56" rx="5"/><rect x="284" y="140" width="10" height="56" rx="5"/></g>
+<path d="M232 410 L256 520 L280 410 Z" fill="url(#flame)"/>
+<ellipse cx="256" cy="430" rx="22" ry="16" fill="#bff4ff" filter="url(#glow)"/>
+<g filter="url(#sh)" stroke="#0e1830" stroke-width="6" stroke-linejoin="round">
+  <path d="M256 196 L282 300 L410 352 L410 378 L282 362 L276 392 L316 414 L316 430 L256 420 L196 430 L196 414 L236 392 L230 362 L102 378 L102 352 L230 300 Z" fill="url(#wing)"/>
+  <path d="M256 150 Q276 200 276 260 L272 420 L240 420 L236 260 Q236 200 256 150 Z" fill="url(#hull)"/>
+  <path d="M256 196 Q268 226 266 262 L246 262 Q244 226 256 196 Z" fill="url(#canopy)"/>
+  <rect x="148" y="328" width="12" height="44" rx="6" fill="#e6eaf2"/><rect x="352" y="328" width="12" height="44" rx="6" fill="#e6eaf2"/>
+</g>
+<path d="M252 206 Q248 230 250 250" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none" opacity=".85"/>
+<path d="M120 362 L230 316" stroke="#fff" stroke-width="4" opacity=".4"/>
+<g fill="#ff3a4a"><circle cx="106" cy="364" r="5"/></g><g fill="#3aff8a"><circle cx="406" cy="364" r="5"/></g>
+{sparkle(440, 230, .8)}{sparkle(70, 230, .6)}
+''')
+
 # ---------------------------------------------------------------- default
 ICONS["default"] = icon(
     rg("bg", (0, "#7aa8ff"), (1, "#2a1aa8"), cy=.3, r=.9)

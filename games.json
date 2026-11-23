@@ -116,5 +116,18 @@
     "url": "https://claude.ai/artifact/NdVDGjGVbYmHWcLhPuET41",
     "icon": "icons/clearsky.svg",
     "added": "2026-11-23T02:00"
+  },
+  {
+    "id": "f16",
+    "title": "✈️ F16 스카이 스트라이커",
+    "genres": [
+      "슈팅",
+      "액션"
+    ],
+    "author": "mythoflee-aiden",
+    "description": "F16 전투기를 몰고 적기를 격추하며 스테이지 끝 보스를 쓰러뜨리는 슈팅 게임. 별 강화·폭탄·온라인 랭킹",
+    "url": "https://mythoflee-aiden.github.io/f16-shooter/",
+    "icon": "icons/f16.svg",
+    "added": "2026-11-23T03:00"
   }
 ]
