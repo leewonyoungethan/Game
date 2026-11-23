@@ -426,6 +426,35 @@ ICONS["starknight"] = icon(
 {sparkle(430, 90, .9)}{sparkle(70, 300, .6)}{sparkle(300, 70, .5, "#fff6c0")}
 ''')
 
+# ---------------------------------------------------------------- 맑은 하늘
+ICONS["clearsky"] = icon(
+    lg("bg", (0, "#9fd0f5"), (.55, "#3f7fb8"), (1, "#0d1726"))
+    + rg("scope", (0, "#163a58"), (1, "#081420"))
+    + rg("sweep", (0, "#9fd0f5", .5), (1, "#9fd0f5", 0))
+    + rg("blipGlow", (0, "#f0b54a", .9), (1, "#f0b54a", 0)),
+    f'''<rect width="512" height="512" fill="url(#bg)"/>
+<g opacity=".9" filter="url(#blur4)"><ellipse cx="96" cy="86" rx="70" ry="18" fill="#fff"/><ellipse cx="420" cy="60" rx="54" ry="14" fill="#fff"/></g>
+<circle cx="256" cy="290" r="196" fill="#0a1a2a" opacity=".5" filter="url(#blur)"/>
+<g filter="url(#sh)">
+  <circle cx="256" cy="280" r="188" fill="url(#scope)" stroke="#e6eef7" stroke-width="10"/>
+</g>
+<g stroke="#9fd0f5" fill="none" opacity=".28" stroke-width="3">
+  <circle cx="256" cy="280" r="140"/><circle cx="256" cy="280" r="92"/><circle cx="256" cy="280" r="46"/>
+  <path d="M256 96 V464 M72 280 H440"/>
+</g>
+<path d="M256 280 L256 96 A184 184 0 0 1 404 172 Z" fill="url(#sweep)"/>
+<path d="M256 280 L404 172" stroke="#cfe8ff" stroke-width="5" stroke-linecap="round"/>
+<g fill="#9fd0f5">
+  <rect x="166" y="196" width="12" height="12" rx="2"/><rect x="330" y="318" width="12" height="12" rx="2"/>
+  <rect x="196" y="352" width="12" height="12" rx="2"/><rect x="300" y="226" width="12" height="12" rx="2" fill="#63c98f"/>
+</g>
+<g stroke="#9fd0f5" stroke-width="4" stroke-linecap="round"><path d="M178 202 l18 -10"/><path d="M342 324 l16 8"/><path d="M208 358 l-14 12"/><path d="M312 232 l18 -6" stroke="#63c98f"/></g>
+<circle cx="360" cy="236" r="44" fill="url(#blipGlow)"/>
+<circle cx="360" cy="236" r="30" fill="none" stroke="#f0b54a" stroke-width="6"/>
+<rect x="353" y="229" width="14" height="14" rx="2" fill="#f0b54a"/>
+<circle cx="256" cy="280" r="9" fill="#e6eef7"/>
+''')
+
 # ---------------------------------------------------------------- default
 ICONS["default"] = icon(
     rg("bg", (0, "#7aa8ff"), (1, "#2a1aa8"), cy=.3, r=.9)

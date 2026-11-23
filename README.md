@@ -71,3 +71,4 @@ python3 -m http.server 8000
 | [🎹 건반 소나기](https://leewonyoungethan.github.io/piano-tiles/) ([저장소](https://github.com/leewonyoungethan/piano-tiles)) | leewonyoungethan | 떨어지는 건반을 눌러 곡을 연주하는 피아노 타일 게임 |
 | [👶 나율이 키우기](https://claude.ai/artifact/5rvyqN2jFhFxz9HxUN83CT) | leewonyoungethan | 나율이를 백 살까지 키우는 육성 시뮬레이션 |
 | [⚔️ 별빛 기사](https://claude.ai/artifact/VeBfTWMoEv4Ksm5jfUWHRs) | leewonyoungethan | 픽셀 액션 플랫포머 |
+| [맑은 하늘](https://claude.ai/artifact/NdVDGjGVbYmHWcLhPuET41) | leewonyoungethan | 9·11 아침을 가상으로 지키는 추모 시뮬레이션 |

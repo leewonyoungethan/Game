@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<defs>
+  <clipPath id="sq"><rect width="512" height="512" rx="114"/></clipPath>
+  <filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000" flood-opacity=".45"/></filter>
+  <filter id="sh2" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#000" flood-opacity=".35"/></filter>
+  <filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="14"/></filter>
+  <filter id="blur4" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
+  <filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .07 0"/></filter>
+  <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset=".6" stop-color="#fff" stop-opacity=".06"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  <radialGradient id="vig" cx=".5" cy=".45" r=".72"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".5"/></radialGradient>
+  <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset=".5" stop-color="#fff" stop-opacity=".12"/><stop offset="1" stop-color="#fff" stop-opacity=".3"/></linearGradient>
+  <radialGradient id="spark"><stop offset="0" stop-color="#fff"/><stop offset=".3" stop-color="#fff" stop-opacity=".8"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd0f5"/><stop offset="0.55" stop-color="#3f7fb8"/><stop offset="1" stop-color="#0d1726"/></linearGradient><radialGradient id="scope" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#163a58"/><stop offset="1" stop-color="#081420"/></radialGradient><radialGradient id="sweep" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#9fd0f5" stop-opacity="0.5"/><stop offset="1" stop-color="#9fd0f5" stop-opacity="0"/></radialGradient><radialGradient id="blipGlow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#f0b54a" stop-opacity="0.9"/><stop offset="1" stop-color="#f0b54a" stop-opacity="0"/></radialGradient></defs>
+<g clip-path="url(#sq)">
+<rect width="512" height="512" fill="url(#bg)"/>
+<g opacity=".9" filter="url(#blur4)"><ellipse cx="96" cy="86" rx="70" ry="18" fill="#fff"/><ellipse cx="420" cy="60" rx="54" ry="14" fill="#fff"/></g>
+<circle cx="256" cy="290" r="196" fill="#0a1a2a" opacity=".5" filter="url(#blur)"/>
+<g filter="url(#sh)">
+  <circle cx="256" cy="280" r="188" fill="url(#scope)" stroke="#e6eef7" stroke-width="10"/>
+</g>
+<g stroke="#9fd0f5" fill="none" opacity=".28" stroke-width="3">
+  <circle cx="256" cy="280" r="140"/><circle cx="256" cy="280" r="92"/><circle cx="256" cy="280" r="46"/>
+  <path d="M256 96 V464 M72 280 H440"/>
+</g>
+<path d="M256 280 L256 96 A184 184 0 0 1 404 172 Z" fill="url(#sweep)"/>
+<path d="M256 280 L404 172" stroke="#cfe8ff" stroke-width="5" stroke-linecap="round"/>
+<g fill="#9fd0f5">
+  <rect x="166" y="196" width="12" height="12" rx="2"/><rect x="330" y="318" width="12" height="12" rx="2"/>
+  <rect x="196" y="352" width="12" height="12" rx="2"/><rect x="300" y="226" width="12" height="12" rx="2" fill="#63c98f"/>
+</g>
+<g stroke="#9fd0f5" stroke-width="4" stroke-linecap="round"><path d="M178 202 l18 -10"/><path d="M342 324 l16 8"/><path d="M208 358 l-14 12"/><path d="M312 232 l18 -6" stroke="#63c98f"/></g>
+<circle cx="360" cy="236" r="44" fill="url(#blipGlow)"/>
+<circle cx="360" cy="236" r="30" fill="none" stroke="#f0b54a" stroke-width="6"/>
+<rect x="353" y="229" width="14" height="14" rx="2" fill="#f0b54a"/>
+<circle cx="256" cy="280" r="9" fill="#e6eef7"/>
+
+<rect width="512" height="512" filter="url(#grain)"/>
+<rect width="512" height="512" fill="url(#vig)"/>
+<path d="M0 0 H512 V190 Q256 250 0 190 Z" fill="url(#gloss)"/>
+</g>
+<rect x="4" y="4" width="504" height="504" rx="110" fill="none" stroke="url(#rim)" stroke-width="8"/>
+</svg>
