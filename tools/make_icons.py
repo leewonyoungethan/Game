@@ -377,6 +377,55 @@ ICONS["nayul"] = icon(
 {sparkle(400, 210, .8)}{sparkle(120, 190, .6)}{sparkle(380, 440, .6)}
 ''')
 
+# ---------------------------------------------------------------- 별빛 기사
+ICONS["starknight"] = icon(
+    rg("bg", (0, "#4a5ad8"), (.5, "#22207a"), (1, "#0a0828"), cy=.35, r=.85)
+    + lg("helm", (0, "#ffffff"), (.45, "#d4dcec"), (1, "#7d8aa8"))
+    + lg("helmDark", (0, "#a8b4cc"), (1, "#5a6680"))
+    + lg("plume", (0, "#fff07a"), (.5, "#ffc21a"), (1, "#d87a00"))
+    + lg("cape", (0, "#ff5a4a"), (1, "#9a1a20"))
+    + lg("blade", (0, "#ffffff"), (.5, "#e6eeff"), (1, "#9ab0e0"), x2=1, y2=0)
+    + rg("bladeGlow", (0, "#bfe0ff", .9), (1, "#7ab8ff", 0))
+    + rg("star", (0, "#fffbe0"), (.5, "#ffd84a"), (1, "#e89a00"), cx=.4, cy=.35)
+    + rg("starGlow", (0, "#ffe680", .9), (1, "#ffc634", 0))
+    + rg("visor", (0, "#6ab8ff"), (1, "#0a1430")),
+    f'''<rect width="512" height="512" fill="url(#bg)"/>
+{stars(17, 46, (0, 0, 512, 512))}
+{rays("#bfd0ff", .08, 18, 256, 230)}
+<path d="M0 430 L60 410 L60 380 L90 380 L90 410 L150 400 L150 360 L170 340 L190 360 L190 400 L330 400 L330 350 L350 330 L370 350 L370 405 L430 410 L430 385 L460 385 L460 415 L512 420 L512 512 L0 512 Z" fill="#14123a"/>
+<ellipse cx="256" cy="470" rx="150" ry="22" fill="#000" opacity=".5" filter="url(#blur)"/>
+<g filter="url(#sh)">
+  <path d="M150 300 Q120 400 96 470 L230 440 L250 330 Z" fill="url(#cape)" stroke="#3a0608" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M362 300 Q392 400 416 470 L282 440 L262 330 Z" fill="url(#cape)" stroke="#3a0608" stroke-width="6" stroke-linejoin="round"/>
+</g>
+<g filter="url(#sh)" stroke="#1a2040" stroke-width="6" stroke-linejoin="round">
+  <path d="M256 92 Q300 40 366 58 Q330 70 318 100 Q356 92 380 116 Q330 118 300 140 Z" fill="url(#plume)"/>
+  <path d="M146 250 Q146 120 256 116 Q366 120 366 250 L366 330 Q366 380 256 392 Q146 380 146 330 Z" fill="url(#helm)"/>
+  <path d="M170 236 L342 236 Q348 236 348 244 L348 262 Q348 270 340 270 L172 270 Q164 270 164 262 L164 244 Q164 236 170 236 Z" fill="url(#visor)"/>
+  <path d="M256 122 L256 236" stroke="#8a96b0" stroke-width="10"/>
+  <path d="M190 300 L322 300 M196 330 L316 330" stroke="#8a96b0" stroke-width="7" fill="none"/>
+  <path d="M146 330 Q146 380 256 392 Q366 380 366 330 Q300 360 256 360 Q212 360 146 330 Z" fill="url(#helmDark)"/>
+</g>
+<path d="M176 160 Q210 128 256 126" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" opacity=".7"/>
+<g fill="#ffe680"><rect x="206" y="246" width="26" height="12" rx="4"/><rect x="282" y="246" width="26" height="12" rx="4"/></g>
+<g filter="url(#glow)" opacity=".85"><rect x="206" y="246" width="26" height="12" rx="4" fill="#bfe6ff"/><rect x="282" y="246" width="26" height="12" rx="4" fill="#bfe6ff"/></g>
+<g transform="translate(442 410) rotate(-12)">
+  <ellipse cx="0" cy="-150" rx="40" ry="170" fill="url(#bladeGlow)"/>
+  <g filter="url(#sh)" stroke="#1a2040" stroke-width="6" stroke-linejoin="round">
+    <path d="M-16 -20 L-16 -270 L0 -306 L16 -270 L16 -20 Z" fill="url(#blade)"/>
+    <rect x="-52" y="-24" width="104" height="22" rx="10" fill="url(#plume)"/>
+    <rect x="-11" y="-4" width="22" height="56" rx="6" fill="#7a4a24"/>
+    <circle cx="0" cy="62" r="14" fill="url(#plume)"/>
+  </g>
+  <path d="M0 -280 L0 -40" stroke="#fff" stroke-width="5" opacity=".8"/>
+</g>
+<circle cx="110" cy="150" r="70" fill="url(#starGlow)"/>
+<g transform="translate(110 150) rotate(-14)" filter="url(#sh2)">
+  <path d="M0 -44 L13 -14 L44 -12 L20 8 L28 40 L0 22 L-28 40 L-20 8 L-44 -12 L-13 -14 Z" fill="url(#star)" stroke="#8a5200" stroke-width="5" stroke-linejoin="round"/>
+</g>
+{sparkle(430, 90, .9)}{sparkle(70, 300, .6)}{sparkle(300, 70, .5, "#fff6c0")}
+''')
+
 # ---------------------------------------------------------------- default
 ICONS["default"] = icon(
     rg("bg", (0, "#7aa8ff"), (1, "#2a1aa8"), cy=.3, r=.9)

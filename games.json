@@ -90,5 +90,18 @@
     "url": "https://claude.ai/artifact/5rvyqN2jFhFxz9HxUN83CT",
     "icon": "icons/nayul.svg",
     "added": "2026-11-21T01:16"
+  },
+  {
+    "id": "starknight",
+    "title": "⚔️ 별빛 기사",
+    "genres": [
+      "액션",
+      "플랫포머"
+    ],
+    "author": "leewonyoungethan",
+    "description": "검과 별 표창으로 숲·동굴·성벽을 지나 바위왕을 쓰러뜨리는 픽셀 액션 플랫포머",
+    "url": "https://claude.ai/artifact/VeBfTWMoEv4Ksm5jfUWHRs",
+    "icon": "icons/starknight.svg",
+    "added": "2026-11-23T01:00"
   }
 ]
