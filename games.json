@@ -49,7 +49,7 @@
     "author": "leewonyoungethan",
     "description": "노을 지는 기차 선로를 3분 동안 달리며 장애물을 피하고 코인을 모으는 러닝 게임",
     "url": "https://claude.ai/artifact/WqVcJh2MKjki5b1KkkMJML",
-    "icon": "icons/rail-dash.svg",
+    "icon": "icons/rail-dash.png",
     "added": "2026-11-21T01:00"
   },
   {
@@ -62,7 +62,7 @@
     "author": "leewonyoungethan",
     "description": "훔친 스포츠카로 한밤의 도시를 누비며 돈가방을 줍고 경찰을 따돌리는 추격전 게임",
     "url": "https://claude.ai/artifact/Th6Z3xiCuQwJPNAsSmBSsD",
-    "icon": "icons/getaway.svg",
+    "icon": "icons/getaway.png",
     "added": "2026-11-21T01:05"
   },
   {
@@ -75,7 +75,7 @@
     "author": "leewonyoungethan",
     "description": "떨어지는 검은 건반을 순서대로 눌러 곡을 연주하는 피아노 타일 게임 (255곡, 2인 협동)",
     "url": "https://leewonyoungethan.github.io/piano-tiles/",
-    "icon": "icons/piano-tiles.svg",
+    "icon": "icons/piano-tiles.png",
     "added": "2026-11-21T01:15"
   },
   {
@@ -88,7 +88,7 @@
     "author": "leewonyoungethan",
     "description": "아기 나율이를 돌보고 놀아주며 백 살까지 키우는 육성 시뮬레이션",
     "url": "https://claude.ai/artifact/5rvyqN2jFhFxz9HxUN83CT",
-    "icon": "icons/nayul.svg",
+    "icon": "icons/nayul.png",
     "added": "2026-11-21T01:16"
   },
   {
@@ -101,7 +101,7 @@
     "author": "leewonyoungethan",
     "description": "검과 별 표창으로 숲·동굴·성벽을 지나 바위왕을 쓰러뜨리는 픽셀 액션 플랫포머",
     "url": "https://claude.ai/artifact/VeBfTWMoEv4Ksm5jfUWHRs",
-    "icon": "icons/starknight.svg",
+    "icon": "icons/starknight.png",
     "added": "2026-11-23T01:00"
   },
   {
@@ -114,7 +114,7 @@
     "author": "leewonyoungethan",
     "description": "2001년 9월 11일 아침을 가상으로 다시 지키는 보안검색·관제 시뮬레이션. 희생자를 기리는 마음으로 만든 게임",
     "url": "https://claude.ai/artifact/NdVDGjGVbYmHWcLhPuET41",
-    "icon": "icons/clearsky.svg",
+    "icon": "icons/clearsky.png",
     "added": "2026-11-23T02:00"
   },
   {
@@ -127,7 +127,7 @@
     "author": "mythoflee-aiden",
     "description": "F16 전투기를 몰고 적기를 격추하며 스테이지 끝 보스를 쓰러뜨리는 슈팅 게임. 별 강화·폭탄·온라인 랭킹",
     "url": "https://mythoflee-aiden.github.io/f16-shooter/",
-    "icon": "icons/f16.svg",
+    "icon": "icons/f16.png",
     "added": "2026-11-23T03:00"
   }
 ]
