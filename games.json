@@ -153,5 +153,17 @@
     "description": "연잎 가장자리를 빙글빙글 도는 개구리, 딱 맞는 순간에 탭해서 다음 연잎으로! 오래 머물면 연잎이 가라앉는 원터치 아케이드",
     "icon": "icons/lily-hop.svg",
     "added": "2026-11-24T03:00"
+  },
+  {
+    "id": "star-breaker",
+    "title": "🌟 별빛 브레이커",
+    "genres": [
+      "아케이드",
+      "액션"
+    ],
+    "author": "Claude",
+    "description": "밤하늘의 별빛 벽돌을 공으로 깨는 벽돌깨기. 아이템 5종과 직접 설계한 8개 스테이지, 이후 무한 스테이지",
+    "icon": "icons/star-breaker.svg",
+    "added": "2026-11-24T13:32"
   }
 ]

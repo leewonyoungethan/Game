@@ -1,0 +1,69 @@
+/* 앱개발부 게임 공통 스타일. 게임마다 :root 의 --bg, --grad, --ink-on-grad 등만 바꿔 쓰면 된다. */
+:root {
+  color-scheme: dark;
+  --bg: #0b0d1c;
+  --panel: rgba(12, 14, 34, .66);
+  --text: #f3f4fa;
+  --muted: #a3a9c6;
+  --line: rgba(255, 255, 255, .14);
+  --a1: #8b5cff; --a2: #ff4fa3; --a3: #ffb547;
+  --grad: linear-gradient(100deg, var(--a1), var(--a2) 55%, var(--a3));
+  --ink-on-grad: #fff;
+  --glow: rgba(255, 79, 163, .35);
+  --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: var(--font);
+  overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+button { font: inherit; color: inherit; }
+
+/* full-screen canvas */
+.stage { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+
+/* top HUD */
+.hud { position: fixed; z-index: 6; left: 0; right: 0; top: 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; pointer-events: none;
+  padding: calc(env(safe-area-inset-top, 0px) + 12px) max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px)); }
+.hud .group { display: flex; gap: 8px; align-items: flex-start; }
+.hud .stack { display: grid; gap: 8px; justify-items: end; }
+.box { pointer-events: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 8px 14px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.lbl { font-size: 11px; font-weight: 700; letter-spacing: .1em; color: var(--muted); }
+.big { font-size: 26px; font-weight: 850; letter-spacing: -.03em; line-height: 1.08; font-variant-numeric: tabular-nums; }
+.sub { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.pill { pointer-events: auto; display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 36px; padding: 0 12px; border-radius: 999px;
+  background: var(--panel); border: 1px solid var(--line); color: var(--muted); font: 600 13px var(--font); text-decoration: none; cursor: pointer; white-space: nowrap;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.pill:hover { color: var(--text); }
+.pill.on { color: var(--text); border-color: rgba(255,255,255,.4); }
+
+/* toast */
+.toast { position: fixed; z-index: 7; left: 50%; top: 22%; transform: translate(-50%, 10px); font-size: clamp(22px, 6vw, 32px); font-weight: 900; letter-spacing: -.03em;
+  opacity: 0; transition: opacity .25s, transform .25s; pointer-events: none; white-space: nowrap; color: #fff6c0; text-shadow: 0 3px 0 rgba(0,0,0,.35), 0 6px 22px rgba(0,0,0,.45); }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* overlay screens */
+.screen { position: fixed; inset: 0; z-index: 5; display: grid; place-items: center; overflow-y: auto;
+  padding: calc(env(safe-area-inset-top, 0px) + 64px) max(16px, env(safe-area-inset-right, 0px)) 24px max(16px, env(safe-area-inset-left, 0px));
+  background: rgba(4, 5, 16, .62); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.screen[hidden] { display: none; }
+.card { width: min(430px, 100%); background: linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,.035)); border: 1px solid var(--line); border-radius: 24px;
+  padding: 24px 22px 22px; text-align: center; box-shadow: 0 30px 80px rgba(0,0,0,.45); }
+.card h1 { margin: 6px 0 8px; font-size: clamp(30px, 9vw, 44px); font-weight: 900; letter-spacing: -.05em; line-height: 1.08; word-break: keep-all; }
+.card h1 span, .grad-text { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.card h2 { margin: 6px 0 4px; font-size: 26px; font-weight: 900; letter-spacing: -.04em; }
+.card p { margin: 0 0 16px; color: var(--muted); line-height: 1.6; font-size: 14px; word-break: keep-all; }
+.rules { display: grid; gap: 8px; text-align: left; margin: 0 0 18px; font-size: 13px; }
+.rules div { display: grid; grid-template-columns: 28px 1fr; gap: 8px; align-items: center; background: rgba(255,255,255,.06); border-radius: 12px; padding: 8px 10px; word-break: keep-all; }
+.rules b { font-size: 18px; text-align: center; }
+.go { width: 100%; min-height: 52px; border: 0; border-radius: 14px; background: var(--grad); color: var(--ink-on-grad); font: 850 17px var(--font); cursor: pointer;
+  box-shadow: 0 10px 30px var(--glow), inset 0 1px 0 rgba(255,255,255,.35); }
+.go.ghost { background: rgba(255,255,255,.08); color: var(--text); box-shadow: none; border: 1px solid var(--line); }
+.row { display: flex; gap: 8px; margin-top: 8px; }
+.row > * { flex: 1; }
+.final { font-size: 48px; font-weight: 900; letter-spacing: -.04em; margin: 2px 0; font-variant-numeric: tabular-nums; }
+.small { font-size: 12px; color: var(--muted); margin-top: 12px; line-height: 1.6; }
+.seg { display: flex; gap: 6px; justify-content: center; margin: 0 0 16px; flex-wrap: wrap; }
+.seg button { flex: 1; min-width: 80px; height: 40px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.05); color: var(--muted); font-weight: 700; font-size: 14px; cursor: pointer; }
+.seg button.on { background: rgba(255,255,255,.16); color: var(--text); border-color: rgba(255,255,255,.4); }
+kbd { font: 600 11px var(--font); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; padding: 1px 6px; }
+:focus-visible { outline: 2px solid var(--a3); outline-offset: 3px; border-radius: 8px; }
+@media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
