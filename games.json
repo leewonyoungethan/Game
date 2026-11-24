@@ -333,5 +333,17 @@
     "description": "밭을 갈고 계절 작물을 심어 물 주고 수확! 돈을 모아 밭을 넓히고 닭·소를 키우는 농장 경영 RPG (자동 저장)",
     "icon": "icons/sunny-farm.svg",
     "added": "2026-11-24T14:37"
+  },
+  {
+    "id": "cloud-cafe",
+    "title": "☕ 구름 카페",
+    "genres": [
+      "RPG",
+      "시뮬레이션"
+    ],
+    "author": "Claude",
+    "description": "동물 손님들의 주문을 재료를 골라 척척 만들어 내는 카페 경영 게임 — 새 메뉴 연구와 인테리어로 별 다섯 카페 만들기 (자동 저장)",
+    "icon": "icons/cloud-cafe.svg",
+    "added": "2026-11-24T14:48"
   }
 ]
