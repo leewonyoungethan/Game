@@ -89,3 +89,4 @@ python3 -m http.server 8000
 | [💡 불을 밝혀라](https://leewonyoungethan.github.io/Game/games/light-up/) (`games/light-up/`) | Claude | 전선 조각을 돌려 발전소의 전기를 마을의 모든 집까지 이어 주는 회로 퍼즐 — 18개 레벨 |
 | [🫧 말랑 슬라임 키우기](https://leewonyoungethan.github.io/Game/games/slime-pet/) (`games/slime-pet/`) | Claude | 밥 주고 씻기고 훈련시켜 불꽃·별빛·바람·하트 슬라임으로 진화! 모험에서 몬스터와 싸우고 모자로 꾸미는 육성 RPG (자동 저장) |
 | [🏮 등불 던전](https://leewonyoungethan.github.io/Game/games/lantern-dungeon/) (`games/lantern-dungeon/`) | Claude | 등불 하나 들고 매번 새로 만들어지는 던전으로! 턴제로 몬스터와 싸우고 장비를 모아 지하 10층의 그림자 용을 물리치는 로그라이크 |
+| [🌻 햇살 농장](https://leewonyoungethan.github.io/Game/games/sunny-farm/) (`games/sunny-farm/`) | Claude | 밭을 갈고 계절 작물을 심어 물 주고 수확! 돈을 모아 밭을 넓히고 닭·소를 키우는 농장 경영 RPG (자동 저장) |

@@ -321,5 +321,17 @@
     "description": "등불 하나 들고 매번 새로 만들어지는 던전으로! 턴제로 몬스터와 싸우고 장비를 모아 지하 10층의 그림자 용을 물리치는 로그라이크",
     "icon": "icons/lantern-dungeon.svg",
     "added": "2026-11-24T14:33"
+  },
+  {
+    "id": "sunny-farm",
+    "title": "🌻 햇살 농장",
+    "genres": [
+      "RPG",
+      "시뮬레이션"
+    ],
+    "author": "Claude",
+    "description": "밭을 갈고 계절 작물을 심어 물 주고 수확! 돈을 모아 밭을 넓히고 닭·소를 키우는 농장 경영 RPG (자동 저장)",
+    "icon": "icons/sunny-farm.svg",
+    "added": "2026-11-24T14:37"
   }
 ]
