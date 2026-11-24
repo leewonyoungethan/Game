@@ -345,5 +345,17 @@
     "description": "동물 손님들의 주문을 재료를 골라 척척 만들어 내는 카페 경영 게임 — 새 메뉴 연구와 인테리어로 별 다섯 카페 만들기 (자동 저장)",
     "icon": "icons/cloud-cafe.svg",
     "added": "2026-11-24T14:48"
+  },
+  {
+    "id": "hero-idle",
+    "title": "⚔️ 용사 키우기",
+    "genres": [
+      "RPG",
+      "방치형"
+    ],
+    "author": "Claude",
+    "description": "알아서 싸우는 꼬마 용사를 금화로 강화하고, 스킬과 장비로 보스를 무찌르는 방치형 RPG — 환생·오프라인 보상까지 (자동 저장)",
+    "icon": "icons/hero-idle.svg",
+    "added": "2026-11-24T14:56"
   }
 ]

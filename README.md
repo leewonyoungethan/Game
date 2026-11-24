@@ -91,3 +91,4 @@ python3 -m http.server 8000
 | [🏮 등불 던전](https://leewonyoungethan.github.io/Game/games/lantern-dungeon/) (`games/lantern-dungeon/`) | Claude | 등불 하나 들고 매번 새로 만들어지는 던전으로! 턴제로 몬스터와 싸우고 장비를 모아 지하 10층의 그림자 용을 물리치는 로그라이크 |
 | [🌻 햇살 농장](https://leewonyoungethan.github.io/Game/games/sunny-farm/) (`games/sunny-farm/`) | Claude | 밭을 갈고 계절 작물을 심어 물 주고 수확! 돈을 모아 밭을 넓히고 닭·소를 키우는 농장 경영 RPG (자동 저장) |
 | [☕ 구름 카페](https://leewonyoungethan.github.io/Game/games/cloud-cafe/) (`games/cloud-cafe/`) | Claude | 동물 손님들의 주문을 재료를 골라 척척 만들어 내는 카페 경영 게임 — 새 메뉴 연구와 인테리어로 별 다섯 카페 만들기 (자동 저장) |
+| [⚔️ 용사 키우기](https://leewonyoungethan.github.io/Game/games/hero-idle/) (`games/hero-idle/`) | Claude | 알아서 싸우는 꼬마 용사를 금화로 강화하고, 스킬과 장비로 보스를 무찌르는 방치형 RPG — 환생·오프라인 보상까지 (자동 저장) |
