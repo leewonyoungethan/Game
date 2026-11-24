@@ -309,5 +309,17 @@
     "description": "밥 주고 씻기고 훈련시켜 불꽃·별빛·바람·하트 슬라임으로 진화! 모험에서 몬스터와 싸우고 모자로 꾸미는 육성 RPG (자동 저장)",
     "icon": "icons/slime-pet.svg",
     "added": "2026-11-24T14:29"
+  },
+  {
+    "id": "lantern-dungeon",
+    "title": "🏮 등불 던전",
+    "genres": [
+      "RPG",
+      "로그라이크"
+    ],
+    "author": "Claude",
+    "description": "등불 하나 들고 매번 새로 만들어지는 던전으로! 턴제로 몬스터와 싸우고 장비를 모아 지하 10층의 그림자 용을 물리치는 로그라이크",
+    "icon": "icons/lantern-dungeon.svg",
+    "added": "2026-11-24T14:33"
   }
 ]

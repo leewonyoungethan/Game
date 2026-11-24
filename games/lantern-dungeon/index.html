@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>등불 던전</title>
+<meta name="theme-color" content="#0a0806">
+<link rel="icon" href="../../icons/lantern-dungeon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../_shared/kit.css">
+<style>
+  :root { --bg: #0a0806; --panel: rgba(24, 18, 12, .72); --a1: #ffd27a; --a2: #ff9a3a; --a3: #e85a2a; --ink-on-grad: #2a1400; --glow: rgba(255,170,60,.35); }
+  .hud .box { padding: 7px 10px; }
+  .hud .big { font-size: 21px; }
+  .meter { height: 6px; width: 86px; border-radius: 9px; background: rgba(255,255,255,.12); overflow: hidden; margin-top: 4px; }
+  .meter i { display: block; height: 100%; transition: width .25s; }
+  .log { position: fixed; z-index: 6; left: 12px; right: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 150px); text-align: center; pointer-events: none; font-size: 13.5px; font-weight: 700; line-height: 1.55; text-shadow: 0 2px 6px #000, 0 0 2px #000; }
+  .log div { transition: opacity .4s; }
+  .log div:nth-child(1) { opacity: .45; } .log div:nth-child(2) { opacity: .7; }
+  .ctrl { position: fixed; z-index: 6; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); display: flex; justify-content: space-between; align-items: flex-end; padding: 0 14px; pointer-events: none; }
+  .ctrl[hidden] { display: none; }
+  .pad { display: grid; grid-template-columns: repeat(3, 44px); grid-template-rows: repeat(3, 40px); gap: 4px; pointer-events: auto; }
+  .pad button, .side button { border-radius: 12px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font-size: 18px; cursor: pointer; backdrop-filter: blur(6px); touch-action: manipulation; }
+  .pad button:active, .side button:active { background: rgba(255,200,120,.25); }
+  .pad .u { grid-column: 2; grid-row: 1; } .pad .l { grid-column: 1; grid-row: 2; } .pad .r { grid-column: 3; grid-row: 2; } .pad .d { grid-column: 2; grid-row: 3; }
+  .side { display: grid; gap: 6px; pointer-events: auto; }
+  .side button { height: 46px; padding: 0 14px; font-size: 14px; font-weight: 800; }
+  .side button:disabled { opacity: .4; }
+  .inv { font-size: 11.5px; color: var(--muted); margin-top: 3px; white-space: nowrap; }
+</style>
+</head>
+<body>
+<canvas class="stage" id="cv"></canvas>
+<div class="hud">
+  <div class="group">
+    <div class="box"><div class="lbl" id="floorLbl">지하 1층</div><div class="big" id="hp">30/30</div><div class="meter"><i id="hpBar" style="background:#ff6a6a"></i></div><div class="inv" id="lvl">Lv.1 · 공격 4 · 방어 0</div></div>
+    <div class="box"><div class="lbl">등불 기름</div><div class="big" id="oil">100</div><div class="meter"><i id="oilBar" style="background:#ffc85a"></i></div><div class="inv" id="gold">🪙 0</div></div>
+  </div>
+  <div class="stack">
+    <a class="pill" href="../../">← 센터</a>
+    <button class="pill" id="muteBtn" type="button"></button>
+  </div>
+</div>
+<div class="log" id="log"><div></div><div></div><div></div></div>
+<div class="ctrl" id="ctrl" hidden>
+  <div class="pad">
+    <button class="u" type="button" data-d="0,-1" aria-label="위">▲</button>
+    <button class="l" type="button" data-d="-1,0" aria-label="왼쪽">◀</button>
+    <button class="r" type="button" data-d="1,0" aria-label="오른쪽">▶</button>
+    <button class="d" type="button" data-d="0,1" aria-label="아래">▼</button>
+  </div>
+  <div class="side">
+    <button type="button" id="potBtn">🧪 물약 0</button>
+    <button type="button" id="waitBtn">⏳ 한 턴 쉬기</button>
+  </div>
+</div>
+
+<div class="screen" id="startScreen">
+  <div class="card">
+    <div class="lbl">앱개발부 던전 RPG</div>
+    <h1>등불 <span>던전</span></h1>
+    <p>작은 등불 하나만 들고 깊은 던전으로! 지하 10층의 그림자 용을 물리치고 마을의 빛을 되찾아 오세요.</p>
+    <div class="rules">
+      <div><b>🕹️</b><span>방향 버튼·방향키·WASD로 한 칸씩 움직여요. 내가 한 번 움직이면 몬스터도 한 번!</span></div>
+      <div><b>⚔️</b><span>몬스터 쪽으로 걸어가면 공격해요</span></div>
+      <div><b>🏮</b><span>걸을 때마다 등불 기름이 줄어요. 기름이 떨어지면 앞이 거의 안 보여요!</span></div>
+      <div><b>🪜</b><span>계단을 찾아 더 깊이 내려가요. 무기·갑옷·물약을 챙기세요</span></div>
+    </div>
+    <button class="go" id="startBtn" type="button">던전으로</button>
+    <p class="small" id="bestLine"></p>
+  </div>
+</div>
+<div class="screen" id="overScreen" hidden>
+  <div class="card">
+    <div class="lbl" id="overLbl"></div>
+    <h2 id="overTitle"></h2>
+    <div class="final" id="finalScore"></div>
+    <p id="overText"></p>
+    <button class="go" id="againBtn" type="button">새로운 모험</button>
+  </div>
+</div>
+
+<script src="../_shared/kit.js"></script>
+<script>
+(() => {
+'use strict';
+const { $, rand, randi, pick, clamp, shuffle, tone, noise, chord, toast, roundRect } = Kit;
+const MW = 30, MH = 34, TS = 32, LAST = 10;
+const cv = $('cv'), ctx = cv.getContext('2d');
+let VW, VH, DPR; function resize() { DPR = Math.min(2, devicePixelRatio || 1); VW = innerWidth; VH = innerHeight; cv.width = VW * DPR; cv.height = VH * DPR; } addEventListener('resize', resize); resize();
+const best = Kit.best('ld_best');
+
+// ---------------------------------------------------------------- data
+const MONS = [
+  { k: 'rat', e: '🐀', name: '쥐', hp: 6, atk: 2, def: 0, xp: 3, f: [1, 3] },
+  { k: 'bat', e: '🦇', name: '박쥐', hp: 5, atk: 2, def: 0, xp: 3, f: [1, 4], erratic: true },
+  { k: 'slime', e: '🦠', name: '슬라임', hp: 12, atk: 3, def: 0, xp: 5, f: [2, 5], slow: true },
+  { k: 'spider', e: '🕷️', name: '독거미', hp: 10, atk: 4, def: 0, xp: 6, f: [3, 6] },
+  { k: 'skel', e: '💀', name: '해골 병사', hp: 17, atk: 5, def: 1, xp: 9, f: [4, 8] },
+  { k: 'gob', e: '👺', name: '도깨비', hp: 22, atk: 6, def: 1, xp: 12, f: [5, 9] },
+  { k: 'ghost', e: '👻', name: '유령', hp: 18, atk: 7, def: 0, xp: 14, f: [6, 10], erratic: true },
+  { k: 'orc', e: '👹', name: '오우거', hp: 32, atk: 8, def: 2, xp: 18, f: [7, 10] },
+];
+const BOSS = { k: 'boss', e: '🐉', name: '그림자 용', hp: 160, atk: 13, def: 3, xp: 0, boss: true };
+const WEAPONS = [['나무 막대', 0], ['녹슨 단검', 1], ['강철 검', 2], ['전투 도끼', 3], ['기사의 장검', 5], ['불꽃 마검', 7]];
+const ARMORS = [['천 옷', 0], ['가죽 갑옷', 1], ['사슬 갑옷', 2], ['강철 판금', 3], ['용비늘 갑옷', 5]];
+
+// ---------------------------------------------------------------- state
+let map, seen, vis, mons, items, pl, floor, turn, state = 'title', logLines = [], cam = { x: 0, y: 0 }, fx = [], kills = 0, gold = 0, shake = 0, TT = 0;
+function newRun() {
+  pl = { x: 0, y: 0, hp: 30, max: 30, atk: 4, def: 0, lv: 1, xp: 0, oil: 100, pots: 1, w: 0, a: 0, face: 1, anim: 0, ax: 0, ay: 0 };
+  floor = 0; kills = 0; gold = 0; logLines = []; nextFloor();
+}
+const xpNeed = () => 10 + pl.lv * 8;
+
+// ---------------------------------------------------------------- generation
+function genFloor() {
+  map = Array.from({ length: MH }, () => Array(MW).fill(1)); // 1 wall, 0 floor, 2 stairs
+  const rooms = [];
+  for (let t = 0; t < 300 && rooms.length < 11; t++) {
+    const w = randi(4, 8), h = randi(4, 7), x = randi(1, MW - w - 2), y = randi(1, MH - h - 2);
+    if (rooms.some(r => x < r.x + r.w + 1 && x + w + 1 > r.x && y < r.y + r.h + 1 && y + h + 1 > r.y)) continue;
+    rooms.push({ x, y, w, h, cx: x + (w >> 1), cy: y + (h >> 1) });
+  }
+  for (const r of rooms) for (let y = r.y; y < r.y + r.h; y++) for (let x = r.x; x < r.x + r.w; x++) map[y][x] = 0;
+  // connect rooms in order of position (a chain plus a couple of extra loops)
+  const order = [...rooms].sort((a, b) => a.cx + a.cy * .7 - (b.cx + b.cy * .7));
+  const carve = (a, b) => { let x = a.cx, y = a.cy; const hFirst = Math.random() < .5; const stepX = () => { while (x !== b.cx) { map[y][x] = map[y][x] === 1 ? 0 : map[y][x]; x += Math.sign(b.cx - x); } }; const stepY = () => { while (y !== b.cy) { map[y][x] = map[y][x] === 1 ? 0 : map[y][x]; y += Math.sign(b.cy - y); } }; if (hFirst) { stepX(); stepY(); } else { stepY(); stepX(); } map[y][x] = 0; };
+  for (let i = 1; i < order.length; i++) carve(order[i - 1], order[i]);
+  for (let i = 0; i < 2; i++) carve(pick(rooms), pick(rooms));
+  return order;
+}
+function bfsDist(sx, sy) {
+  const d = Array.from({ length: MH }, () => Array(MW).fill(-1)); d[sy][sx] = 0; const q = [[sx, sy]];
+  while (q.length) { const [x, y] = q.shift(); for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const nx = x + dx, ny = y + dy; if (map[ny] && map[ny][nx] !== undefined && map[ny][nx] !== 1 && d[ny][nx] < 0) { d[ny][nx] = d[y][x] + 1; q.push([nx, ny]); } } }
+  return d;
+}
+function nextFloor() {
+  floor++; let rooms;
+  for (;;) { rooms = genFloor(); if (rooms.length >= 6) break; }
+  const start = rooms[0]; pl.x = start.cx; pl.y = start.cy;
+  const D = bfsDist(pl.x, pl.y);
+  // stairs in the farthest reachable room
+  const far = rooms.slice(1).reduce((a, b) => (D[b.cy][b.cx] > D[a.cy][a.cx] ? b : a));
+  if (floor < LAST) map[far.cy][far.cx] = 2;
+  seen = Array.from({ length: MH }, () => Array(MW).fill(false));
+  mons = []; items = [];
+  const freeIn = r => { for (let t = 0; t < 30; t++) { const x = randi(r.x, r.x + r.w - 1), y = randi(r.y, r.y + r.h - 1); if (map[y][x] === 0 && !(x === pl.x && y === pl.y) && !mons.some(m => m.x === x && m.y === y) && !items.some(i => i.x === x && i.y === y)) return [x, y]; } return null; };
+  const pool = MONS.filter(m => floor >= m.f[0] && floor <= m.f[1]);
+  const nM = 5 + Math.floor(floor * 1.5);
+  for (let i = 0; i < nM; i++) { const r = pick(rooms.slice(1)), p = freeIn(r); if (!p) continue; const M = pick(pool), s = 1 + (floor - M.f[0]) * .12 + (floor - 1) * .04; mons.push({ ...M, x: p[0], y: p[1], hp: Math.round(M.hp * s), max: Math.round(M.hp * s), atk: Math.round(M.atk * (1 + (s - 1) * .7)), awake: false, hit: 0, ox: 0, oy: 0 }); }
+  if (floor === LAST) { const p = [far.cx, far.cy]; mons.push({ ...BOSS, x: p[0], y: p[1], max: BOSS.hp, awake: false, hit: 0, ox: 0, oy: 0 }); }
+  // items: oil is the lifeline, so every floor gets enough of it
+  const drops = ['oil', 'oil', 'gold', 'gold', 'gold']; drops.push('pot'); if (Math.random() < .4) drops.push('pot');
+  if (Math.random() < .55) drops.push('weapon'); if (Math.random() < .45) drops.push('armor'); if (Math.random() < .35) drops.push('map'); if (Math.random() < .5) drops.push('chest'); if (floor > 4) drops.push('oil');
+  for (const k of drops) { const p = freeIn(pick(rooms)); if (p) items.push({ k, x: p[0], y: p[1] }); }
+  cam.x = pl.x; cam.y = pl.y; computeVis();
+  log(floor === LAST ? '🐉 깊은 곳에서 무언가 숨 쉬는 소리가 들려요…' : `지하 ${floor}층에 내려왔어요.`);
+  hud();
+}
+
+// ---------------------------------------------------------------- vision
+const radius = () => (pl.oil > 0 ? 2.5 + Math.ceil(pl.oil / 25) : 1.6);
+function los(x0, y0, x1, y1) {
+  let dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0), sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1, err = dx - dy, x = x0, y = y0;
+  while (!(x === x1 && y === y1)) { if (!(x === x0 && y === y0) && map[y][x] === 1) return false; const e2 = 2 * err; if (e2 > -dy) { err -= dy; x += sx; } if (e2 < dx) { err += dx; y += sy; } }
+  return true;
+}
+function computeVis() {
+  vis = Array.from({ length: MH }, () => Array(MW).fill(0)); const R = radius(), Ri = Math.ceil(R);
+  for (let y = pl.y - Ri; y <= pl.y + Ri; y++) for (let x = pl.x - Ri; x <= pl.x + Ri; x++) {
+    if (y < 0 || x < 0 || y >= MH || x >= MW) continue; const d = Math.hypot(x - pl.x, y - pl.y);
+    if (d <= R && los(pl.x, pl.y, x, y)) { vis[y][x] = 1 - d / (R + 1); seen[y][x] = true; }
+  }
+}
+
+// ---------------------------------------------------------------- turns
+const blocked = (x, y) => !map[y] || map[y][x] === undefined || map[y][x] === 1;
+const monAt = (x, y) => mons.find(m => m.x === x && m.y === y);
+function act(dx, dy) {
+  if (state !== 'play') return; Kit.initAudio();
+  if (dx) pl.face = dx;
+  const nx = pl.x + dx, ny = pl.y + dy, m = monAt(nx, ny);
+  if (m) attack(m, dx, dy);
+  else if (!blocked(nx, ny)) { pl.x = nx; pl.y = ny; tone(160 + rand(0, 30), .03, 'triangle', .015); pickup(); if (map[ny][nx] === 2) { descend(); return; } }
+  else return; // bump wall: no turn
+  endTurn();
+}
+function wait() { if (state !== 'play') return; if (pl.hp < pl.max && Math.random() < .5) pl.hp++; endTurn(); }
+function endTurn() {
+  turn++; pl.oil = Math.max(0, pl.oil - .55); if (pl.oil === 0 && turn % 12 === 0) log('등불이 꺼졌어요… 기름을 찾아야 해요!');
+  if (turn % 12 === 0 && pl.hp < pl.max) pl.hp++;
+  computeVis(); monstersAct(); computeVis(); hud();
+}
+function attack(m, dx, dy) {
+  const atk = pl.atk + WEAPONS[pl.w][1], dmg = Math.max(1, atk + randi(-1, 2) - m.def), crit = Math.random() < .1, d = crit ? dmg * 2 : dmg;
+  m.hp -= d; m.hit = .25; m.awake = true; pl.anim = 1; pl.ax = dx; pl.ay = dy;
+  floatText(m.x, m.y, (crit ? '치명타 ' : '') + '-' + d, crit ? '#ffe06a' : '#fff'); noise(.08, .07, 1600); tone(crit ? 900 : 300, .06, 'square', .03);
+  if (m.hp <= 0) {
+    mons = mons.filter(o => o !== m); kills++;
+    for (let i = 0; i < 12; i++) fx.push({ x: m.x + .5, y: m.y + .5, vx: rand(-3, 3), vy: rand(-3, 3), life: .5, c: '#c8b8a8' });
+    if (m.boss) return victory();
+    log(`${m.name}을(를) 물리쳤어요! (+${m.xp} 경험치)`); gainXP(m.xp);
+    if (Math.random() < .25) { items.push({ k: pick(['gold', 'gold', 'oil']), x: m.x, y: m.y }); }
+  } else log(`${m.name}에게 ${d} 피해!`);
+}
+function gainXP(n) {
+  pl.xp += n;
+  while (pl.xp >= xpNeed()) { pl.xp -= xpNeed(); pl.lv++; pl.max += 6; pl.hp = Math.min(pl.max, pl.hp + 10); pl.atk += 1; if (pl.lv % 3 === 0) pl.def += 1; log(`✨ 레벨 업! Lv.${pl.lv} (체력·공격 상승)`); chord([523, 659, 784, 1047], .06, 'triangle', .05, .25); toast(`레벨 ${pl.lv}!`); }
+}
+function monstersAct() {
+  const D = bfsDist(pl.x, pl.y);
+  for (const m of mons) {
+    const dist = Math.hypot(m.x - pl.x, m.y - pl.y);
+    if (!m.awake && vis[m.y][m.x] > 0 && dist < 6) { m.awake = true; if (m.boss) { log('🐉 그림자 용이 눈을 떴어요!'); noise(.6, .12, 300); shake = 10; } }
+    if (!m.awake) continue;
+    if (m.slow && turn % 2) continue;
+    if (Math.abs(m.x - pl.x) + Math.abs(m.y - pl.y) === 1) { // adjacent: attack
+      const def = pl.def + ARMORS[pl.a][1], dmg = Math.max(1, m.atk + randi(-1, 1) - def);
+      pl.hp -= dmg; m.ox = (pl.x - m.x) * .35; m.oy = (pl.y - m.y) * .35; shake = Math.max(shake, 4);
+      floatText(pl.x, pl.y, '-' + dmg, '#ff6a6a'); tone(140, .1, 'sawtooth', .04, -40);
+      log(`${m.name}의 공격! ${dmg} 피해`);
+      if (m.boss && Math.random() < .3) { pl.oil = Math.max(0, pl.oil - 8); log('🐉 그림자 숨결! 등불이 흔들려요 (기름 -8)'); }
+      if (pl.hp <= 0) return die(m);
+      continue;
+    }
+    let opts = [[1, 0], [-1, 0], [0, 1], [0, -1]].map(([dx, dy]) => [m.x + dx, m.y + dy]).filter(([x, y]) => !blocked(x, y) && !monAt(x, y) && !(x === pl.x && y === pl.y));
+    if (!opts.length) continue;
+    let pickP;
+    if (m.erratic && Math.random() < .4) pickP = pick(opts);
+    else { opts.sort((a, b) => (D[a[1]][a[0]] < 0 ? 999 : D[a[1]][a[0]]) - (D[b[1]][b[0]] < 0 ? 999 : D[b[1]][b[0]])); pickP = opts[0]; if (D[pickP[1]][pickP[0]] > 14) m.awake = false; }
+    m.ox = m.x - pickP[0]; m.oy = m.y - pickP[1]; m.x = pickP[0]; m.y = pickP[1];
+  }
+}
+function pickup() {
+  const i = items.findIndex(t => t.x === pl.x && t.y === pl.y); if (i < 0) return; const it = items.splice(i, 1)[0];
+  const k = it.k === 'chest' ? pick(['weapon', 'armor', 'pot', 'pot', 'gold', 'oil']) : it.k;
+  if (it.k === 'chest') log('📦 상자를 열었어요!');
+  if (k === 'oil') { pl.oil = Math.min(100, pl.oil + 40); log('🛢️ 등불 기름 +40'); tone(500, .15, 'sine', .04, 300); }
+  else if (k === 'pot') { pl.pots++; log('🧪 회복 물약을 주웠어요'); tone(800, .08, 'sine', .04, 200); }
+  else if (k === 'gold') { const g = randi(5, 12) + floor * 3; gold += g; log(`🪙 금화 ${g}개`); tone(1200, .05, 'triangle', .03); tone(1500, .05, 'triangle', .03); }
+  else if (k === 'map') { for (let y = 0; y < MH; y++) for (let x = 0; x < MW; x++) if (map[y][x] !== 1 || [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([a, b]) => map[y + b] && map[y + b][x + a] === 0)) seen[y][x] = true; log('📜 지도 두루마리! 이 층의 길이 보여요'); chord([660, 880], .05, 'sine', .04, .2); }
+  else if (k === 'weapon') { const tier = clamp(Math.floor(floor / 2) + randi(0, 1), 1, WEAPONS.length - 1); if (tier > pl.w) { pl.w = tier; log(`🗡️ ${WEAPONS[tier][0]} 장착! (공격 +${WEAPONS[tier][1]})`); chord([523, 784], .05, 'triangle', .05, .2); } else { gold += 15; log(`🗡️ ${WEAPONS[tier][0]}… 지금 무기가 더 좋아요 (팔아서 🪙15)`); } }
+  else if (k === 'armor') { const tier = clamp(Math.floor(floor / 2.5) + randi(0, 1), 1, ARMORS.length - 1); if (tier > pl.a) { pl.a = tier; log(`🛡️ ${ARMORS[tier][0]} 장착! (방어 +${ARMORS[tier][1]})`); chord([523, 784], .05, 'triangle', .05, .2); } else { gold += 15; log(`🛡️ ${ARMORS[tier][0]}… 지금 갑옷이 더 좋아요 (팔아서 🪙15)`); } }
+}
+function usePotion() { if (state !== 'play' || !pl.pots || pl.hp >= pl.max) return; pl.pots--; const h = 14 + pl.lv * 2; pl.hp = Math.min(pl.max, pl.hp + h); log(`🧪 물약을 마셨어요 (+${h})`); chord([660, 880, 1100], .04, 'sine', .04, .15); endTurn(); }
+function descend() { chord([392, 330, 262], .08, 'triangle', .05, .2); toast(`지하 ${floor + 1}층`); nextFloor(); }
+function score() { return gold + (floor - 1) * 100 + kills * 10 + (state === 'won' ? 1000 : 0); }
+function die(m) {
+  state = 'dead'; pl.hp = 0; hud(); noise(.7, .15, 300); tone(110, .8, 'sawtooth', .06, -50); shake = 12;
+  const s = score(), isBest = best.submit(s);
+  setTimeout(() => { $('overLbl').textContent = isBest ? '🎉 최고 기록!' : `최고 기록 ${best.get()}`; $('overTitle').textContent = '등불이 꺼졌어요…'; $('finalScore').textContent = s.toLocaleString(); $('overText').textContent = `지하 ${floor}층에서 ${m.name}에게 쓰러졌어요 · Lv.${pl.lv} · 처치 ${kills} · 🪙${gold}`; Kit.show('overScreen'); }, 900);
+}
+function victory() {
+  state = 'won'; hud(); chord([523, 659, 784, 1047, 1319, 1568], .1, 'triangle', .07, .5);
+  const s = score(), isBest = best.submit(s);
+  setTimeout(() => { $('overLbl').textContent = isBest ? '🎉 최고 기록!' : '던전 정복!'; $('overTitle').textContent = '🏮 그림자 용을 물리쳤어요!'; $('finalScore').textContent = s.toLocaleString(); $('overText').textContent = `마을에 빛이 돌아왔어요! Lv.${pl.lv} · 처치 ${kills} · 🪙${gold} · ${turn}턴`; Kit.show('overScreen'); }, 1200);
+}
+function log(t) { logLines.push(t); if (logLines.length > 3) logLines.shift(); const els = $('log').children; for (let i = 0; i < 3; i++) els[i].textContent = logLines[i - (3 - logLines.length)] || ''; }
+function floatText(x, y, t, c) { fx.push({ x: x + .5, y: y + .2, t, c, life: .9, vx: 0, vy: -1.2 }); }
+function hud() {
+  $('floorLbl').textContent = `지하 ${floor}층`; $('hp').textContent = `${Math.max(0, pl.hp)}/${pl.max}`; $('hpBar').style.width = Math.max(0, pl.hp / pl.max * 100) + '%';
+  $('lvl').textContent = `Lv.${pl.lv} · ⚔️${pl.atk + WEAPONS[pl.w][1]} · 🛡️${pl.def + ARMORS[pl.a][1]}`;
+  $('oil').textContent = Math.ceil(pl.oil); $('oilBar').style.width = pl.oil + '%'; $('oilBar').style.background = pl.oil < 20 ? '#ff6a4a' : '#ffc85a';
+  $('gold').textContent = `🪙 ${gold} · 🧪${pl.pots}`; $('potBtn').textContent = `🧪 물약 ${pl.pots}`; $('potBtn').disabled = !pl.pots;
+}
+
+// ---------------------------------------------------------------- draw
+function draw(dt) {
+  const c = ctx; c.setTransform(DPR, 0, 0, DPR, 0, 0); c.fillStyle = '#050403'; c.fillRect(0, 0, VW, VH);
+  if (!map) return;
+  const S = clamp(Math.min(VW / 11, VH / 15), 30, 64), k = S / TS;
+  cam.x += (pl.x - cam.x) * Math.min(1, dt * 10); cam.y += (pl.y - cam.y) * Math.min(1, dt * 10);
+  const sx = shake ? rand(-shake, shake) : 0, sy = shake ? rand(-shake, shake) : 0; shake *= .85; if (shake < .3) shake = 0;
+  const ox = VW / 2 - (cam.x + .5) * S + sx, oy = VH * .44 - (cam.y + .5) * S + sy;
+  const flick = 1 + Math.sin(TT * 9) * .03 + Math.sin(TT * 23) * .02;
+  const x0 = Math.max(0, Math.floor(-ox / S) - 1), x1 = Math.min(MW, Math.ceil((VW - ox) / S) + 1), y0 = Math.max(0, Math.floor(-oy / S) - 1), y1 = Math.min(MH, Math.ceil((VH - oy) / S) + 1);
+  for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
+    if (!seen[y][x]) continue; const v = vis[y][x], X = ox + x * S, Y = oy + y * S, t = map[y][x];
+    if (t === 1) {
+      c.fillStyle = '#3a3028'; c.fillRect(X, Y, S + .5, S + .5);
+      c.fillStyle = '#2a221c'; for (let r = 0; r < 3; r++) { const off = (r % 2) * S / 2; c.fillRect(X, Y + r * S / 3, S, 1.2); for (let b = 0; b < 3; b++) c.fillRect(X + ((off + b * S / 2) % S), Y + r * S / 3, 1.2, S / 3); }
+      if (map[y + 1] && map[y + 1][x] !== 1) { c.fillStyle = '#4e4034'; c.fillRect(X, Y + S * .78, S, S * .22); }
+    } else {
+      c.fillStyle = (x + y) % 2 ? '#2a241e' : '#2e2721'; c.fillRect(X, Y, S + .5, S + .5);
+      c.fillStyle = 'rgba(0,0,0,.18)'; c.fillRect(X, Y, S, 1); c.fillRect(X, Y, 1, S);
+      if ((x * 7 + y * 13) % 11 === 0) { c.fillStyle = 'rgba(255,255,255,.05)'; c.beginPath(); c.arc(X + S * .3, Y + S * .6, S * .08, 0, 7); c.fill(); }
+      if (t === 2) { c.fillStyle = '#150f0a'; c.fillRect(X + S * .15, Y + S * .15, S * .7, S * .7); c.fillStyle = '#6a5440'; for (let i = 0; i < 4; i++) c.fillRect(X + S * .15, Y + S * (.2 + i * .16), S * .7 * (1 - i * .18), S * .08); }
+    }
+    // darkness: remembered tiles stay dim, lit tiles get the warm lantern
+    const dark = v > 0 ? clamp(1 - v * 1.25 * flick, 0, .85) : .82;
+    c.fillStyle = `rgba(5,4,3,${dark})`; c.fillRect(X, Y, S + .5, S + .5);
+    if (v > 0) { c.fillStyle = `rgba(255,160,60,${v * .14})`; c.fillRect(X, Y, S + .5, S + .5); }
+  }
+  c.textAlign = 'center'; c.textBaseline = 'middle';
+  // items (only in view)
+  for (const it of items) { const v = vis[it.y][it.x]; if (!v) continue; const X = ox + (it.x + .5) * S, Y = oy + (it.y + .5) * S + Math.sin(TT * 3 + it.x) * 2; c.globalAlpha = Math.min(1, v * 2.2); c.font = `${S * .6}px sans-serif`; c.fillText({ oil: '🛢️', pot: '🧪', gold: '🪙', weapon: '🗡️', armor: '🛡️', map: '📜', chest: '📦' }[it.k], X, Y); }
+  c.globalAlpha = 1;
+  // monsters
+  for (const m of mons) {
+    const v = vis[m.y][m.x]; m.ox *= .7; m.oy *= .7; m.hit = Math.max(0, m.hit - dt); if (!v) continue;
+    const X = ox + (m.x + .5 + m.ox) * S, Y = oy + (m.y + .5 + m.oy) * S;
+    c.globalAlpha = Math.min(1, v * 2.2); c.fillStyle = 'rgba(0,0,0,.35)'; c.beginPath(); c.ellipse(X, Y + S * .32, S * .3, S * .1, 0, 0, 7); c.fill();
+    if (m.hit > 0) c.filter = 'brightness(3)';
+    c.font = `${S * (m.boss ? 1.3 : .72)}px sans-serif`; c.fillText(m.e, X + (m.hit ? rand(-2, 2) : 0), Y - (m.boss ? S * .2 : 0) + Math.sin(TT * 4 + m.x) * 1.5); c.filter = 'none';
+    if (m.hp < m.max || m.boss) { const w = S * (m.boss ? 1.6 : .8); c.fillStyle = 'rgba(0,0,0,.6)'; c.fillRect(X - w / 2, Y - S * (m.boss ? 1.05 : .56), w, 4); c.fillStyle = '#ff5a5a'; c.fillRect(X - w / 2, Y - S * (m.boss ? 1.05 : .56), w * m.hp / m.max, 4); }
+    if (!m.awake) { c.fillStyle = 'rgba(255,255,255,.7)'; c.font = `800 ${S * .3}px sans-serif`; c.fillText('z', X + S * .35, Y - S * .4 + Math.sin(TT * 2) * 2); }
+    c.globalAlpha = 1;
+  }
+  // player
+  pl.anim = Math.max(0, pl.anim - dt * 6);
+  const px = ox + (pl.x + .5 + pl.ax * pl.anim * .25) * S, py = oy + (pl.y + .5 + pl.ay * pl.anim * .25) * S;
+  drawHero(c, px, py, S);
+  // lantern halo
+  const R = radius() * S * flick, lg = c.createRadialGradient(px, py, S * .2, px, py, R);
+  lg.addColorStop(0, 'rgba(255,190,90,.22)'); lg.addColorStop(1, 'rgba(255,150,50,0)'); c.fillStyle = lg; c.beginPath(); c.arc(px, py, R, 0, 7); c.fill();
+  for (const f of fx) {
+    f.life -= dt; f.x += f.vx * dt; f.y += f.vy * dt; const X = ox + f.x * S, Y = oy + f.y * S; c.globalAlpha = Math.max(0, Math.min(1, f.life * 2));
+    if (f.t) { c.fillStyle = f.c; c.font = `900 ${S * .42}px "Pretendard Variable", sans-serif`; c.fillText(f.t, X, Y); } else { c.fillStyle = f.c; c.fillRect(X - 2, Y - 2, 4, 4); }
+  }
+  fx = fx.filter(f => f.life > 0); c.globalAlpha = 1; c.textBaseline = 'alphabetic';
+  // vignette
+  const vg = c.createRadialGradient(VW / 2, VH * .44, Math.min(VW, VH) * .3, VW / 2, VH * .44, Math.max(VW, VH) * .75); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.75)'); c.fillStyle = vg; c.fillRect(0, 0, VW, VH);
+}
+function drawHero(c, x, y, S) {
+  const k = S / 32, f = pl.face, bob = Math.sin(TT * 4) * k;
+  c.save(); c.translate(x, y + bob);
+  c.fillStyle = 'rgba(0,0,0,.4)'; c.beginPath(); c.ellipse(0, 12 * k, 10 * k, 3.5 * k, 0, 0, 7); c.fill();
+  // cloak
+  c.fillStyle = '#3a5a9a'; c.beginPath(); c.moveTo(-9 * k, 11 * k); c.quadraticCurveTo(-10 * k, -4 * k, 0, -8 * k); c.quadraticCurveTo(10 * k, -4 * k, 9 * k, 11 * k); c.closePath(); c.fill();
+  // face + hood
+  c.fillStyle = '#ffd8b0'; c.beginPath(); c.arc(0, -8 * k, 6.5 * k, 0, 7); c.fill();
+  c.fillStyle = '#2a4a8a'; c.beginPath(); c.arc(0, -9 * k, 8 * k, Math.PI * 1.05, Math.PI * 1.95); c.lineTo(8 * k, -5 * k); c.quadraticCurveTo(0, -18 * k, -8 * k, -5 * k); c.fill();
+  c.fillStyle = '#1a1010'; c.fillRect((f * 2 - 1.2) * k, -8.5 * k, 1.8 * k, 2.4 * k); c.fillRect((f * 2 - 5.4) * k, -8.5 * k, 1.8 * k, 2.4 * k);
+  // lantern in front hand
+  const lx = f * 11 * k, ly = 2 * k + Math.sin(TT * 3) * k;
+  c.strokeStyle = '#6a5030'; c.lineWidth = 1.5 * k; c.beginPath(); c.moveTo(f * 6 * k, -1 * k); c.lineTo(lx, ly - 5 * k); c.stroke();
+  const g = c.createRadialGradient(lx, ly, 1, lx, ly, 9 * k); g.addColorStop(0, pl.oil > 0 ? '#fff6c0' : '#6a5a4a'); g.addColorStop(1, pl.oil > 0 ? 'rgba(255,170,60,0)' : 'rgba(0,0,0,0)'); c.fillStyle = g; c.beginPath(); c.arc(lx, ly, 9 * k, 0, 7); c.fill();
+  c.fillStyle = '#8a6a3a'; c.fillRect(lx - 3.5 * k, ly - 5 * k, 7 * k, 2 * k); c.fillRect(lx - 3.5 * k, ly + 3 * k, 7 * k, 2 * k);
+  c.fillStyle = pl.oil > 0 ? '#ffd27a' : '#4a3a2a'; c.fillRect(lx - 2.5 * k, ly - 3 * k, 5 * k, 6 * k);
+  c.restore();
+}
+
+// ---------------------------------------------------------------- input
+const KEYS = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0], w: [0, -1], s: [0, 1], a: [-1, 0], d: [1, 0] };
+addEventListener('keydown', e => { const k = KEYS[e.key.length === 1 ? e.key.toLowerCase() : e.key]; if (k) { e.preventDefault(); act(...k); } else if (e.key === ' ' || e.key === '.') { e.preventDefault(); wait(); } else if (e.key === 'q' || e.key === 'Q') usePotion(); });
+let holdT = null;
+for (const b of document.querySelectorAll('.pad button')) {
+  const [dx, dy] = b.dataset.d.split(',').map(Number);
+  const go = () => act(dx, dy);
+  b.addEventListener('pointerdown', e => { e.preventDefault(); go(); clearInterval(holdT); holdT = setInterval(go, 190); });
+  for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) b.addEventListener(ev, () => clearInterval(holdT));
+}
+// tap the map: step toward the tap
+cv.addEventListener('pointerdown', e => {
+  if (state !== 'play') return; const dx = e.clientX - VW / 2, dy = e.clientY - VH * .44;
+  if (Math.hypot(dx, dy) < 18) return wait();
+  Math.abs(dx) > Math.abs(dy) ? act(Math.sign(dx), 0) : act(0, Math.sign(dy));
+});
+$('potBtn').onclick = usePotion; $('waitBtn').onclick = wait;
+function start() { newRun(); turn = 0; state = 'play'; Kit.hide('startScreen', 'overScreen'); $('ctrl').hidden = false; }
+$('startBtn').onclick = start; $('againBtn').onclick = start;
+Kit.bindMute($('muteBtn'));
+$('bestLine').textContent = best.get() ? `최고 기록 ${best.get().toLocaleString()}점` : '';
+
+let last = performance.now();
+function frame(now) { const dt = Math.min(.05, (now - last) / 1000); last = now; TT += dt; draw(dt); requestAnimationFrame(frame); }
+newRun(); turn = 0; requestAnimationFrame(frame);
+if (location.hash === '#test') window.__game = { s: () => ({ state, floor, hp: pl.hp, max: pl.max, lv: pl.lv, oil: Math.round(pl.oil), pots: pl.pots, gold, kills, turn, mons: mons.length, w: pl.w, a: pl.a }), act, wait, usePotion, pl: () => pl, map: () => map, mons: () => mons, items: () => items, bfsDist, descend, god: () => { pl.max = pl.hp = 9999; } };
+})();
+</script>
+</body>
+</html>
