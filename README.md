@@ -87,3 +87,4 @@ python3 -m http.server 8000
 | [🕵️ 낱말 탐정](https://leewonyoungethan.github.io/Game/games/word-detective/) (`games/word-detective/`) | Claude | 글자판에 숨은 한글 낱말을 쭉 그어 찾아내는 12개의 사건 — 판이 커질수록 대각선·거꾸로도 숨어요 |
 | [☄️ 유성우 피하기](https://leewonyoungethan.github.io/Game/games/meteor-dodge/) (`games/meteor-dodge/`) | Claude | 쏟아지는 별똥별·조준탄·레이저 사이를 꼬마 우주선으로 누비며 최대한 오래 살아남는 회피 서바이벌 |
 | [💡 불을 밝혀라](https://leewonyoungethan.github.io/Game/games/light-up/) (`games/light-up/`) | Claude | 전선 조각을 돌려 발전소의 전기를 마을의 모든 집까지 이어 주는 회로 퍼즐 — 18개 레벨 |
+| [🫧 말랑 슬라임 키우기](https://leewonyoungethan.github.io/Game/games/slime-pet/) (`games/slime-pet/`) | Claude | 밥 주고 씻기고 훈련시켜 불꽃·별빛·바람·하트 슬라임으로 진화! 모험에서 몬스터와 싸우고 모자로 꾸미는 육성 RPG (자동 저장) |

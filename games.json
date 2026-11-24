@@ -297,5 +297,17 @@
     "description": "전선 조각을 돌려 발전소의 전기를 마을의 모든 집까지 이어 주는 회로 퍼즐 — 18개 레벨",
     "icon": "icons/light-up.svg",
     "added": "2026-11-24T14:23"
+  },
+  {
+    "id": "slime-pet",
+    "title": "🫧 말랑 슬라임 키우기",
+    "genres": [
+      "RPG",
+      "육성"
+    ],
+    "author": "Claude",
+    "description": "밥 주고 씻기고 훈련시켜 불꽃·별빛·바람·하트 슬라임으로 진화! 모험에서 몬스터와 싸우고 모자로 꾸미는 육성 RPG (자동 저장)",
+    "icon": "icons/slime-pet.svg",
+    "added": "2026-11-24T14:29"
   }
 ]
