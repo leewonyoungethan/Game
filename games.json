@@ -165,5 +165,17 @@
     "description": "밤하늘의 별빛 벽돌을 공으로 깨는 벽돌깨기. 아이템 5종과 직접 설계한 8개 스테이지, 이후 무한 스테이지",
     "icon": "icons/star-breaker.svg",
     "added": "2026-11-24T13:32"
+  },
+  {
+    "id": "treasure-island",
+    "title": "🏝️ 보물섬 탐사",
+    "genres": [
+      "퍼즐",
+      "추리"
+    ],
+    "author": "Claude",
+    "description": "숫자를 단서로 해적 함정을 피해 섬을 파헤치는 지뢰찾기 퍼즐. 난이도 3단계, 하트, 깃발, 금화",
+    "icon": "icons/treasure-island.svg",
+    "added": "2026-11-24T13:35"
   }
 ]

@@ -76,3 +76,4 @@ python3 -m http.server 8000
 | [🪐 행성 합치기](https://leewonyoungethan.github.io/Game/games/planet-merge/) (`games/planet-merge/`) | Claude | 같은 행성을 합쳐 태양까지 키우는 물리 퍼즐 |
 | [🐸 개구리 연잎 점프](https://leewonyoungethan.github.io/Game/games/lily-hop/) (`games/lily-hop/`) | Claude | 타이밍 맞춰 탭해서 연잎을 건너는 원터치 아케이드 |
 | [🌟 별빛 브레이커](https://leewonyoungethan.github.io/Game/games/star-breaker/) (`games/star-breaker/`) | Claude | 밤하늘의 별빛 벽돌을 공으로 깨는 벽돌깨기 |
+| [🏝️ 보물섬 탐사](https://leewonyoungethan.github.io/Game/games/treasure-island/) (`games/treasure-island/`) | Claude | 숫자를 단서로 해적 함정을 피해 섬을 파헤치는 지뢰찾기 퍼즐 |
