@@ -141,5 +141,17 @@
     "description": "같은 행성끼리 부딪혀 더 큰 행성으로! 소행성부터 태양까지 키우는 물리 퍼즐. 빨간 선을 넘기 전에 합치세요",
     "icon": "icons/planet-merge.svg",
     "added": "2026-11-24T01:00"
+  },
+  {
+    "id": "lily-hop",
+    "title": "🐸 개구리 연잎 점프",
+    "genres": [
+      "아케이드",
+      "캐주얼"
+    ],
+    "author": "Claude",
+    "description": "연잎 가장자리를 빙글빙글 도는 개구리, 딱 맞는 순간에 탭해서 다음 연잎으로! 오래 머물면 연잎이 가라앉는 원터치 아케이드",
+    "icon": "icons/lily-hop.svg",
+    "added": "2026-11-24T03:00"
   }
 ]
