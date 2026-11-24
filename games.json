@@ -225,5 +225,17 @@
     "description": "과일을 먹을수록 길어지는 꼬마 용의 꼬리잡기. 벽 통과 모드와 벽 조심 모드, 보석·고추 아이템, 길어질수록 생기는 바위",
     "icon": "icons/dragon-snake.svg",
     "added": "2026-11-24T13:49"
+  },
+  {
+    "id": "quiet-pond",
+    "title": "🎣 고요한 낚시터",
+    "genres": [
+      "힐링",
+      "수집"
+    ],
+    "author": "Claude",
+    "description": "고양이 낚시꾼과 함께하는 힐링 낚시. 힘 조절 캐스팅, 입질 타이밍, 줄 장력 미니게임, 낮과 밤이 바뀌는 호수와 12종 물고기 도감",
+    "icon": "icons/quiet-pond.svg",
+    "added": "2026-11-24T13:55"
   }
 ]

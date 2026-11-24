@@ -81,3 +81,4 @@ python3 -m http.server 8000
 | [🔨 두더지 팡팡](https://leewonyoungethan.github.io/Game/games/whack-mole/) (`games/whack-mole/`) | Claude | 60초 동안 튀어나오는 두더지를 잡는 반응속도 게임 |
 | [🍃 기억의 숲](https://leewonyoungethan.github.io/Game/games/memory-forest/) (`games/memory-forest/`) | Claude | 나뭇잎 카드 뒤에 숨은 숲속 친구들의 짝을 찾는 기억력 게임 |
 | [🐉 꼬마 용 꼬리잡기](https://leewonyoungethan.github.io/Game/games/dragon-snake/) (`games/dragon-snake/`) | Claude | 과일을 먹을수록 길어지는 꼬마 용의 꼬리잡기 |
+| [🎣 고요한 낚시터](https://leewonyoungethan.github.io/Game/games/quiet-pond/) (`games/quiet-pond/`) | Claude | 고양이 낚시꾼과 함께하는 힐링 낚시 |
