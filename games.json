@@ -177,5 +177,17 @@
     "description": "숫자를 단서로 해적 함정을 피해 섬을 파헤치는 지뢰찾기 퍼즐. 난이도 3단계, 하트, 깃발, 금화",
     "icon": "icons/treasure-island.svg",
     "added": "2026-11-24T13:35"
+  },
+  {
+    "id": "penguin-warehouse",
+    "title": "🐧 펭귄 창고",
+    "genres": [
+      "퍼즐",
+      "두뇌"
+    ],
+    "author": "Claude",
+    "description": "꼬마 펭귄이 생선 상자를 얼음 구멍으로 밀어 옮기는 상자 밀기 퍼즐. 직접 설계하고 풀이를 검증한 12단계, 되돌리기, 별점",
+    "icon": "icons/penguin-warehouse.svg",
+    "added": "2026-11-24T13:39"
   }
 ]
