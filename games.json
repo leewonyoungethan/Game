@@ -189,5 +189,17 @@
     "description": "꼬마 펭귄이 생선 상자를 얼음 구멍으로 밀어 옮기는 상자 밀기 퍼즐. 직접 설계하고 풀이를 검증한 12단계, 되돌리기, 별점",
     "icon": "icons/penguin-warehouse.svg",
     "added": "2026-11-24T13:39"
+  },
+  {
+    "id": "whack-mole",
+    "title": "🔨 두더지 팡팡",
+    "genres": [
+      "아케이드",
+      "반응속도"
+    ],
+    "author": "Claude",
+    "description": "60초 동안 튀어나오는 두더지를 잡는 반응속도 게임. 헬멧·황금 두더지, 피해야 할 고슴도치, 시간을 늘려주는 토끼, 콤보 배율",
+    "icon": "icons/whack-mole.svg",
+    "added": "2026-11-24T13:42"
   }
 ]
