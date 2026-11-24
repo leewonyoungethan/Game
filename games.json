@@ -237,5 +237,17 @@
     "description": "고양이 낚시꾼과 함께하는 힐링 낚시. 힘 조절 캐스팅, 입질 타이밍, 줄 장력 미니게임, 낮과 밤이 바뀌는 호수와 12종 물고기 도감",
     "icon": "icons/quiet-pond.svg",
     "added": "2026-11-24T13:55"
+  },
+  {
+    "id": "cloud-tower",
+    "title": "🏙️ 구름 위 블록 탑",
+    "genres": [
+      "아케이드",
+      "타이밍"
+    ],
+    "author": "Claude",
+    "description": "좌우로 움직이는 블록을 타이밍 맞춰 쌓아 구름 위부터 우주까지 올라가는 탑 쌓기. 퍼펙트 3연속이면 블록이 다시 넓어져요",
+    "icon": "icons/cloud-tower.svg",
+    "added": "2026-11-24T13:57"
   }
 ]
