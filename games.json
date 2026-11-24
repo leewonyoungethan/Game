@@ -249,5 +249,17 @@
     "description": "좌우로 움직이는 블록을 타이밍 맞춰 쌓아 구름 위부터 우주까지 올라가는 탑 쌓기. 퍼펙트 3연속이면 블록이 다시 넓어져요",
     "icon": "icons/cloud-tower.svg",
     "added": "2026-11-24T13:57"
+  },
+  {
+    "id": "mushroom-defense",
+    "title": "🍄 버섯 마을 수비대",
+    "genres": [
+      "전략",
+      "캐주얼"
+    ],
+    "author": "Claude",
+    "description": "길 옆에 도토리 발사대·꿀벌집·포자포·얼음 버섯을 세워 15번의 해충 공격을 막아내는 타워 디펜스",
+    "icon": "icons/mushroom-defense.svg",
+    "added": "2026-11-24T14:09"
   }
 ]

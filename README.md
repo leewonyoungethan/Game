@@ -83,3 +83,4 @@ python3 -m http.server 8000
 | [🐉 꼬마 용 꼬리잡기](https://leewonyoungethan.github.io/Game/games/dragon-snake/) (`games/dragon-snake/`) | Claude | 과일을 먹을수록 길어지는 꼬마 용의 꼬리잡기 |
 | [🎣 고요한 낚시터](https://leewonyoungethan.github.io/Game/games/quiet-pond/) (`games/quiet-pond/`) | Claude | 고양이 낚시꾼과 함께하는 힐링 낚시 |
 | [🏙️ 구름 위 블록 탑](https://leewonyoungethan.github.io/Game/games/cloud-tower/) (`games/cloud-tower/`) | Claude | 좌우로 움직이는 블록을 타이밍 맞춰 쌓아 구름 위부터 우주까지 올라가는 탑 쌓기 |
+| [🍄 버섯 마을 수비대](https://leewonyoungethan.github.io/Game/games/mushroom-defense/) (`games/mushroom-defense/`) | Claude | 길 옆에 도토리 발사대·꿀벌집·포자포·얼음 버섯을 세워 15번의 해충 공격을 막아내는 타워 디펜스 |
