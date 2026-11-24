@@ -357,5 +357,17 @@
     "description": "알아서 싸우는 꼬마 용사를 금화로 강화하고, 스킬과 장비로 보스를 무찌르는 방치형 RPG — 환생·오프라인 보상까지 (자동 저장)",
     "icon": "icons/hero-idle.svg",
     "added": "2026-11-24T14:56"
+  },
+  {
+    "id": "magic-school",
+    "title": "🔮 마법학교 3년",
+    "genres": [
+      "RPG",
+      "육성"
+    ],
+    "author": "Claude",
+    "description": "3년 동안 매주 수업·알바·휴식 일정을 짜고 친구를 사귀며 시험을 치르는 학원 육성 RPG — 10가지 졸업 엔딩 모으기 (자동 저장)",
+    "icon": "icons/magic-school.svg",
+    "added": "2026-11-24T15:00"
   }
 ]

@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>마법학교 3년</title>
+<meta name="theme-color" content="#1a1238">
+<link rel="icon" href="../../icons/magic-school.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../_shared/kit.css">
+<style>
+  :root { --bg: #1a1238; --panel: rgba(28, 20, 60, .78); --a1: #c8a8ff; --a2: #ff9ad8; --a3: #ffd27a; --ink-on-grad: #2a1040; --glow: rgba(200,160,255,.35); }
+  .wrap { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; display: flex; justify-content: center; padding: 0 10px calc(env(safe-area-inset-bottom, 0px) + 10px); }
+  .wrap[hidden] { display: none; }
+  .pane { width: min(560px, 100%); background: rgba(24, 16, 52, .9); border: 1px solid var(--line); border-radius: 22px; padding: 12px; backdrop-filter: blur(10px); box-shadow: 0 -10px 40px rgba(0,0,0,.4); max-height: 62vh; overflow-y: auto; }
+  .stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; margin-bottom: 8px; }
+  .st { background: rgba(255,255,255,.06); border-radius: 10px; padding: 5px 0 6px; text-align: center; font-size: 11px; color: var(--muted); font-weight: 700; }
+  .st b { display: block; font-size: 17px; color: var(--text); font-variant-numeric: tabular-nums; }
+  .st.up b { color: #9af0a8; }
+  .meta { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; font-size: 13px; font-weight: 750; }
+  .stress { flex: 1; height: 8px; border-radius: 9px; background: rgba(255,255,255,.12); overflow: hidden; }
+  .stress i { display: block; height: 100%; transition: width .4s, background .4s; }
+  .acts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .act { display: grid; grid-template-columns: 32px 1fr; gap: 0 8px; align-items: center; text-align: left; padding: 8px 9px; border-radius: 13px; border: 1px solid var(--line); background: rgba(255,255,255,.05); color: var(--text); font-size: 13px; font-weight: 800; cursor: pointer; }
+  .act .e { grid-row: span 2; font-size: 24px; text-align: center; }
+  .act small { color: var(--muted); font-size: 10.5px; font-weight: 650; }
+  .act.sel { border-color: #c8a8ff; background: rgba(200,168,255,.18); }
+  .act:disabled { opacity: .35; cursor: default; }
+  .cat { grid-column: 1 / -1; font-size: 11.5px; color: var(--muted); font-weight: 800; margin: 6px 2px 0; letter-spacing: .06em; }
+  .slots { display: flex; gap: 6px; margin: 10px 0 8px; }
+  .slot { flex: 1; height: 40px; border-radius: 12px; border: 1px dashed rgba(255,255,255,.3); display: grid; place-items: center; font-size: 13px; font-weight: 800; color: var(--muted); }
+  .slot.f { border-style: solid; border-color: #c8a8ff; color: var(--text); background: rgba(200,168,255,.12); }
+  .log { min-height: 130px; font-size: 14px; line-height: 1.75; font-weight: 650; }
+  .log div { animation: fadeIn .35s both; }
+  .log .gain { color: #9af0a8; } .log .loss { color: #ffa0a8; } .log .ev { color: #ffd27a; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } }
+  .choices { display: grid; gap: 6px; margin-top: 10px; }
+  .choice { padding: 12px; border-radius: 14px; border: 1px solid var(--line); background: rgba(255,255,255,.07); color: var(--text); font-weight: 800; font-size: 14px; cursor: pointer; text-align: left; }
+  .friends { display: flex; gap: 6px; margin-bottom: 8px; }
+  .fr { flex: 1; display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,.05); border-radius: 12px; padding: 5px 8px; font-size: 12px; font-weight: 750; min-width: 0; }
+  .fr span { font-size: 20px; }
+  .fr .hearts { color: #ff8ab8; font-size: 11px; letter-spacing: -1px; white-space: nowrap; overflow: hidden; }
+  .exam { display: grid; gap: 6px; margin: 8px 0; }
+  .exam .row { display: grid; grid-template-columns: 70px 1fr 40px; gap: 8px; align-items: center; font-size: 13px; font-weight: 750; }
+  .exam .bar { height: 10px; border-radius: 9px; background: rgba(255,255,255,.1); overflow: hidden; }
+  .exam .bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #c8a8ff, #ff9ad8); transition: width 1s; }
+  .nm { width: 100%; height: 48px; border-radius: 14px; border: 1px solid var(--line); background: rgba(255,255,255,.06); color: var(--text); font: 800 18px var(--font); text-align: center; margin: 0 0 12px; }
+  .colors { display: flex; gap: 10px; justify-content: center; margin: 0 0 14px; }
+  .colors button { width: 40px; height: 40px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; }
+  .colors button.on { border-color: #fff; }
+  .endings { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin: 8px 0 12px; }
+  .endings div { aspect-ratio: 1; border-radius: 12px; background: rgba(255,255,255,.06); display: grid; place-items: center; font-size: 22px; }
+  .endings div.lock { filter: grayscale(1) brightness(.4); }
+</style>
+</head>
+<body>
+<canvas class="stage" id="cv"></canvas>
+<div class="hud">
+  <div class="group">
+    <div class="box"><div class="lbl" id="weekLbl">1학년 1주차</div><div class="big" id="nameLbl">-</div><div class="sub" id="coins">🪙 0</div></div>
+  </div>
+  <div class="stack">
+    <a class="pill" href="../../">← 센터</a>
+    <button class="pill" id="muteBtn" type="button"></button>
+  </div>
+</div>
+<div class="wrap" id="wrap" hidden><div class="pane" id="pane"></div></div>
+
+<div class="screen" id="startScreen">
+  <div class="card">
+    <div class="lbl">앱개발부 학원 육성 RPG</div>
+    <h1>마법학교 <span>3년</span></h1>
+    <p>별빛 마법학교에 입학했어요! 3년 동안 매주 일정을 짜서 공부하고, 친구를 사귀고, 시험을 치러요. 어떤 마법사가 될지는 나에게 달렸어요.</p>
+    <input class="nm" id="nameInput" maxlength="6" value="별이" aria-label="학생 이름">
+    <div class="colors" id="colors"></div>
+    <div class="endings" id="endingBox"></div>
+    <button class="go" id="startBtn" type="button">입학하기</button>
+    <div class="row"><button class="go ghost" id="contBtn" type="button" hidden>이어서 하기</button></div>
+  </div>
+</div>
+
+<script src="../_shared/kit.js"></script>
+<script>
+(() => {
+'use strict';
+const { $, rand, randi, pick, clamp, tone, noise, chord, toast, roundRect, shuffle } = Kit;
+const cv = $('cv'), ctx = cv.getContext('2d');
+let VW, VH, DPR; function resize() { DPR = Math.min(2, devicePixelRatio || 1); VW = innerWidth; VH = innerHeight; cv.width = VW * DPR; cv.height = VH * DPR; } addEventListener('resize', resize); resize();
+
+// ---------------------------------------------------------------- data
+const STATS = [['mag', '🔮', '마력'], ['kno', '📚', '지식'], ['body', '💪', '체력'], ['cha', '💗', '매력'], ['cou', '🦁', '용기']];
+const HATS = { violet: ['#8a5ae0', '#5a2ab0'], rose: ['#ff7ab8', '#c83a80'], sky: ['#5ab0ff', '#2a6ad0'], mint: ['#4ad0a0', '#1a8a6a'] };
+const FRIENDS = { luna: { e: '🧝‍♀️', name: '루나', like: 'magic' }, toto: { e: '🧒', name: '토토', like: 'fly' }, mir: { e: '🧑‍🎓', name: '미르', like: 'history' } };
+const ACTS = [
+  { cat: '수업' },
+  { id: 'magic', e: '🔮', name: '마법 실습', g: { mag: [3, 5] }, stress: 9, txt: '지팡이를 휘둘러 주문을 연습했어요' },
+  { id: 'history', e: '📚', name: '마법사 역사', g: { kno: [3, 5] }, stress: 7, txt: '두꺼운 마법서를 열심히 읽었어요' },
+  { id: 'herb', e: '🧪', name: '약초학', g: { kno: [1, 3], mag: [1, 3] }, stress: 7, txt: '향긋한 약초로 물약을 끓였어요' },
+  { id: 'fly', e: '🧹', name: '빗자루 비행', g: { body: [2, 4], cou: [1, 3] }, stress: 8, txt: '빗자루를 타고 운동장 위를 날았어요' },
+  { id: 'beast', e: '🦄', name: '마법 생물학', g: { cou: [2, 4], kno: [1, 2] }, stress: 8, year: 2, txt: '유니콘과 그리핀을 돌봤어요' },
+  { id: 'star', e: '🔭', name: '별자리 점술', g: { mag: [2, 4], cha: [1, 2] }, stress: 7, year: 2, txt: '밤하늘의 별을 읽는 법을 배웠어요' },
+  { cat: '아르바이트' },
+  { id: 'bakery', e: '🥐', name: '빵집 알바', coin: 30, g: { body: [1, 2] }, stress: 6, txt: '마법 빵집에서 반죽을 날랐어요' },
+  { id: 'library', e: '📖', name: '도서관 사서', coin: 22, g: { kno: [1, 2] }, stress: 4, txt: '조용한 도서관에서 책을 정리했어요' },
+  { id: 'dragon', e: '🐉', name: '아기 용 돌보기', coin: 50, g: { cou: [2, 3] }, stress: 12, year: 2, txt: '장난꾸러기 아기 용에게 밥을 줬어요' },
+  { cat: '휴식·활동' },
+  { id: 'rest', e: '🛌', name: '기숙사 휴식', g: {}, stress: -28, txt: '포근한 침대에서 푹 쉬었어요' },
+  { id: 'town', e: '🎡', name: '마을 나들이', coin: -15, g: { cha: [1, 3] }, stress: -32, txt: '친구들과 마을 축제를 구경했어요' },
+  { id: 'choir', e: '🎵', name: '합창부', g: { cha: [2, 4] }, stress: -6, txt: '노래로 반짝이는 빛을 만들었어요' },
+  { id: 'duel', e: '⚔️', name: '결투 동아리', g: { cou: [2, 4], body: [1, 2] }, stress: 6, txt: '나무 지팡이로 결투 연습을 했어요' },
+];
+const WEEKS = 8, YEARS = 3;
+const EXAM_WEEKS = [4, 8];
+const ENDINGS = [
+  { id: 'arch', e: '🧙', name: '대마법사', test: s => s.mag >= 75 && s.kno >= 45, text: '누구보다 강한 마력과 깊은 지식으로 왕국 최고의 대마법사가 되었어요!' },
+  { id: 'scholar', e: '📜', name: '왕립 도서관 학자', test: s => s.kno >= 75, text: '수천 권의 마법서를 지키며 잊혀진 주문을 되살리는 학자가 되었어요.' },
+  { id: 'knight', e: '🐉', name: '드래곤 기사', test: s => s.body >= 55 && s.cou >= 60, text: '용과 함께 하늘을 나는 용감한 드래곤 기사가 되었어요!' },
+  { id: 'idol', e: '🌟', name: '마법 아이돌', test: s => s.cha >= 70, text: '노래와 빛의 마법으로 모두를 웃게 하는 마법 아이돌이 되었어요!' },
+  { id: 'potion', e: '⚗️', name: '마법 약방 주인', test: s => s.mag >= 50 && s.kno >= 50, text: '마을 한가운데 작은 약방을 열어, 아픈 사람들을 낫게 해 줘요.' },
+  { id: 'adventurer', e: '🗺️', name: '전설의 모험가', test: s => s.cou >= 70, text: '지도에 없는 땅을 찾아 떠나는 전설의 모험가가 되었어요!' },
+  { id: 'friend', e: '🤝', name: '평생 친구', test: (s, f) => Object.values(f).some(v => v >= 10), text: '' },
+  { id: 'teacher', e: '🍎', name: '마법학교 선생님', test: (s, f, ex) => ex >= 85, text: '시험마다 1등! 졸업하자마자 모교의 선생님이 되었어요.' },
+  { id: 'rich', e: '💰', name: '마법 상인', test: (s, f, ex, coins) => coins >= 600, text: '알뜰하게 모은 돈으로 마법 물건 가게를 차렸어요!' },
+  { id: 'normal', e: '🏡', name: '행복한 마을 마법사', test: () => true, text: '대단하지는 않아도, 마을 사람들의 작은 고민을 마법으로 해결해 주는 다정한 마법사가 되었어요.' },
+];
+
+// ---------------------------------------------------------------- events
+const EVENTS = [
+  { t: '숲길에서 날개를 다친 아기 그리핀을 발견했어요!', c: [
+    ['직접 치료해 준다', s => (s.kno >= 20 ? [{ kno: 3, cou: 2 }, '약초 지식으로 날개를 감싸 줬어요. 그리핀이 고맙다고 울었어요!'] : [{ stress: 10, cou: 2 }, '서툴러서 진땀을 흘렸지만 어떻게든 도와줬어요.'])],
+    ['선생님께 알린다', () => [{ cha: 2 }, '선생님이 칭찬해 주셨어요.']] ] },
+  { t: '도서관 금지 구역의 문이 살짝 열려 있어요…', c: [
+    ['몰래 들어가 본다', s => (Math.random() < .5 + s.cou / 200 ? [{ mag: 5, kno: 3 }, '오래된 주문서를 발견했어요! 마력이 쑥 올랐어요.'] : [{ stress: 15, coins: -20 }, '사서 선생님께 들켜서 벌금을 냈어요…'])],
+    ['못 본 척 지나간다', () => [{ stress: -5 }, '마음이 편해요.']] ] },
+  { t: '기숙사 방에 작은 요정이 길을 잃고 들어왔어요.', c: [
+    ['과자를 나눠 준다', () => [{ cha: 3, coins: -5 }, '요정이 반짝이 가루를 뿌려 주고 갔어요 ✨']],
+    ['창문으로 내보낸다', () => [{ stress: -3 }, '요정이 손을 흔들며 날아갔어요.']] ] },
+  { t: '시험 전날 밤, 친구들이 밤샘 파자마 파티를 하재요!', c: [
+    ['같이 논다!', () => [{ cha: 3, stress: -15, kno: -2 }, '너무 즐거웠어요! (공부는 조금 못 했지만…)']],
+    ['공부한다', () => [{ kno: 3, stress: 8 }, '혼자 조용히 복습했어요.']] ] },
+  { t: '운동장에 빗자루 경주 대회 포스터가 붙었어요.', c: [
+    ['출전한다', s => (s.body + s.cou >= 50 ? [{ coins: 60, cou: 3 }, '1등! 상금 60코인을 받았어요 🏆'] : [{ body: 2, stress: 5 }, '꼴찌였지만 재밌었어요!'])],
+    ['응원만 한다', () => [{ cha: 2 }, '목이 쉬도록 응원했어요.']] ] },
+  { t: '마법 약을 잘못 섞어서 머리카락이 무지개색이 됐어요!', c: [
+    ['그대로 다닌다', () => [{ cha: 4, stress: 4 }, '오히려 인기 폭발! 다들 따라 하고 싶대요.']],
+    ['해독제를 만든다', s => [{ kno: 3, mag: 1 }, '원래대로 돌아왔어요. 약초학 실력도 늘었어요.']] ] },
+  { t: '용돈 편지가 도착했어요! 💌', c: [['고맙습니다!', () => [{ coins: 40, stress: -5 }, '부모님의 따뜻한 편지와 40코인!']]] },
+  { t: '한밤중, 학교 탑 위에서 이상한 빛이 보여요.', c: [
+    ['확인하러 간다', s => (s.cou >= 25 ? [{ cou: 3, mag: 3 }, '유성의 조각이었어요! 손에 쥐니 마력이 차올랐어요.'] : [{ stress: 12 }, '너무 무서워서 도망쳤어요…'])],
+    ['이불 속에 숨는다', () => [{ stress: -3 }, '…그냥 자는 게 최고예요.']] ] },
+];
+const FRIEND_EVENTS = {
+  luna: ['루나가 "같이 주문 연습할래?" 하고 웃었어요.', '루나가 직접 만든 별빛 부적을 선물했어요 ✨', '루나와 밤늦게까지 새 주문을 만들었어요.'],
+  toto: ['토토가 빗자루 뒤에 태워 줬어요! 바람이 시원해요.', '토토와 운동장에서 술래잡기를 했어요.', '토토가 "넌 최고의 비행 파트너야!"라고 했어요.'],
+  mir: ['미르가 아끼는 책을 빌려줬어요.', '미르와 도서관에서 수수께끼 놀이를 했어요.', '미르가 "너랑 공부하면 시간 가는 줄 몰라" 하고 웃었어요.'],
+};
+
+// ---------------------------------------------------------------- state
+const KEY = 'ms_save', END_KEY = 'ms_endings';
+let G = null, sel = [], hatPick = 'violet', TT = 0, sparks = [], busy = false;
+const unlockedEnd = () => Kit.store.get(END_KEY, []);
+function fresh(name, hat) { return { name, hat, year: 1, week: 1, coins: 50, stress: 10, s: { mag: 5, kno: 5, body: 5, cha: 5, cou: 5 }, f: { luna: 0, toto: 0, mir: 0 }, exams: [], phase: 'plan' }; }
+function save() { Kit.store.set(KEY, G); }
+
+// ---------------------------------------------------------------- render
+function statsHTML(diff = {}) {
+  return `<div class="stats">${STATS.map(([k, e, n]) => `<div class="st${diff[k] > 0 ? ' up' : ''}">${e} ${n}<b>${G.s[k]}${diff[k] > 0 ? `<small style="font-size:11px"> +${diff[k]}</small>` : ''}</b></div>`).join('')}</div>
+  <div class="meta"><span>😵 스트레스</span><div class="stress"><i style="width:${G.stress}%;background:${G.stress >= 75 ? '#ff5a6a' : G.stress >= 50 ? '#ffc04a' : '#7af0a0'}"></i></div><span>${G.stress}</span></div>
+  <div class="friends">${Object.entries(FRIENDS).map(([k, F]) => `<div class="fr"><span>${F.e}</span><div>${F.name}<div class="hearts">♥ ${Math.min(10, G.f[k])}/10</div></div></div>`).join('')}</div>`;
+}
+function hud() {
+  $('weekLbl').textContent = `${G.year}학년 ${G.week}주차${EXAM_WEEKS.includes(G.week) ? ' · 시험 주간' : ''}`;
+  $('nameLbl').textContent = G.name; $('coins').textContent = `🪙 ${G.coins}`;
+}
+function plan() {
+  G.phase = 'plan'; sel = []; save(); hud();
+  let html = statsHTML() + `<div class="slots"><div class="slot" id="s0">첫 번째 일정</div><div class="slot" id="s1">두 번째 일정</div></div><div class="acts">`;
+  for (const a of ACTS) {
+    if (a.cat) { html += `<div class="cat">${a.cat}</div>`; continue; }
+    const locked = a.year && G.year < a.year, poor = a.coin < 0 && G.coins < -a.coin;
+    const gains = Object.entries(a.g).map(([k]) => STATS.find(s => s[0] === k)[1]).join('') + (a.coin ? ` ${a.coin > 0 ? '+' : ''}${a.coin}🪙` : '') + ` 😵${a.stress > 0 ? '+' : ''}${a.stress}`;
+    html += `<button type="button" class="act" data-id="${a.id}" ${locked || poor ? 'disabled' : ''}><span class="e">${a.e}</span><span>${a.name}</span><small>${locked ? `${a.year}학년부터` : gains}</small></button>`;
+  }
+  html += `</div><button class="go" id="goBtn" type="button" style="margin-top:10px" disabled>이번 주 시작!</button>`;
+  $('pane').innerHTML = html; $('wrap').hidden = false; $('pane').scrollTop = 0;
+  for (const b of $('pane').querySelectorAll('.act')) b.onclick = () => pickAct(b.dataset.id);
+  $('goBtn').onclick = runWeek;
+}
+function pickAct(id) {
+  Kit.initAudio();
+  const i = sel.indexOf(id);
+  if (i >= 0) sel.splice(i, 1); else if (sel.length < 2) sel.push(id); else sel = [sel[1], id];
+  tone(600 + sel.length * 100, .05, 'triangle', .04);
+  for (const b of $('pane').querySelectorAll('.act')) b.classList.toggle('sel', sel.includes(b.dataset.id));
+  for (let k = 0; k < 2; k++) { const a = ACTS.find(x => x.id === sel[k]); const el = $('s' + k); el.textContent = a ? `${a.e} ${a.name}` : (k ? '두 번째 일정' : '첫 번째 일정'); el.classList.toggle('f', !!a); }
+  $('goBtn').disabled = sel.length < 2;
+}
+async function runWeek() {
+  if (busy) return; busy = true;
+  const before = { ...G.s }, lines = [];
+  $('pane').innerHTML = statsHTML() + `<div class="log" id="log"></div>`;
+  const log = (t, cls = '') => { const d = document.createElement('div'); d.className = cls; d.textContent = t; $('log').append(d); $('pane').scrollTop = 1e6; };
+  for (const id of sel) {
+    const a = ACTS.find(x => x.id === id);
+    await wait(420); log(`${a.e} ${a.txt}`);
+    const tired = G.stress >= 80;
+    let gainTxt = [];
+    for (const [k, [lo, hi]] of Object.entries(a.g)) { let v = randi(lo, hi); if (tired) v = Math.max(1, Math.floor(v / 2)); G.s[k] += v; gainTxt.push(`${STATS.find(s => s[0] === k)[2]} +${v}`); }
+    if (a.coin) { G.coins += a.coin; gainTxt.push(`${a.coin > 0 ? '+' : ''}${a.coin}코인`); }
+    G.stress = clamp(G.stress + a.stress, 0, 100);
+    sparkle(); tone(700 + randi(0, 300), .06, 'triangle', .04);
+    if (gainTxt.length) { await wait(260); log('  ' + gainTxt.join(' · ') + (tired ? ' (지쳐서 효과 반감 😵)' : ''), 'gain'); }
+    // friends
+    for (const [k, F] of Object.entries(FRIENDS)) if (F.like === id && Math.random() < .75) { G.f[k]++; await wait(300); log(`${F.e} ${pick(FRIEND_EVENTS[k])} (${F.name} ♥+1)`, 'ev'); }
+  }
+  if (G.stress >= 95) { await wait(400); log('🤒 너무 무리해서 몸살이 났어요… 이틀 동안 끙끙 앓았어요. (스트레스 -30, 체력 -2)', 'loss'); G.stress -= 30; G.s.body = Math.max(1, G.s.body - 2); }
+  // diff summary
+  const diff = {}; for (const k in G.s) diff[k] = G.s[k] - before[k];
+  const logHTML = $('log').innerHTML; $('pane').innerHTML = statsHTML(diff) + `<div class="log" id="log">${logHTML}</div>`;
+  hud(); save();
+  await wait(300);
+  // random event (≈45%) — not on exam weeks
+  if (!EXAM_WEEKS.includes(G.week) && Math.random() < .45) { busy = false; return eventScreen(pick(EVENTS)); }
+  busy = false; nextBtn();
+}
+function nextBtn() {
+  const b = document.createElement('button'); b.className = 'go'; b.type = 'button'; b.style.marginTop = '10px';
+  b.textContent = EXAM_WEEKS.includes(G.week) ? '📝 시험 보러 가기' : '다음 주로 →'; b.onclick = advance; $('pane').append(b); b.focus({ preventScroll: true });
+}
+function eventScreen(ev) {
+  chord([523, 784], .06, 'sine', .04, .2);
+  const box = document.createElement('div'); box.innerHTML = `<div class="log"><div class="ev">✨ ${ev.t}</div></div><div class="choices">${ev.c.map((c, i) => `<button type="button" class="choice" data-i="${i}">${c[0]}</button>`).join('')}</div>`;
+  $('pane').append(box); $('pane').scrollTop = 1e6;
+  for (const b of box.querySelectorAll('.choice')) b.onclick = () => {
+    const [fx, msg] = ev.c[+b.dataset.i][1](G.s); box.querySelector('.choices').remove();
+    const parts = [];
+    for (const [k, v] of Object.entries(fx)) { if (k === 'stress') G.stress = clamp(G.stress + v, 0, 100); else if (k === 'coins') G.coins = Math.max(0, G.coins + v); else G.s[k] = Math.max(1, G.s[k] + v); parts.push(`${k === 'stress' ? '스트레스' : k === 'coins' ? '코인' : STATS.find(s => s[0] === k)[2]} ${v > 0 ? '+' : ''}${v}`); }
+    const d = document.createElement('div'); d.innerHTML = `<div class="log"><div>${msg}</div><div class="${Object.values(fx).some(v => v < 0) && !fx.stress ? 'loss' : 'gain'}">  ${parts.join(' · ')}</div></div>`; box.append(d);
+    hud(); save(); sparkle(); nextBtn();
+  };
+}
+function advance() {
+  if (EXAM_WEEKS.includes(G.week) && G.phase !== 'examDone') return exam();
+  G.phase = 'plan';
+  G.week++;
+  if (G.week > WEEKS) { G.week = 1; G.year++; if (G.year > YEARS) return graduate(); festival(); return; }
+  plan();
+}
+function exam() {
+  const idx = G.exams.length, need = 14 + idx * 11; // the bar rises every exam
+  const subj = [['🔮 마법', G.s.mag], ['📚 이론', G.s.kno], ['🧹 비행', (G.s.body + G.s.cou) / 2]];
+  const scores = subj.map(([n, v]) => clamp(Math.round(v / need * 80 + randi(-4, 6) - (G.stress >= 70 ? 8 : 0)), 5, 100));
+  const avg = Math.round(scores.reduce((a, b) => a + b, 0) / 3), rank = clamp(Math.round(31 - avg / 100 * 30 + randi(-1, 1)), 1, 30);
+  G.exams.push(avg); G.phase = 'examDone';
+  const prize = rank <= 3 ? 50 : rank <= 10 ? 20 : 0; G.coins += prize; G.stress = clamp(G.stress + 10, 0, 100);
+  $('pane').innerHTML = `<h2 style="margin:4px 0 2px">📝 ${G.year}학년 ${G.week === 4 ? '중간' : '기말'}고사</h2><div class="exam">${subj.map(([n], i) => `<div class="row"><span>${n}</span><div class="bar"><i id="eb${i}"></i></div><b>${scores[i]}</b></div>`).join('')}</div>
+  <p style="font-size:15px;font-weight:800;margin:10px 0 2px">평균 ${avg}점 · 30명 중 <span style="color:#ffd27a">${rank}등</span> ${rank === 1 ? '🥇' : rank <= 3 ? '🏅' : ''}</p>
+  <p style="color:var(--muted);font-size:13px;margin:0">${rank <= 3 ? `우수상! 상금 ${prize}코인` : rank <= 10 ? `잘했어요! 장려금 ${prize}코인` : avg < 40 ? '보충 수업을 들어야 할지도… 다음엔 힘내요!' : '무난하게 통과했어요.'}${G.stress >= 70 ? ' (스트레스 때문에 실력을 다 못 냈어요)' : ''}</p>`;
+  setTimeout(() => scores.forEach((s, i) => { const el = $('eb' + i); if (el) el.style.width = s + '%'; }), 50);
+  rank <= 3 ? chord([523, 659, 784, 1047], .08, 'triangle', .06, .3) : tone(500, .2, 'triangle', .04);
+  hud(); save(); nextBtn(); $('pane').lastChild.textContent = '다음 주로 →';
+}
+function festival() {
+  // year-end magic tournament
+  const power = G.s.mag + G.s.cou * .6 + G.s.cha * .3, need = 30 + (G.year - 1) * 30;
+  const win = power + randi(-8, 8) >= need;
+  const prize = win ? 80 + G.year * 20 : 10; G.coins += prize; G.stress = 15;
+  $('pane').innerHTML = `<h2 style="margin:4px 0 6px">🎆 ${G.year - 1}학년 마법 축제</h2><div class="log"><div>학년을 마무리하는 마법 대결 대회가 열렸어요!</div><div class="${win ? 'gain' : ''}">${win ? `🏆 우승! 화려한 주문으로 관중을 사로잡았어요. 상금 ${prize}코인!` : `아쉽게 졌지만 좋은 경험이었어요. 참가상 ${prize}코인`}</div><div>방학 동안 푹 쉬어서 스트레스가 확 줄었어요. 이제 ${G.year}학년!</div></div>`;
+  if (win) { chord([523, 659, 784, 1047, 1319], .08, 'triangle', .06, .4); for (let i = 0; i < 3; i++) setTimeout(sparkle, i * 200); }
+  G.phase = 'plan'; hud(); save();
+  const b = document.createElement('button'); b.className = 'go'; b.type = 'button'; b.style.marginTop = '10px'; b.textContent = `${G.year}학년 시작!`; b.onclick = plan; $('pane').append(b);
+}
+function graduate() {
+  const exAvg = G.exams.length ? G.exams.reduce((a, b) => a + b, 0) / G.exams.length : 0;
+  const E = ENDINGS.find(e => e.test(G.s, G.f, exAvg, G.coins));
+  let text = E.text;
+  if (E.id === 'friend') { const [k] = Object.entries(G.f).sort((a, b) => b[1] - a[1])[0]; const F = FRIENDS[k]; text = `${F.e} ${F.name}와(과) 둘도 없는 단짝이 되었어요. 졸업 후에도 함께 ${k === 'luna' ? '마법 연구소를 차렸어요' : k === 'toto' ? '하늘 택배 회사를 차렸어요' : '세계의 도서관을 여행하고 있어요'}!`; }
+  const got = unlockedEnd(); const isNew = !got.includes(E.id); if (isNew) { got.push(E.id); Kit.store.set(END_KEY, got); }
+  Kit.store.set(KEY, null);
+  chord([523, 659, 784, 1047, 1319, 1568], .12, 'triangle', .07, .6); for (let i = 0; i < 6; i++) setTimeout(sparkle, i * 180);
+  $('weekLbl').textContent = '🎓 졸업!';
+  $('pane').innerHTML = `<div style="text-align:center"><div style="font-size:64px;margin:4px 0">${E.e}</div><div class="lbl">${isNew ? '✨ 새로운 엔딩!' : '엔딩'} (${got.length}/${ENDINGS.length})</div><h2 style="margin:6px 0">${G.name}, ${E.name}</h2><p style="color:var(--muted);line-height:1.7;word-break:keep-all">${text}</p></div>${statsHTML()}<p style="color:var(--muted);font-size:12.5px;text-align:center">시험 평균 ${Math.round(exAvg)}점 · 모은 코인 ${G.coins}</p><button class="go" type="button" id="againBtn">다시 입학하기</button>`;
+  $('againBtn').onclick = () => { $('wrap').hidden = true; showStart(); };
+}
+const wait = ms => new Promise(r => setTimeout(r, window.__fast ? 0 : ms));
+
+// ---------------------------------------------------------------- canvas scene
+function sparkle() { for (let i = 0; i < 16; i++) sparks.push({ x: VW / 2 + rand(-40, 40), y: VH * .3 + rand(-30, 30), vx: rand(-120, 120), vy: rand(-160, 20), life: rand(.6, 1.2), c: pick(['#ffd27a', '#c8a8ff', '#ff9ad8', '#9ad8ff']) }); }
+const bgStars = Array.from({ length: 80 }, () => ({ x: Math.random(), y: Math.random() * .6, r: Math.random() * 1.4 + .3, t: Math.random() * 6 }));
+function draw(dt) {
+  const c = ctx; c.setTransform(DPR, 0, 0, DPR, 0, 0);
+  const night = !G || G.week % 2 === 0;
+  const g = c.createLinearGradient(0, 0, 0, VH); if (night) { g.addColorStop(0, '#120a30'); g.addColorStop(.6, '#3a2a70'); g.addColorStop(1, '#6a4a90'); } else { g.addColorStop(0, '#6a8aff'); g.addColorStop(.6, '#c8b8ff'); g.addColorStop(1, '#ffd8e8'); }
+  c.fillStyle = g; c.fillRect(0, 0, VW, VH);
+  if (night) for (const s of bgStars) { c.globalAlpha = .4 + .5 * Math.abs(Math.sin(s.t + TT)); c.fillStyle = '#fff'; c.fillRect(s.x * VW, s.y * VH, s.r, s.r); }
+  c.globalAlpha = 1;
+  // moon / sun
+  c.fillStyle = night ? '#fff6d0' : '#fff8c0'; c.beginPath(); c.arc(VW * .82, VH * .12, 26, 0, 7); c.fill(); if (night) { c.fillStyle = '#1a1040'; c.beginPath(); c.arc(VW * .82 + 10, VH * .12 - 6, 23, 0, 7); c.fill(); }
+  // castle silhouette
+  const base = VH * .48, cx = VW / 2, s = Math.min(1.2, VW / 420);
+  c.fillStyle = night ? '#2a1a50' : '#8a7ac8';
+  c.beginPath(); c.moveTo(0, base + 40); for (let x = 0; x <= VW; x += 30) c.lineTo(x, base + 30 - Math.sin(x / 60) * 12); c.lineTo(VW, VH); c.lineTo(0, VH); c.fill();
+  const towers = [[-110, 120, 26], [-50, 170, 32], [0, 220, 40], [55, 160, 30], [112, 110, 24]];
+  for (const [dx, h, w] of towers) {
+    const x = cx + dx * s, top = base - h * s;
+    c.fillStyle = night ? '#3a2a6a' : '#a898e0'; c.fillRect(x - w * s / 2, top, w * s, h * s + 40);
+    c.fillStyle = night ? '#5a3a9a' : '#6a5ab8'; c.beginPath(); c.moveTo(x - w * s * .7, top); c.lineTo(x, top - w * s * 1.4); c.lineTo(x + w * s * .7, top); c.fill();
+    c.fillStyle = night ? `rgba(255,210,120,${.7 + .3 * Math.sin(TT * 2 + dx)})` : '#fff4c0';
+    for (let wy = top + 16 * s; wy < base; wy += 30 * s) { roundRect(c, x - 4 * s, wy, 8 * s, 12 * s, 4 * s); c.fill(); }
+    c.strokeStyle = '#ffd27a'; c.lineWidth = 2; c.beginPath(); c.moveTo(x, top - w * s * 1.4); c.lineTo(x, top - w * s * 1.4 - 14); c.stroke(); c.fillStyle = '#ff7ab8'; c.beginPath(); c.moveTo(x, top - w * s * 1.4 - 14); c.lineTo(x + 10, top - w * s * 1.4 - 10); c.lineTo(x, top - w * s * 1.4 - 6); c.fill();
+  }
+  // student in front
+  if (G) { const top = $('wrap').hidden ? VH : $('pane').getBoundingClientRect().top; drawStudent(c, VW / 2 - 100 * s, Math.min(base + 20, top - 46 * s), s * 1.25); }
+  for (const p of sparks) { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 120 * dt; p.life -= dt; c.globalAlpha = Math.max(0, Math.min(1, p.life * 2)); c.fillStyle = p.c; c.beginPath(); for (let i = 0; i < 4; i++) { const a = i * Math.PI / 2 + TT * 3; c.lineTo(p.x + Math.cos(a) * 5, p.y + Math.sin(a) * 5); c.lineTo(p.x + Math.cos(a + .78) * 2, p.y + Math.sin(a + .78) * 2); } c.fill(); }
+  sparks = sparks.filter(p => p.life > 0); c.globalAlpha = 1;
+}
+function drawStudent(c, x, y, s) {
+  const [h1, h2] = HATS[G.hat] || HATS.violet, bob = Math.sin(TT * 2) * 3;
+  c.save(); c.translate(x, y + bob); c.scale(s, s);
+  c.fillStyle = 'rgba(0,0,0,.2)'; c.beginPath(); c.ellipse(0, 40, 26, 6, 0, 0, 7); c.fill();
+  // robe
+  c.fillStyle = h2; c.beginPath(); c.moveTo(-22, 38); c.quadraticCurveTo(-24, 0, 0, -6); c.quadraticCurveTo(24, 0, 22, 38); c.fill();
+  c.fillStyle = '#ffd27a'; c.fillRect(-3, 0, 6, 36);
+  // face
+  c.fillStyle = '#ffe0c8'; c.beginPath(); c.arc(0, -18, 17, 0, 7); c.fill();
+  c.fillStyle = '#5a3a2a'; c.beginPath(); c.arc(0, -22, 18, Math.PI * .95, Math.PI * 2.05); c.fill();
+  c.fillStyle = '#2a1a2a'; c.beginPath(); c.ellipse(-6, -16, 2.4, 3.2, 0, 0, 7); c.ellipse(6, -16, 2.4, 3.2, 0, 0, 7); c.fill();
+  c.fillStyle = 'rgba(255,120,150,.5)'; c.beginPath(); c.ellipse(-11, -10, 4, 2.5, 0, 0, 7); c.ellipse(11, -10, 4, 2.5, 0, 0, 7); c.fill();
+  c.strokeStyle = '#2a1a2a'; c.lineWidth = 1.6; c.beginPath(); c.arc(0, -10, 3.5, .2, Math.PI - .2); c.stroke();
+  // hat
+  c.fillStyle = h1; c.beginPath(); c.ellipse(0, -34, 28, 7, 0, 0, 7); c.fill();
+  c.beginPath(); c.moveTo(-15, -36); c.quadraticCurveTo(-4, -60, 4, -80); c.quadraticCurveTo(14, -66, 15, -36); c.fill();
+  c.fillStyle = '#ffd27a'; c.fillRect(-15, -40, 30, 4);
+  // wand
+  c.save(); c.translate(22, 6); c.rotate(-.6 + Math.sin(TT * 3) * .15); c.fillStyle = '#7a4a2a'; c.fillRect(-1.5, -30, 3, 30); c.fillStyle = '#fff6c0'; c.beginPath(); c.arc(0, -32, 4 + Math.sin(TT * 6), 0, 7); c.fill(); c.restore();
+  c.restore();
+}
+
+// ---------------------------------------------------------------- start
+function buildColors() { $('colors').innerHTML = ''; for (const [k, [a, b]] of Object.entries(HATS)) { const btn = document.createElement('button'); btn.type = 'button'; btn.style.background = `linear-gradient(135deg, ${a}, ${b})`; btn.className = k === hatPick ? 'on' : ''; btn.setAttribute('aria-label', k); btn.onclick = () => { hatPick = k; buildColors(); }; $('colors').append(btn); } }
+function showStart() {
+  G = null; const got = unlockedEnd();
+  $('endingBox').innerHTML = ENDINGS.map(e => `<div class="${got.includes(e.id) ? '' : 'lock'}" title="${got.includes(e.id) ? e.name : '???'}">${e.e}</div>`).join('');
+  const saved = Kit.store.get(KEY, null); $('contBtn').hidden = !saved; if (saved) $('contBtn').textContent = `이어서 하기 (${saved.name} · ${saved.year}학년 ${saved.week}주차)`;
+  buildColors(); Kit.show('startScreen');
+}
+$('startBtn').onclick = () => { Kit.initAudio(); G = fresh($('nameInput').value.trim() || '별이', hatPick); Kit.hide('startScreen'); sparkle(); chord([523, 659, 784, 1047], .08, 'triangle', .06, .3); plan(); };
+$('contBtn').onclick = () => { Kit.initAudio(); G = Kit.store.get(KEY, null); Kit.hide('startScreen'); if (G.phase === 'examDone') { G.phase = 'plan'; G.week++; if (G.week > WEEKS) { G.week = 1; G.year++; if (G.year > YEARS) return graduate(); } } plan(); };
+Kit.bindMute($('muteBtn'));
+showStart();
+let last = performance.now();
+function frame(now) { const dt = Math.min(.05, (now - last) / 1000); last = now; TT += dt; draw(dt); requestAnimationFrame(frame); }
+requestAnimationFrame(frame);
+if (location.hash === '#test') window.__game = { G: () => G, pickAct, runWeek, advance, ENDINGS };
+})();
+</script>
+</body>
+</html>
