@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>불을 밝혀라</title>
+<meta name="theme-color" content="#0a0f2a">
+<link rel="icon" href="../../icons/light-up.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../_shared/kit.css">
+<style>
+  :root { --bg: #0a0f2a; --a1: #ffe06a; --a2: #ffb03a; --a3: #ff7a4a; --ink-on-grad: #3a2000; --glow: rgba(255,200,80,.35); }
+  .levels { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin: 0 0 14px; }
+  .lv { aspect-ratio: 1; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.06); color: var(--text); font-weight: 850; font-size: 15px; cursor: pointer; display: grid; place-items: center; padding: 2px 0; line-height: 1.1; }
+  .lv small { display: block; font-size: 9px; letter-spacing: 0; color: #ffe06a; font-weight: 700; }
+  .lv:disabled { opacity: .3; cursor: default; }
+  .lv.next { border-color: #ffe06a; box-shadow: 0 0 0 2px rgba(255,224,106,.3); }
+  .stars { font-size: 40px; letter-spacing: 6px; margin: 4px 0 6px; color: #ffe06a; }
+  .bottom { position: fixed; z-index: 6; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); display: flex; justify-content: center; gap: 8px; }
+  .bottom[hidden] { display: none; }
+</style>
+</head>
+<body>
+<canvas class="stage" id="cv"></canvas>
+<div class="hud">
+  <div class="group">
+    <div class="box"><div class="lbl">레벨</div><div class="big" id="level">1</div><div class="sub" id="lit">🏠 0/0</div></div>
+    <div class="box"><div class="lbl">돌린 횟수</div><div class="big" id="moves">0</div><div class="sub" id="par">목표 -</div></div>
+  </div>
+  <div class="stack">
+    <a class="pill" href="../../">← 게임 센터</a>
+    <button class="pill" id="muteBtn" type="button"></button>
+  </div>
+</div>
+<div class="bottom" id="bottom" hidden>
+  <button class="pill" id="resetBtn" type="button">↺ 처음부터</button>
+  <button class="pill" id="menuBtn" type="button">☰ 레벨 선택</button>
+</div>
+
+<div class="screen" id="startScreen">
+  <div class="card">
+    <div class="lbl">앱개발부 회로 퍼즐</div>
+    <h1>불을 <span>밝혀라</span></h1>
+    <p>정전된 밤 마을! 전선 조각을 돌려서 발전소의 전기를 모든 집까지 이어 주세요.</p>
+    <div class="rules">
+      <div><b>👆</b><span>칸을 탭하면 시계 방향으로 90° 돌아가요 (우클릭은 반대 방향)</span></div>
+      <div><b>⚡</b><span>발전소와 이어진 전선은 노랗게 빛나요</span></div>
+      <div><b>🏠</b><span>모든 집에 불이 켜지면 성공! 적게 돌릴수록 별이 많아요</span></div>
+    </div>
+    <div class="levels" id="levels"></div>
+    <button class="go" id="startBtn" type="button">레벨 1 시작</button>
+  </div>
+</div>
+<div class="screen" id="overScreen" hidden>
+  <div class="card">
+    <div class="lbl" id="overLbl">마을에 불이 켜졌어요!</div>
+    <h2 id="overTitle"></h2>
+    <div class="stars" id="stars"></div>
+    <p id="overText"></p>
+    <button class="go" id="nextBtn" type="button">다음 레벨</button>
+    <div class="row"><button class="go ghost" id="retryBtn" type="button">다시 풀기</button><button class="go ghost" id="menu2Btn" type="button">레벨 선택</button></div>
+  </div>
+</div>
+
+<script src="../_shared/kit.js"></script>
+<script>
+(() => {
+'use strict';
+const { $, clamp, tone, chord, toast, roundRect } = Kit;
+const LEVELS = [[4, 4], [4, 5], [5, 5], [5, 6], [5, 6], [6, 6], [6, 7], [6, 7], [6, 8], [7, 8], [7, 8], [7, 9], [7, 9], [8, 9], [8, 10], [8, 10], [9, 11], [9, 12]];
+const N = 1, E = 2, S = 4, Wd = 8, DIR = [[N, 0, -1, S], [E, 1, 0, Wd], [S, 0, 1, N], [Wd, -1, 0, E]];
+const rotCW = m => ((m << 1) | (m >> 3)) & 15;
+const TS = 64; // tile size in virtual px
+const cv = $('cv'), ctx = cv.getContext('2d');
+let F, cols, rows, tiles, src, level = 0, moves = 0, par = 0, state = 'title', TT = 0, lastLit = 0;
+let prog = Kit.store.get('lt_progress', {});
+function resize() { if (!cols) return; F = Kit.fit(cv, cols * TS + 24, rows * TS + 24, { top: 96, bottom: 64 }); }
+addEventListener('resize', resize);
+
+// ---------------------------------------------------------------- seeded generation
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function generate(c, r, seed) {
+  const R = rng(seed), sol = Array.from({ length: r }, () => Array(c).fill(0)), seen = Array.from({ length: r }, () => Array(c).fill(false));
+  const sx = Math.floor(c / 2), sy = Math.floor(r / 2); seen[sy][sx] = true;
+  const deg = (x, y) => [1, 2, 4, 8].filter(b => sol[y][x] & b).length;
+  let front = []; const addF = (x, y) => DIR.forEach(([b, dx, dy, ob]) => { const nx = x + dx, ny = y + dy; if (nx >= 0 && ny >= 0 && nx < c && ny < r && !seen[ny][nx]) front.push([x, y, b, nx, ny, ob]); });
+  addF(sx, sy);
+  while (front.length) {
+    // randomized Prim, but avoid making 4-way crossings (they never need turning, so they are boring)
+    let i = Math.floor(R() * front.length), tries = 0;
+    while (tries++ < 6 && deg(front[i][0], front[i][1]) >= 3) i = Math.floor(R() * front.length);
+    const [x, y, b, nx, ny, ob] = front.splice(i, 1)[0];
+    if (seen[ny][nx]) continue;
+    seen[ny][nx] = true; sol[y][x] |= b; sol[ny][nx] |= ob; addF(nx, ny);
+  }
+  const T = [];
+  for (let y = 0; y < r; y++) for (let x = 0; x < c; x++) {
+    const m = sol[y][x]; let k = Math.floor(R() * 4), cur = m; for (let i = 0; i < k; i++) cur = rotCW(cur);
+    T.push({ x, y, sol: m, m: cur, ang: 0, vis: 0, kind: x === sx && y === sy ? 'src' : deg(x, y) === 1 ? 'house' : 'wire', lit: false, litT: 0 });
+  }
+  // make sure it is not solved already
+  if (T.every(t => t.m === t.sol)) { const t = T.find(t => t.kind !== 'src' && t.m !== 5 && t.m !== 10); t.m = rotCW(t.m); }
+  return { T, sx, sy };
+}
+function minTurns(from, to) { let m = from; for (let k = 0; k < 4; k++) { if (m === to) return k; m = rotCW(m); } return 0; }
+
+// ---------------------------------------------------------------- game
+function load(i) {
+  level = i; const [c, r] = LEVELS[i]; cols = c; rows = r;
+  const g = generate(c, r, 1000 + i * 7919); tiles = g.T; src = tiles.find(t => t.kind === 'src');
+  // the minimal number of taps needed (clockwise only) is the par
+  par = tiles.reduce((s, t) => s + minTurns(t.m, t.sol), 0); moves = 0; state = 'play';
+  resize(); power(); lastLit = houses().filter(t => t.lit).length;
+  Kit.hide('startScreen', 'overScreen'); $('bottom').hidden = false; hud();
+}
+const tileAt = (x, y) => (x >= 0 && y >= 0 && x < cols && y < rows ? tiles[y * cols + x] : null);
+const houses = () => tiles.filter(t => t.kind === 'house');
+function power() {
+  tiles.forEach(t => (t.lit = false)); const q = [src]; src.lit = true;
+  while (q.length) { const t = q.shift(); for (const [b, dx, dy, ob] of DIR) { if (!(t.m & b)) continue; const n = tileAt(t.x + dx, t.y + dy); if (n && !n.lit && n.m & ob) { n.lit = true; q.push(n); } } }
+}
+function rotate(t, dir = 1) {
+  if (state !== 'play') return;
+  if (dir > 0) { t.m = rotCW(t.m); t.ang += Math.PI / 2; } else { t.m = rotCW(rotCW(rotCW(t.m))); t.ang -= Math.PI / 2; }
+  moves++; tone(dir > 0 ? 420 : 380, .05, 'triangle', .03, 60);
+  power();
+  const n = houses().filter(h => h.lit).length;
+  if (n > lastLit) chord([660 + n * 20, 880 + n * 20], .03, 'sine', .035, .12);
+  lastLit = n; hud();
+  if (n === houses().length && tiles.every(t => t.lit)) win();
+}
+function win() {
+  state = 'won';
+  const stars = moves <= Math.ceil(par * 1.25) + 2 ? 3 : moves <= par * 2 + 4 ? 2 : 1;
+  if ((prog[level] || 0) < stars) { prog[level] = stars; Kit.store.set('lt_progress', prog); }
+  chord([523, 659, 784, 1047, 1319], .09, 'triangle', .06, .35);
+  setTimeout(() => {
+    $('overTitle').textContent = `레벨 ${level + 1} 완료`;
+    $('stars').textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+    $('overText').textContent = `${moves}번 돌려서 집 ${houses().length}채에 불을 켰어요.` + (stars < 3 ? ` ${Math.ceil(par * 1.25) + 2}번 안에 풀면 별 3개!` : moves <= par ? ' 최소 횟수로 풀었어요, 완벽해요!' : ' 훌륭해요!');
+    $('overLbl').textContent = level === LEVELS.length - 1 ? '🌃 모든 마을에 불이 켜졌어요!' : '마을에 불이 켜졌어요!';
+    $('nextBtn').hidden = level >= LEVELS.length - 1;
+    Kit.show('overScreen');
+  }, 1300);
+}
+function hud() {
+  $('level').textContent = level + 1; $('moves').textContent = moves; $('par').textContent = `별3 ≤ ${Math.ceil(par * 1.25) + 2}`;
+  const h = houses(); $('lit').textContent = `🏠 ${h.filter(t => t.lit).length}/${h.length}`;
+}
+
+// ---------------------------------------------------------------- draw
+const skyStars = Array.from({ length: 90 }, () => ({ x: Math.random(), y: Math.random(), r: Math.random() * 1.3 + .3, t: Math.random() * 6 }));
+function draw() {
+  const c = ctx; const vw = innerWidth, vh = innerHeight, dpr = F ? F.dpr : 1;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const g = c.createLinearGradient(0, 0, 0, vh); g.addColorStop(0, '#060a22'); g.addColorStop(1, '#1a1440'); c.fillStyle = g; c.fillRect(0, 0, vw, vh);
+  for (const s of skyStars) { c.globalAlpha = .3 + .5 * Math.abs(Math.sin(s.t + TT)); c.fillStyle = '#fff'; c.fillRect(s.x * vw, s.y * vh, s.r, s.r); } c.globalAlpha = 1;
+  if (!tiles || !F) return;
+  const { scale, ox, oy } = F; c.translate(ox, oy); c.scale(scale, scale); c.translate(12, 12);
+  const BW = cols * TS, BH = rows * TS;
+  c.fillStyle = 'rgba(10,14,40,.85)'; roundRect(c, -10, -10, BW + 20, BH + 20, 18); c.fill(); c.strokeStyle = 'rgba(255,255,255,.08)'; c.lineWidth = 2; c.stroke();
+  const allLit = state === 'won';
+  for (const t of tiles) {
+    // animate visual rotation toward target
+    t.vis += (t.ang - t.vis) * .3;
+    t.litT += ((t.lit ? 1 : 0) - t.litT) * .18;
+    const cx = t.x * TS + TS / 2, cy = t.y * TS + TS / 2;
+    c.fillStyle = t.lit ? `rgba(60,52,30,${.5 + .3 * t.litT})` : 'rgba(28,34,70,.9)';
+    roundRect(c, t.x * TS + 3, t.y * TS + 3, TS - 6, TS - 6, 10); c.fill();
+    c.save(); c.translate(cx, cy); c.rotate(t.vis - t.ang); // draw the *current* mask, offset by the in-flight animation
+    drawWires(c, t);
+    c.restore();
+    if (t.kind === 'house') drawHouse(c, cx, cy, t.litT, allLit);
+    else if (t.kind === 'src') drawSource(c, cx, cy);
+  }
+}
+function drawWires(c, t) {
+  const L = TS / 2, k = t.litT;
+  const arms = DIR.filter(([b]) => t.m & b).map(([b, dx, dy]) => [dx, dy]);
+  const wireCol = `rgb(${70 + 185 * k},${78 + 140 * k},${110 - 40 * k})`;
+  if (k > .05) { c.shadowColor = 'rgba(255,210,80,.9)'; c.shadowBlur = 14 * k; }
+  c.strokeStyle = wireCol; c.lineWidth = 11; c.lineCap = 'round';
+  c.beginPath(); for (const [dx, dy] of arms) { c.moveTo(0, 0); c.lineTo(dx * L, dy * L); } c.stroke();
+  c.shadowBlur = 0;
+  c.strokeStyle = k > .5 ? 'rgba(255,255,220,.9)' : 'rgba(255,255,255,.12)'; c.lineWidth = 3;
+  c.beginPath(); for (const [dx, dy] of arms) { c.moveTo(0, 0); c.lineTo(dx * L, dy * L); } c.stroke();
+  if (t.kind === 'wire') { c.fillStyle = wireCol; c.beginPath(); c.arc(0, 0, 8, 0, 7); c.fill(); }
+}
+function drawHouse(c, x, y, k, party) {
+  c.save(); c.translate(x, y + 2);
+  if (k > .05) { const rg = c.createRadialGradient(0, 0, 4, 0, 0, 34); rg.addColorStop(0, `rgba(255,220,120,${.45 * k})`); rg.addColorStop(1, 'rgba(255,220,120,0)'); c.fillStyle = rg; c.beginPath(); c.arc(0, 0, 34, 0, 7); c.fill(); }
+  const mix = (a, b) => a.map((v, i) => Math.round(v + (b[i] - v) * k));
+  c.fillStyle = `rgb(${mix([84, 88, 120], [240, 228, 204])})`; roundRect(c, -15, -6, 30, 22, 3); c.fill();
+  c.fillStyle = `rgb(${mix([70, 52, 78], [214, 74, 58])})`; c.beginPath(); c.moveTo(-20, -4); c.lineTo(0, -21); c.lineTo(20, -4); c.closePath(); c.fill();
+  c.fillStyle = `rgb(${mix([50, 40, 60], [122, 74, 42])})`; c.fillRect(2, 2, 8, 14);
+  const win = k > .5 ? (party ? `hsl(${45 + 10 * Math.sin(TT * 6 + x)},100%,${62 + 14 * Math.abs(Math.sin(TT * 4 + y))}%)` : '#ffe06a') : '#1a1e3a';
+  c.fillStyle = win; c.fillRect(-11, 0, 9, 8); c.fillRect(-11, -1, 9, 1);
+  c.strokeStyle = 'rgba(0,0,0,.35)'; c.lineWidth = 1.2; c.strokeRect(-11, 0, 9, 8);
+  c.restore();
+}
+function drawSource(c, x, y) {
+  c.save(); c.translate(x, y);
+  const p = 1 + .06 * Math.sin(TT * 5);
+  const rg = c.createRadialGradient(0, 0, 4, 0, 0, 30 * p); rg.addColorStop(0, 'rgba(255,240,150,.8)'); rg.addColorStop(1, 'rgba(255,200,80,0)'); c.fillStyle = rg; c.beginPath(); c.arc(0, 0, 30 * p, 0, 7); c.fill();
+  const bg = c.createRadialGradient(-5, -5, 2, 0, 0, 18); bg.addColorStop(0, '#fff8c0'); bg.addColorStop(1, '#ffb030'); c.fillStyle = bg; c.beginPath(); c.arc(0, 0, 17, 0, 7); c.fill();
+  c.strokeStyle = '#a86010'; c.lineWidth = 2.5; c.stroke();
+  c.fillStyle = '#7a3a00'; c.beginPath(); c.moveTo(3, -12); c.lineTo(-7, 2); c.lineTo(-1, 2); c.lineTo(-4, 12); c.lineTo(7, -3); c.lineTo(1, -3); c.closePath(); c.fill();
+  c.restore();
+}
+
+// ---------------------------------------------------------------- input
+function tileFromEvent(e) {
+  const x = (e.clientX - F.ox) / F.scale - 12, y = (e.clientY - F.oy) / F.scale - 12;
+  return tileAt(Math.floor(x / TS), Math.floor(y / TS));
+}
+cv.addEventListener('pointerdown', e => { if (state !== 'play') return; Kit.initAudio(); const t = tileFromEvent(e); if (t) rotate(t, e.button === 2 ? -1 : 1); });
+cv.addEventListener('contextmenu', e => e.preventDefault());
+
+// ---------------------------------------------------------------- menus
+function nextLevel() { const i = LEVELS.findIndex((_, i) => !prog[i]); return i < 0 ? LEVELS.length - 1 : i; }
+function menu() {
+  state = 'title'; $('bottom').hidden = true;
+  const box = $('levels'); box.textContent = ''; const nx = nextLevel();
+  LEVELS.forEach((L, i) => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'lv' + (i === nx && !prog[i] ? ' next' : '');
+    const st = prog[i] || 0, open = i === 0 || prog[i - 1];
+    b.innerHTML = `${i + 1}<small>${open ? '★'.repeat(st) + '☆'.repeat(3 - st) : '🔒'}</small>`;
+    b.disabled = !open; b.setAttribute('aria-label', `레벨 ${i + 1}`); b.onclick = () => load(i); box.append(b);
+  });
+  $('startBtn').textContent = `레벨 ${nx + 1} 시작`;
+  Kit.hide('overScreen'); Kit.show('startScreen');
+}
+$('startBtn').onclick = () => load(nextLevel());
+$('nextBtn').onclick = () => load(Math.min(level + 1, LEVELS.length - 1));
+$('retryBtn').onclick = () => load(level); $('resetBtn').onclick = () => load(level);
+$('menuBtn').onclick = menu; $('menu2Btn').onclick = menu;
+Kit.bindMute($('muteBtn'));
+
+let last = performance.now();
+function frame(now) { const dt = Math.min(.05, (now - last) / 1000); last = now; TT += dt; draw(); requestAnimationFrame(frame); }
+F = Kit.fit(cv, 400, 400, {}); menu(); requestAnimationFrame(frame);
+if (location.hash === '#test') window.__game = { load, tiles: () => tiles, rotate, s: () => ({ state, moves, par, level, lit: houses().filter(h => h.lit).length, houses: houses().length }), LEVELS, generate, minTurns, F: () => F };
+})();
+</script>
+</body>
+</html>

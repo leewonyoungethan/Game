@@ -285,5 +285,17 @@
     "description": "쏟아지는 별똥별·조준탄·레이저 사이를 꼬마 우주선으로 누비며 최대한 오래 살아남는 회피 서바이벌",
     "icon": "icons/meteor-dodge.svg",
     "added": "2026-11-24T14:20"
+  },
+  {
+    "id": "light-up",
+    "title": "💡 불을 밝혀라",
+    "genres": [
+      "퍼즐",
+      "두뇌"
+    ],
+    "author": "Claude",
+    "description": "전선 조각을 돌려 발전소의 전기를 마을의 모든 집까지 이어 주는 회로 퍼즐 — 18개 레벨",
+    "icon": "icons/light-up.svg",
+    "added": "2026-11-24T14:23"
   }
 ]
