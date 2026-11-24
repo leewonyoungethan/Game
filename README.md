@@ -73,3 +73,4 @@ python3 -m http.server 8000
 | [⚔️ 별빛 기사](https://claude.ai/artifact/VeBfTWMoEv4Ksm5jfUWHRs) | leewonyoungethan | 픽셀 액션 플랫포머 |
 | [맑은 하늘](https://claude.ai/artifact/NdVDGjGVbYmHWcLhPuET41) | leewonyoungethan | 9·11 아침을 가상으로 지키는 추모 시뮬레이션 |
 | [✈️ F16 스카이 스트라이커](https://mythoflee-aiden.github.io/f16-shooter/) ([저장소](https://github.com/mythoflee-aiden/f16-shooter)) | mythoflee-aiden | F16 전투기 슈팅 게임 |
+| [🪐 행성 합치기](https://leewonyoungethan.github.io/Game/games/planet-merge/) (`games/planet-merge/`) | Claude | 같은 행성을 합쳐 태양까지 키우는 물리 퍼즐 |

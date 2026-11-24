@@ -129,5 +129,17 @@
     "url": "https://mythoflee-aiden.github.io/f16-shooter/",
     "icon": "icons/f16.svg",
     "added": "2026-11-23T03:00"
+  },
+  {
+    "id": "planet-merge",
+    "title": "🪐 행성 합치기",
+    "genres": [
+      "퍼즐",
+      "캐주얼"
+    ],
+    "author": "Claude",
+    "description": "같은 행성끼리 부딪혀 더 큰 행성으로! 소행성부터 태양까지 키우는 물리 퍼즐. 빨간 선을 넘기 전에 합치세요",
+    "icon": "icons/planet-merge.svg",
+    "added": "2026-11-24T01:00"
   }
 ]
