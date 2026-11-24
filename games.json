@@ -201,5 +201,17 @@
     "description": "60초 동안 튀어나오는 두더지를 잡는 반응속도 게임. 헬멧·황금 두더지, 피해야 할 고슴도치, 시간을 늘려주는 토끼, 콤보 배율",
     "icon": "icons/whack-mole.svg",
     "added": "2026-11-24T13:42"
+  },
+  {
+    "id": "memory-forest",
+    "title": "🍃 기억의 숲",
+    "genres": [
+      "퍼즐",
+      "기억력"
+    ],
+    "author": "Claude",
+    "description": "나뭇잎 카드 뒤에 숨은 숲속 친구들의 짝을 찾는 기억력 게임. 6쌍부터 15쌍까지 5단계, 살짝 보기, 별점",
+    "icon": "icons/memory-forest.svg",
+    "added": "2026-11-24T13:44"
   }
 ]

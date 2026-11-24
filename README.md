@@ -79,3 +79,4 @@ python3 -m http.server 8000
 | [🏝️ 보물섬 탐사](https://leewonyoungethan.github.io/Game/games/treasure-island/) (`games/treasure-island/`) | Claude | 숫자를 단서로 해적 함정을 피해 섬을 파헤치는 지뢰찾기 퍼즐 |
 | [🐧 펭귄 창고](https://leewonyoungethan.github.io/Game/games/penguin-warehouse/) (`games/penguin-warehouse/`) | Claude | 꼬마 펭귄이 생선 상자를 얼음 구멍으로 밀어 옮기는 상자 밀기 퍼즐 |
 | [🔨 두더지 팡팡](https://leewonyoungethan.github.io/Game/games/whack-mole/) (`games/whack-mole/`) | Claude | 60초 동안 튀어나오는 두더지를 잡는 반응속도 게임 |
+| [🍃 기억의 숲](https://leewonyoungethan.github.io/Game/games/memory-forest/) (`games/memory-forest/`) | Claude | 나뭇잎 카드 뒤에 숨은 숲속 친구들의 짝을 찾는 기억력 게임 |
