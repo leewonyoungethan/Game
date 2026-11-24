@@ -261,5 +261,17 @@
     "description": "길 옆에 도토리 발사대·꿀벌집·포자포·얼음 버섯을 세워 15번의 해충 공격을 막아내는 타워 디펜스",
     "icon": "icons/mushroom-defense.svg",
     "added": "2026-11-24T14:09"
+  },
+  {
+    "id": "word-detective",
+    "title": "🕵️ 낱말 탐정",
+    "genres": [
+      "퍼즐",
+      "두뇌"
+    ],
+    "author": "Claude",
+    "description": "글자판에 숨은 한글 낱말을 쭉 그어 찾아내는 12개의 사건 — 판이 커질수록 대각선·거꾸로도 숨어요",
+    "icon": "icons/word-detective.svg",
+    "added": "2026-11-24T14:12"
   }
 ]

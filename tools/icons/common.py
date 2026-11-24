@@ -96,3 +96,40 @@ def dedupe(svg):
         for k, v in re.findall(r'([\w:-]+)="([^"]*)"', mm.group(2)): d[k] = v
         return "<" + mm.group(1) + "".join(f' {k}="{v}"' for k, v in d.items()) + mm.group(3) + ">"
     return re.sub(r"<\w+\b[^<>]*?/?>", fix, svg)
+
+
+# ---------------------------------------------------------------- text as outlines
+# Icons are shown through <img>, where web fonts never load, so any lettering is converted to
+# vector paths. Glyph outlines are cached in glyphs.json (only the characters actually used), so
+# building needs the font file only when a new character shows up. Font: Pretendard ExtraBold (OFL),
+# looked up at $ICON_FONT or tools/fonts/Pretendard-ExtraBold.otf.
+import json as _json, os as _os
+_GLYPHS_PATH = _os.path.join(_os.path.dirname(__file__), "glyphs.json")
+_glyphs = None
+
+def _load_glyph(ch):
+    global _glyphs
+    if _glyphs is None:
+        _glyphs = _json.load(open(_GLYPHS_PATH)) if _os.path.exists(_GLYPHS_PATH) else {}
+    if ch not in _glyphs:
+        from fontTools.ttLib import TTFont
+        from fontTools.pens.svgPathPen import SVGPathPen
+        font_path = _os.environ.get("ICON_FONT") or _os.path.join(_os.path.dirname(__file__), "..", "fonts", "Pretendard-ExtraBold.otf")
+        f = TTFont(font_path); gs = f.getGlyphSet(); name = f.getBestCmap()[ord(ch)]
+        pen = SVGPathPen(gs); gs[name].draw(pen)
+        _glyphs[ch] = {"d": pen.getCommands(), "adv": gs[name].width, "upm": f["head"].unitsPerEm}
+        _json.dump(_glyphs, open(_GLYPHS_PATH, "w"), ensure_ascii=False, sort_keys=True, indent=0)
+    return _glyphs[ch]
+
+def text_path(text, x, y, size, fill="#000", anchor="middle", extra=""):
+    """Outlined text. (x, y) is the baseline point; anchor is start|middle|end."""
+    gl = [_load_glyph(c) for c in text]
+    k = size / gl[0]["upm"]
+    width = sum(g["adv"] for g in gl) * k
+    cx = x - (width / 2 if anchor == "middle" else width if anchor == "end" else 0)
+    out = []
+    for g in gl:
+        if g["d"]:
+            out.append(f'<path transform="translate({cx:.1f} {y:.1f}) scale({k:.4f} {-k:.4f})" d="{g["d"]}"/>')
+        cx += g["adv"] * k
+    return f'<g fill="{fill}" {extra}>' + "".join(out) + "</g>"

@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>낱말 탐정</title>
+<meta name="theme-color" content="#1a1f3a">
+<link rel="icon" href="../../icons/word-detective.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../_shared/kit.css">
+<style>
+  :root { --bg: #161a33; --a1: #ffcf6a; --a2: #ff9a4a; --a3: #ff6a7a; --ink-on-grad: #3a1a00; --glow: rgba(255,170,80,.3); --paper: #fbf2dc; --paper2: #f1e2bd; --ink: #3a2a1a; }
+  body { background: radial-gradient(120% 80% at 50% 0%, #2a3160, #161a33 60%, #0e1124); }
+  .main { position: fixed; left: 0; right: 0; bottom: 0; top: calc(env(safe-area-inset-top, 0px) + 92px); display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 0 12px calc(env(safe-area-inset-bottom, 0px) + 12px); }
+  .main[hidden] { display: none; }
+  .board { position: relative; background: linear-gradient(180deg, var(--paper), var(--paper2)); border-radius: 18px; box-shadow: 0 18px 50px rgba(0,0,0,.45), inset 0 0 0 2px rgba(120,80,30,.25); touch-action: none; flex: none; }
+  .board::before { content: ''; position: absolute; inset: 0; border-radius: 18px; pointer-events: none; background: repeating-linear-gradient(0deg, transparent 0 23px, rgba(140,100,50,.06) 23px 24px); }
+  .cells { position: absolute; inset: 10px; display: grid; }
+  .cell { display: grid; place-items: center; color: var(--ink); font-weight: 800; letter-spacing: -.04em; position: relative; z-index: 2; transition: transform .15s, color .15s; }
+  .cell.hint { animation: hint 1s ease-in-out 3; color: #e8402a; }
+  @keyframes hint { 50% { transform: scale(1.35); } }
+  .cell.pop { animation: pop .35s ease-out; }
+  @keyframes pop { 40% { transform: scale(1.3); } }
+  svg.marks { position: absolute; inset: 10px; overflow: visible; pointer-events: none; z-index: 1; }
+  .words { width: min(560px, 100%); display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+  .w { padding: 6px 11px; border-radius: 999px; background: rgba(255,255,255,.08); border: 1px solid var(--line); font-weight: 750; font-size: 14px; transition: all .3s; }
+  .w.found { text-decoration: line-through; text-decoration-thickness: 2px; color: var(--muted); background: rgba(255,255,255,.03); }
+  .w.found::before { content: '✔ '; color: #7cf09a; }
+  .tools { display: flex; gap: 8px; }
+  .shake { animation: shake .3s; }
+  @keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+  .cases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0 0 14px; }
+  .case { border-radius: 14px; border: 1px solid var(--line); background: rgba(255,255,255,.06); color: var(--text); padding: 10px 4px 8px; cursor: pointer; display: grid; gap: 2px; justify-items: center; }
+  .case .n { font-size: 11px; color: var(--muted); font-weight: 700; }
+  .case .t { font-size: 15px; font-weight: 850; }
+  .case .s { font-size: 12px; letter-spacing: 1px; color: #ffcf6a; }
+  .case:disabled { opacity: .35; cursor: default; }
+  .case.next { border-color: #ffcf6a; box-shadow: 0 0 0 2px rgba(255,207,106,.35); }
+  .stars { font-size: 40px; letter-spacing: 6px; margin: 4px 0 6px; }
+</style>
+</head>
+<body>
+<div class="hud">
+  <div class="group">
+    <div class="box"><div class="lbl" id="caseLbl">사건</div><div class="big" id="theme">-</div><div class="sub" id="count">0/0</div></div>
+    <div class="box"><div class="lbl">시간</div><div class="big" id="time">0:00</div><div class="sub" id="par">목표 -</div></div>
+  </div>
+  <div class="stack">
+    <a class="pill" href="../../">← 게임 센터</a>
+    <button class="pill" id="muteBtn" type="button"></button>
+  </div>
+</div>
+
+<div class="main" id="main" hidden>
+  <div class="board" id="board"><svg class="marks" id="marks"></svg><div class="cells" id="cells"></div></div>
+  <div class="words" id="words"></div>
+  <div class="tools">
+    <button class="pill" id="hintBtn" type="button">🔍 단서 (3)</button>
+    <button class="pill" id="listBtn" type="button">📁 사건 목록</button>
+  </div>
+</div>
+
+<div class="screen" id="startScreen">
+  <div class="card">
+    <div class="lbl">앱개발부 낱말 퍼즐</div>
+    <h1>낱말 <span>탐정</span></h1>
+    <p>글자판 속에 숨은 낱말을 찾아 사건을 해결하세요! 첫 글자부터 끝 글자까지 손가락으로 쭉 그으면 돼요.</p>
+    <div class="cases" id="cases"></div>
+    <button class="go" id="startBtn" type="button">다음 사건 맡기</button>
+    <div class="row"><button class="go ghost" id="randomBtn" type="button">🎲 무작위 사건</button></div>
+    <p class="small">사건이 진행될수록 판이 커지고, 낱말이 대각선·거꾸로도 숨어요.</p>
+  </div>
+</div>
+<div class="screen" id="overScreen" hidden>
+  <div class="card">
+    <div class="lbl" id="overLbl">사건 해결!</div>
+    <h2 id="overTitle"></h2>
+    <div class="stars" id="stars"></div>
+    <p id="overText"></p>
+    <button class="go" id="nextBtn" type="button">다음 사건</button>
+    <div class="row"><button class="go ghost" id="retryBtn" type="button">다시 풀기</button><button class="go ghost" id="menuBtn" type="button">사건 목록</button></div>
+  </div>
+</div>
+
+<script src="../_shared/kit.js"></script>
+<script>
+(() => {
+'use strict';
+const { $, pick, shuffle, randi, tone, chord, toast } = Kit;
+const THEMES = [
+  ['동물', ['고양이', '강아지', '토끼', '코끼리', '기린', '사자', '호랑이', '다람쥐', '펭귄', '거북이', '원숭이', '하마', '여우', '늑대', '판다']],
+  ['과일', ['사과', '바나나', '딸기', '포도', '수박', '복숭아', '참외', '키위', '망고', '체리', '레몬', '자두', '블루베리', '파인애플', '오렌지']],
+  ['음식', ['김밥', '떡볶이', '비빔밥', '라면', '불고기', '김치찌개', '만두', '피자', '치킨', '햄버거', '짜장면', '냉면', '순대', '잡채', '갈비']],
+  ['탈것', ['자동차', '기차', '비행기', '자전거', '버스', '택시', '지하철', '헬리콥터', '오토바이', '트럭', '로켓', '요트', '썰매', '유모차', '잠수함']],
+  ['직업', ['의사', '선생님', '경찰관', '소방관', '요리사', '가수', '화가', '과학자', '기자', '농부', '우주인', '간호사', '미용사', '작가', '판사']],
+  ['날씨와 자연', ['무지개', '구름', '바람', '소나기', '눈사람', '번개', '안개', '태풍', '햇살', '이슬', '노을', '바다', '폭포', '단풍', '고드름']],
+  ['학교', ['연필', '지우개', '공책', '칠판', '교실', '운동장', '급식', '숙제', '시험', '방학', '필통', '가방', '도서관', '실내화', '체육복']],
+  ['운동', ['축구', '야구', '농구', '배구', '수영', '탁구', '태권도', '스키', '볼링', '테니스', '양궁', '골프', '마라톤', '줄넘기', '씨름']],
+  ['악기', ['피아노', '기타', '바이올린', '드럼', '플루트', '첼로', '하모니카', '장구', '가야금', '트럼펫', '실로폰', '리코더', '탬버린', '해금', '꽹과리']],
+  ['나라', ['한국', '일본', '중국', '미국', '영국', '프랑스', '독일', '브라질', '이집트', '호주', '캐나다', '인도', '스페인', '이탈리아', '멕시코']],
+  ['우주', ['태양', '지구', '화성', '목성', '토성', '금성', '은하수', '별자리', '혜성', '블랙홀', '우주선', '인공위성', '망원경', '유성', '달토끼']],
+  ['바다', ['고래', '상어', '문어', '오징어', '해파리', '불가사리', '돌고래', '꽃게', '새우', '산호초', '조개', '미역', '등대', '해마', '갈매기']],
+];
+const FILL = '가나다라마바사아자차카타파하고노도로모보소오조호구누두루무부수우주추기니디리미비시이지치개내대래매배새애재해강상장방정성인일한물불말발살';
+const CASES = THEMES.map((t, i) => ({ n: i + 1, theme: t[0], words: t[1], size: i < 3 ? 6 : i < 6 ? 7 : i < 9 ? 8 : 9, count: [5, 6, 6, 6, 7, 7, 8, 8, 8, 9, 9, 10][i], dirs: i < 3 ? 2 : i < 6 ? 4 : 8 }));
+const DIRS = [[1, 0], [0, 1], [1, 1], [1, -1], [-1, 0], [0, -1], [-1, -1], [-1, 1]];
+const COLORS = ['#ff7a8a', '#ffb44a', '#7ad86a', '#4ac8ff', '#b08aff', '#ff8ad8', '#4ae0c0', '#ffd84a', '#8aa8ff', '#ff9a6a'];
+
+let prog = Kit.store.get('wd_progress', {}); // {caseN: stars}
+let cur, grid, N, placed, found, hints, hintUsed, t0, elapsed, timerOn = false, cellPx = 40, drag = null;
+
+// ---------------------------------------------------------------- generation
+function generate(c) {
+  const syl = w => [...w];
+  for (let attempt = 0; attempt < 200; attempt++) {
+    const words = shuffle([...c.words]).filter(w => syl(w).length <= c.size).slice(0, c.count).sort((a, b) => syl(b).length - syl(a).length);
+    const g = Array.from({ length: c.size }, () => Array(c.size).fill(null)), P = [];
+    let ok = true;
+    for (const w of words) {
+      const s = syl(w); let done = false;
+      for (let k = 0; k < 400 && !done; k++) {
+        const [dx, dy] = DIRS[randi(0, c.dirs - 1)], x = randi(0, c.size - 1), y = randi(0, c.size - 1);
+        const ex = x + dx * (s.length - 1), ey = y + dy * (s.length - 1);
+        if (ex < 0 || ey < 0 || ex >= c.size || ey >= c.size) continue;
+        let fits = true, overlap = 0;
+        for (let i = 0; i < s.length; i++) { const v = g[y + dy * i][x + dx * i]; if (v && v !== s[i]) { fits = false; break; } if (v) overlap++; }
+        if (!fits || overlap > 1) continue;
+        for (let i = 0; i < s.length; i++) g[y + dy * i][x + dx * i] = s[i];
+        P.push({ w, x, y, dx, dy, len: s.length }); done = true;
+      }
+      if (!done) { ok = false; break; }
+    }
+    if (!ok) continue;
+    // filler: mix of syllables from this theme's other words and common syllables (keeps it tricky but fair)
+    const pool = [...c.words.join(''), ...FILL];
+    for (let y = 0; y < c.size; y++) for (let x = 0; x < c.size; x++) if (!g[y][x]) g[y][x] = pick(pool);
+    // make sure no target word accidentally appears a second time
+    if (P.some(p => countOcc(g, p.w) > 1)) continue;
+    return { g, P };
+  }
+  throw new Error('generation failed');
+}
+function countOcc(g, w) {
+  const s = [...w], n = g.length; let c = 0;
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) for (const [dx, dy] of DIRS) {
+    let ok = true; for (let i = 0; i < s.length; i++) { const xx = x + dx * i, yy = y + dy * i; if (xx < 0 || yy < 0 || xx >= n || yy >= n || g[yy][xx] !== s[i]) { ok = false; break; } } if (ok) c++;
+  }
+  return s.length > 1 && s.join('') === [...s].reverse().join('') ? c / 2 : c;
+}
+
+// ---------------------------------------------------------------- game flow
+function startCase(c) {
+  cur = c; const { g, P } = generate(c); grid = g; placed = P; N = c.size; found = new Set(); hints = 3; hintUsed = false; elapsed = 0; t0 = performance.now(); timerOn = true;
+  $('caseLbl').textContent = c.n ? `사건 #${c.n}` : '무작위 사건'; $('theme').textContent = c.theme;
+  $('par').textContent = '목표 ' + fmt(par());
+  Kit.hide('startScreen', 'overScreen'); $('main').hidden = false;
+  render(); layout(); updateHint();
+}
+const par = () => cur.count * 9 + cur.size * 4;
+function fmt(s) { s = Math.floor(s); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }
+function render() {
+  const cells = $('cells'); cells.textContent = ''; cells.style.gridTemplateColumns = `repeat(${N}, 1fr)`; cells.style.gridTemplateRows = `repeat(${N}, 1fr)`;
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) { const d = document.createElement('div'); d.className = 'cell'; d.textContent = grid[y][x]; d.dataset.x = x; d.dataset.y = y; cells.append(d); }
+  const words = $('words'); words.textContent = '';
+  for (const p of [...placed].sort((a, b) => a.w.localeCompare(b.w, 'ko'))) { const s = document.createElement('span'); s.className = 'w'; s.textContent = p.w; s.dataset.w = p.w; words.append(s); }
+  $('marks').textContent = ''; updateCount();
+}
+function layout() {
+  if (!cur) return;
+  const top = 92 + 12, listH = $('words').offsetHeight + 46 + 24;
+  const avail = Math.min(innerWidth - 24, innerHeight - top - listH - 12, 560);
+  const size = Math.max(220, avail); cellPx = (size - 20) / N;
+  const b = $('board'); b.style.width = b.style.height = size + 'px';
+  $('cells').style.fontSize = Math.round(cellPx * .5) + 'px';
+  $('marks').setAttribute('viewBox', `0 0 ${size - 20} ${size - 20}`);
+  redrawMarks();
+}
+addEventListener('resize', layout);
+function updateCount() { $('count').textContent = `찾은 낱말 ${found.size}/${placed.length}`; }
+function updateHint() { $('hintBtn').textContent = `🔍 단서 (${hints})`; $('hintBtn').disabled = hints <= 0; }
+
+// ---------------------------------------------------------------- marks
+function capsule(x0, y0, x1, y1, color, opacity, cls) {
+  const c = v => (v + .5) * cellPx, w = cellPx * .82;
+  const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  l.setAttribute('x1', c(x0)); l.setAttribute('y1', c(y0)); l.setAttribute('x2', c(x1)); l.setAttribute('y2', c(y1));
+  l.setAttribute('stroke', color); l.setAttribute('stroke-width', w); l.setAttribute('stroke-linecap', 'round'); l.setAttribute('opacity', opacity); if (cls) l.setAttribute('class', cls);
+  return l;
+}
+function redrawMarks() {
+  const m = $('marks'); m.textContent = '';
+  placed.forEach((p, i) => { if (found.has(p.w)) m.append(capsule(p.x, p.y, p.x + p.dx * (p.len - 1), p.y + p.dy * (p.len - 1), COLORS[i % COLORS.length], .55)); });
+  if (drag && drag.end) m.append(capsule(drag.x, drag.y, drag.end.x, drag.end.y, '#3a6aff', .35));
+}
+
+// ---------------------------------------------------------------- input
+function cellFrom(e) {
+  const r = $('cells').getBoundingClientRect();
+  const x = Math.floor((e.clientX - r.left) / cellPx), y = Math.floor((e.clientY - r.top) / cellPx);
+  return { x: Math.max(0, Math.min(N - 1, x)), y: Math.max(0, Math.min(N - 1, y)), inside: x >= 0 && y >= 0 && x < N && y < N };
+}
+function snap(sx, sy, tx, ty) {
+  const dx = tx - sx, dy = ty - sy; if (!dx && !dy) return { x: sx, y: sy };
+  const ang = Math.atan2(dy, dx), oct = Math.round(ang / (Math.PI / 4));
+  const ux = Math.round(Math.cos(oct * Math.PI / 4)), uy = Math.round(Math.sin(oct * Math.PI / 4));
+  let len = Math.max(Math.abs(dx), Math.abs(dy));
+  while (len > 0) { const ex = sx + ux * len, ey = sy + uy * len; if (ex >= 0 && ey >= 0 && ex < N && ey < N) return { x: ex, y: ey }; len--; }
+  return { x: sx, y: sy };
+}
+$('board').addEventListener('pointerdown', e => {
+  if (!timerOn) return; Kit.initAudio();
+  const c = cellFrom(e); if (!c.inside) return;
+  drag = { x: c.x, y: c.y, end: { x: c.x, y: c.y } }; $('board').setPointerCapture(e.pointerId);
+  tone(520, .04, 'triangle', .03); redrawMarks();
+});
+$('board').addEventListener('pointermove', e => {
+  if (!drag) return; const c = cellFrom(e), s = snap(drag.x, drag.y, c.x, c.y);
+  if (s.x !== drag.end.x || s.y !== drag.end.y) { drag.end = s; tone(520 + 40 * Math.max(Math.abs(s.x - drag.x), Math.abs(s.y - drag.y)), .03, 'triangle', .02); redrawMarks(); }
+});
+addEventListener('pointerup', () => { if (!drag) return; const d = drag; drag = null; check(d.x, d.y, d.end.x, d.end.y); redrawMarks(); });
+addEventListener('pointercancel', () => { drag = null; redrawMarks(); });
+
+function check(x0, y0, x1, y1) {
+  const dx = Math.sign(x1 - x0), dy = Math.sign(y1 - y0), len = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)) + 1;
+  if (len < 2) return;
+  let s = ''; for (let i = 0; i < len; i++) s += grid[y0 + dy * i][x0 + dx * i];
+  const rev = [...s].reverse().join('');
+  const hit = placed.find(p => !found.has(p.w) && (p.w === s || p.w === rev));
+  if (!hit) {
+    if (placed.some(p => p.w === s || p.w === rev)) { toast('이미 찾은 낱말이에요'); return; }
+    $('board').classList.remove('shake'); void $('board').offsetWidth; $('board').classList.add('shake'); tone(200, .12, 'sine', .04, -60); return;
+  }
+  // accept the hidden placement (even if the player traced it backwards)
+  found.add(hit.w);
+  for (let i = 0; i < hit.len; i++) { const el = cellEl(hit.x + hit.dx * i, hit.y + hit.dy * i); el.classList.remove('pop', 'hint'); void el.offsetWidth; el.classList.add('pop'); }
+  const chip = [...$('words').children].find(c => c.dataset.w === hit.w); if (chip) chip.classList.add('found');
+  chord([659, 784, 988].slice(0, 2 + (found.size % 2)), .05, 'triangle', .05, .15);
+  updateCount(); redrawMarks();
+  if (found.size === placed.length) setTimeout(solved, 450);
+}
+const cellEl = (x, y) => $('cells').children[y * N + x];
+
+$('hintBtn').onclick = () => {
+  if (hints <= 0 || !timerOn) return;
+  const left = placed.filter(p => !found.has(p.w)); if (!left.length) return;
+  const p = pick(left); hints--; hintUsed = true; updateHint();
+  const el = cellEl(p.x, p.y); el.classList.remove('hint'); void el.offsetWidth; el.classList.add('hint');
+  toast(`단서: "${p.w}"의 첫 글자`); tone(880, .1, 'sine', .04, 200);
+};
+
+function solved() {
+  timerOn = false; const t = elapsed, P = par();
+  let stars = t <= P ? 3 : t <= P * 2 ? 2 : 1; if (hintUsed) stars = Math.min(stars, 2);
+  chord([523, 659, 784, 1047], .08, 'triangle', .06, .35);
+  let msg = `${fmt(t)} 만에 ${placed.length}개 낱말을 모두 찾았어요.`;
+  if (cur.n) {
+    const prev = prog[cur.n] || 0; if (stars > prev) { prog[cur.n] = stars; Kit.store.set('wd_progress', prog); }
+    if (stars < 3) msg += hintUsed ? ' 단서 없이 풀면 별 3개!' : ` 목표 ${fmt(P)} 안에 풀면 별 3개!`;
+  }
+  $('overTitle').textContent = cur.n ? `사건 #${cur.n} · ${cur.theme}` : `무작위 사건 · ${cur.theme}`;
+  $('overLbl').textContent = cur.n === 12 ? '🕵️ 모든 사건 해결! 명탐정 등극' : '사건 해결!';
+  $('stars').textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+  $('overText').textContent = msg;
+  $('nextBtn').textContent = cur.n && cur.n < 12 ? '다음 사건' : '🎲 무작위 사건';
+  Kit.show('overScreen');
+}
+
+// ---------------------------------------------------------------- menus
+function nextCase() { const n = CASES.findIndex(c => !prog[c.n]); return CASES[n < 0 ? 11 : n]; }
+function randomCase() { const t = pick(THEMES); return { n: 0, theme: t[0], words: t[1], size: 9, count: 10, dirs: 8 }; }
+function menu() {
+  timerOn = false; $('main').hidden = true;
+  const box = $('cases'); box.textContent = ''; const nx = nextCase();
+  CASES.forEach((c, i) => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'case' + (c === nx && !prog[c.n] ? ' next' : '');
+    const st = prog[c.n] || 0, unlocked = i === 0 || prog[CASES[i - 1].n];
+    b.innerHTML = `<span class="n">사건 #${c.n}</span><span class="t">${c.theme}</span><span class="s">${unlocked ? '★'.repeat(st) + '☆'.repeat(3 - st) : '🔒'}</span>`;
+    b.disabled = !unlocked; b.onclick = () => startCase(c); box.append(b);
+  });
+  $('startBtn').textContent = Object.keys(prog).length >= 12 ? '🎲 무작위 사건' : `사건 #${nx.n} 맡기`;
+  Kit.hide('overScreen'); Kit.show('startScreen');
+}
+$('startBtn').onclick = () => Object.keys(prog).length >= 12 ? startCase(randomCase()) : startCase(nextCase());
+$('randomBtn').onclick = () => startCase(randomCase());
+$('nextBtn').onclick = () => (cur.n && cur.n < 12 ? startCase(CASES[cur.n]) : startCase(randomCase()));
+$('retryBtn').onclick = () => startCase(cur);
+$('menuBtn').onclick = menu; $('listBtn').onclick = menu;
+Kit.bindMute($('muteBtn'));
+
+setInterval(() => { if (timerOn && !document.hidden) { elapsed = (performance.now() - t0) / 1000; $('time').textContent = fmt(elapsed); } }, 250);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) t0 = performance.now() - elapsed * 1000; });
+menu();
+if (location.hash === '#test') window.__game = { placed: () => placed, grid: () => grid, N: () => N, found: () => [...found], check, start: i => startCase(CASES[i]), random: () => startCase(randomCase()), gen: generate, CASES, countOcc };
+})();
+</script>
+</body>
+</html>

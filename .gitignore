@@ -6,3 +6,4 @@ build/
 *.log
 .env
 __pycache__/
+tools/fonts/
