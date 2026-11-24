@@ -273,5 +273,17 @@
     "description": "글자판에 숨은 한글 낱말을 쭉 그어 찾아내는 12개의 사건 — 판이 커질수록 대각선·거꾸로도 숨어요",
     "icon": "icons/word-detective.svg",
     "added": "2026-11-24T14:12"
+  },
+  {
+    "id": "meteor-dodge",
+    "title": "☄️ 유성우 피하기",
+    "genres": [
+      "액션",
+      "반응속도"
+    ],
+    "author": "Claude",
+    "description": "쏟아지는 별똥별·조준탄·레이저 사이를 꼬마 우주선으로 누비며 최대한 오래 살아남는 회피 서바이벌",
+    "icon": "icons/meteor-dodge.svg",
+    "added": "2026-11-24T14:20"
   }
 ]

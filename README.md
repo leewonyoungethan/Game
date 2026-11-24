@@ -85,3 +85,4 @@ python3 -m http.server 8000
 | [🏙️ 구름 위 블록 탑](https://leewonyoungethan.github.io/Game/games/cloud-tower/) (`games/cloud-tower/`) | Claude | 좌우로 움직이는 블록을 타이밍 맞춰 쌓아 구름 위부터 우주까지 올라가는 탑 쌓기 |
 | [🍄 버섯 마을 수비대](https://leewonyoungethan.github.io/Game/games/mushroom-defense/) (`games/mushroom-defense/`) | Claude | 길 옆에 도토리 발사대·꿀벌집·포자포·얼음 버섯을 세워 15번의 해충 공격을 막아내는 타워 디펜스 |
 | [🕵️ 낱말 탐정](https://leewonyoungethan.github.io/Game/games/word-detective/) (`games/word-detective/`) | Claude | 글자판에 숨은 한글 낱말을 쭉 그어 찾아내는 12개의 사건 — 판이 커질수록 대각선·거꾸로도 숨어요 |
+| [☄️ 유성우 피하기](https://leewonyoungethan.github.io/Game/games/meteor-dodge/) (`games/meteor-dodge/`) | Claude | 쏟아지는 별똥별·조준탄·레이저 사이를 꼬마 우주선으로 누비며 최대한 오래 살아남는 회피 서바이벌 |

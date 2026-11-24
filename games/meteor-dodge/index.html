@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>유성우 피하기</title>
+<meta name="theme-color" content="#070a1e">
+<link rel="icon" href="../../icons/meteor-dodge.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../_shared/kit.css">
+<style>
+  :root { --bg: #070a1e; --a1: #6ad8ff; --a2: #8a6aff; --a3: #ff6ab8; --glow: rgba(120,140,255,.35); }
+  .items { position: fixed; z-index: 6; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); display: flex; gap: 8px; pointer-events: none; }
+  .items .pill { pointer-events: none; }
+  .items .pill[hidden] { display: none; }
+</style>
+</head>
+<body>
+<canvas class="stage" id="cv"></canvas>
+<div class="hud">
+  <div class="group">
+    <div class="box"><div class="lbl">버틴 시간</div><div class="big" id="time">0.0</div><div class="sub" id="phase">1단계</div></div>
+    <div class="box"><div class="lbl">점수</div><div class="big" id="score">0</div><div class="sub" id="best">최고 0</div></div>
+  </div>
+  <div class="stack">
+    <a class="pill" href="../../">← 게임 센터</a>
+    <button class="pill" id="muteBtn" type="button"></button>
+  </div>
+</div>
+<div class="items"><span class="pill" id="shieldPill" hidden>🛡️ 보호막</span><span class="pill" id="slowPill" hidden>⏳ 느린 시간</span></div>
+
+<div class="screen" id="startScreen">
+  <div class="card">
+    <div class="lbl">앱개발부 회피 게임</div>
+    <h1>유성우 <span>피하기</span></h1>
+    <p>꼬마 우주선이 유성우 한가운데 갇혔어요! 쏟아지는 별똥별을 피해 최대한 오래 살아남으세요.</p>
+    <div class="rules">
+      <div><b>👆</b><span>화면 아무 데나 끌면 우주선이 같은 만큼 움직여요 (키보드는 방향키)</span></div>
+      <div><b>💠</b><span>빛나는 가운데 점만 맞지 않으면 돼요 — 아슬아슬 스치면 보너스!</span></div>
+      <div><b>🛡️</b><span>보호막 · ⏳ 느린 시간 · 💥 폭탄 · ⭐ 별 조각을 챙겨요</span></div>
+      <div><b>⚠️</b><span>시간이 지날수록 조준탄·장벽·레이저·폭발 유성이 나타나요</span></div>
+    </div>
+    <button class="go" id="startBtn" type="button">출발!</button>
+  </div>
+</div>
+<div class="screen" id="overScreen" hidden>
+  <div class="card">
+    <div class="lbl" id="overLbl"></div>
+    <h2>우주선이 부딪혔어요 💫</h2>
+    <div class="final" id="finalScore">0</div>
+    <p id="overText"></p>
+    <button class="go" id="againBtn" type="button">다시 출발</button>
+  </div>
+</div>
+
+<script src="../_shared/kit.js"></script>
+<script>
+(() => {
+'use strict';
+const { $, rand, randi, pick, clamp, tone, noise, chord, toast } = Kit;
+const W = 400, H = 700;
+const cv = $('cv'), ctx = cv.getContext('2d');
+let F; function resize() { F = Kit.fit(cv, W, H, { top: 0, bottom: 0 }); } addEventListener('resize', resize); resize();
+const best = Kit.best('md2_best');
+
+// ---------------------------------------------------------------- background
+const starsBg = [0, 1, 2].map(l => Array.from({ length: 50 - l * 12 }, () => ({ x: rand(-40, W + 40), y: rand(-200, H + 200), r: rand(.4, 1.1) + l * .5, tw: rand(0, 6) })));
+const nebula = Array.from({ length: 5 }, () => ({ x: rand(0, W), y: rand(0, H), r: rand(120, 220), h: pick([220, 260, 300, 190]) }));
+
+// ---------------------------------------------------------------- state
+let state = 'title', T = 0, score = 0, starBonus = 0, ship, rocks, beams, items, parts, floaters, shield, slowT, rainT, eventT, itemT, shake = 0, phase = 1, nearCD = 0, deadT = 0;
+const PHASES = [0, 12, 25, 40, 58, 80, 105, 135];
+function reset() {
+  T = 0; score = 0; starBonus = 0; ship = { x: W / 2, y: H - 140, vx: 0, tilt: 0, trail: [] };
+  rocks = []; beams = []; items = []; parts = []; floaters = []; shield = false; slowT = 0; rainT = .6; eventT = 7; itemT = 9; phase = 1; shake = 0;
+  updatePills();
+}
+const R_SHIP = 7; // the real hitbox (glowing core)
+
+// ---------------------------------------------------------------- spawning
+function rock(x, y, vx, vy, r, kind = 'rock') { rocks.push({ x, y, vx, vy, r, kind, rot: rand(0, 6), vr: rand(-2, 2), seed: randi(0, 9999), near: false, life: 0 }); }
+function rain() {
+  const big = Math.random() < .18;
+  const r = big ? rand(22, 30) : rand(9, 17), sp = rand(150, 230) + T * 1.4;
+  rock(rand(r, W - r), -r - 10, rand(-30, 30), sp * (big ? .75 : 1), r);
+}
+const EVENTS = [
+  { at: 12, name: '조준탄', run() { const n = 3 + Math.min(3, Math.floor(T / 30)); for (let i = 0; i < n; i++) setTimeout(() => { if (state !== 'play') return; const x = rand(30, W - 30), a = Math.atan2(ship.y + 20, ship.x - x), s = 300 + T; rock(x, -20, Math.cos(a) * s, Math.sin(a) * s, 7, 'comet'); tone(1200, .05, 'square', .015, -400); }, i * 220); } },
+  { at: 25, name: '유성 장벽', run() { const gap = Math.max(70, 110 - T * .3), gx = rand(30, W - 30 - gap), sp = 150 + T * .6; for (let x = 12; x < W; x += 24) if (x < gx || x > gx + gap) rock(x, -24, 0, sp, 11, 'wall'); } },
+  { at: 40, name: '레이저', run() { const n = T > 90 ? 3 : T > 60 ? 2 : 1, cols = []; for (let i = 0; i < n; i++) { let x; do { x = rand(40, W - 40); } while (cols.some(c => Math.abs(c - x) < 90)); cols.push(x); beams.push({ x, w: 46, t: 0, warn: 1.0, fire: .45 }); } tone(440, .5, 'sawtooth', .02, 200); } },
+  { at: 58, name: '폭발 유성', run() { const x = rand(80, W - 80); rocks.push({ x, y: -40, vx: 0, vy: 120, r: 30, kind: 'bomb', fuse: rand(1.4, 2.2), rot: 0, vr: 1, seed: randi(0, 9999), near: false, life: 0 }); } },
+  { at: 80, name: '옆바람 유성', run() { const left = Math.random() < .5, n = 5; for (let i = 0; i < n; i++) setTimeout(() => { if (state !== 'play') return; const y = rand(120, H - 60); rock(left ? -20 : W + 20, y, (left ? 1 : -1) * rand(170, 230), rand(-20, 20), rand(9, 14)); }, i * 260); } },
+];
+function spawnEvent() {
+  const avail = EVENTS.filter(e => T >= e.at); if (!avail.length) return;
+  const e = T - avail[avail.length - 1].at < 3 ? avail[avail.length - 1] : pick(avail);
+  e.run();
+}
+function spawnItem() {
+  const k = shield ? pick(['slow', 'bomb', 'star', 'star']) : pick(['shield', 'shield', 'slow', 'bomb', 'star', 'star']);
+  items.push({ k, x: rand(30, W - 30), y: -20, vy: 90, bob: rand(0, 6) });
+}
+
+// ---------------------------------------------------------------- update
+function burst(x, y, col, n = 14, sp = 160) { for (let i = 0; i < n; i++) { const a = rand(0, 7), s = rand(30, sp); parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: rand(.3, .7), c: col, r: rand(1.5, 3.5) }); } }
+function float(x, y, txt, col = '#fff6c0') { floaters.push({ x, y, txt, col, life: 1 }); }
+function update(dtReal) {
+  if (state === 'dead') { deadT += dtReal; for (const p of parts) { p.x += p.vx * dtReal; p.y += p.vy * dtReal; p.vx *= .97; p.vy *= .97; p.life -= dtReal; } parts = parts.filter(p => p.life > 0); shake *= .9; return; }
+  if (state !== 'play') return;
+  const slow = slowT > 0 ? .45 : 1, dt = dtReal * slow;
+  T += dtReal; slowT = Math.max(0, slowT - dtReal); if (slowT === 0 && $('slowPill').hidden === false) updatePills();
+  nearCD = Math.max(0, nearCD - dtReal);
+  const np = PHASES.filter(p => T >= p).length; if (np !== phase) { phase = np; toast(`${phase}단계!`); chord([523, 784], .05, 'triangle', .04, .2); }
+  // keyboard movement
+  const kx = (keys.ArrowRight || keys.d ? 1 : 0) - (keys.ArrowLeft || keys.a ? 1 : 0), ky = (keys.ArrowDown || keys.s ? 1 : 0) - (keys.ArrowUp || keys.w ? 1 : 0);
+  if (kx || ky) { const l = Math.hypot(kx, ky); moveShip(kx / l * 300 * dtReal, ky / l * 300 * dtReal); }
+  ship.tilt += (clamp(ship.vx / 8, -1, 1) - ship.tilt) * .2; ship.vx *= .7;
+  ship.trail.unshift({ x: ship.x, y: ship.y + 16 }); if (ship.trail.length > 14) ship.trail.pop();
+  // spawns
+  rainT -= dt; if (rainT <= 0) { rain(); rainT = Math.max(.16, .62 - T * .0055) * rand(.7, 1.3); }
+  eventT -= dt; if (eventT <= 0) { spawnEvent(); eventT = Math.max(3.2, 7 - T * .03) * rand(.85, 1.15); }
+  itemT -= dt; if (itemT <= 0) { spawnItem(); itemT = rand(8, 12); }
+  // rocks
+  for (const r of rocks) {
+    r.x += r.vx * dt; r.y += r.vy * dt; r.rot += r.vr * dt; r.life += dt;
+    if (r.kind === 'bomb') { r.fuse -= dt; if (r.fuse <= 0) { r.dead = true; const n = 14; for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2 + rand(-.05, .05); rock(r.x, r.y, Math.cos(a) * 170, Math.sin(a) * 170, 7, 'frag'); } burst(r.x, r.y, '#ffb44a', 30, 220); noise(.3, .12, 600); shake = 8; continue; } }
+    if (r.y > H + 60 || r.y < -200 || r.x < -80 || r.x > W + 80) { r.dead = true; continue; }
+    const d = Math.hypot(r.x - ship.x, r.y - ship.y);
+    if (d < r.r * .88 + R_SHIP) { hit(r); if (state !== 'play') return; continue; }
+    if (!r.near && d < r.r + R_SHIP + 16 && nearCD <= 0) { r.near = true; nearCD = .35; score += 25; float(ship.x, ship.y - 30, '아슬아슬 +25', '#8af0ff'); tone(1400, .05, 'sine', .025, 300); }
+  }
+  rocks = rocks.filter(r => !r.dead);
+  // beams
+  for (const b of beams) {
+    b.t += dt;
+    if (b.t > b.warn && b.t < b.warn + b.fire) {
+      if (!b.fired) { b.fired = true; noise(.35, .09, 2500); shake = 5; }
+      if (Math.abs(ship.x - b.x) < b.w / 2 * .85 + R_SHIP * .5) { hit(null); if (state !== 'play') return; }
+    }
+  }
+  beams = beams.filter(b => b.t < b.warn + b.fire + .2);
+  // items
+  for (const it of items) {
+    it.y += it.vy * dt; it.bob += dt * 4;
+    if (Math.hypot(it.x - ship.x, it.y - ship.y) < 26) { it.dead = true; take(it); }
+    if (it.y > H + 30) it.dead = true;
+  }
+  items = items.filter(i => !i.dead);
+  for (const p of parts) { p.x += p.vx * dtReal; p.y += p.vy * dtReal; p.life -= dtReal; } parts = parts.filter(p => p.life > 0);
+  for (const f of floaters) { f.y -= 30 * dtReal; f.life -= dtReal; } floaters = floaters.filter(f => f.life > 0);
+  shake *= .88;
+  score = Math.max(score, 0);
+  hud();
+}
+function take(it) {
+  if (it.k === 'shield') { shield = true; float(it.x, it.y, '보호막!', '#8af0ff'); chord([660, 990], .05, 'sine', .05, .2); }
+  else if (it.k === 'slow') { slowT = 5; float(it.x, it.y, '느린 시간!', '#c8a8ff'); tone(600, .4, 'sine', .05, -300); }
+  else if (it.k === 'bomb') { for (const r of rocks) burst(r.x, r.y, '#ffb44a', 5, 120); rocks = []; beams = []; float(it.x, it.y, '쾅! 싹 정리', '#ffb44a'); noise(.5, .14, 800); shake = 10; }
+  else { starBonus += 100; score += 100; float(it.x, it.y, '+100', '#ffe06a'); chord([880, 1175], .04, 'triangle', .05, .15); }
+  updatePills();
+}
+function hit(r) {
+  if (shield) {
+    shield = false; updatePills(); burst(ship.x, ship.y, '#8af0ff', 24, 200); shake = 8; noise(.25, .1, 1500); tone(300, .2, 'square', .04, -150);
+    if (r) r.dead = true; else beams.forEach(b => b.fire = 0); // beam that hit you fizzles
+    rocks = rocks.filter(o => Math.hypot(o.x - ship.x, o.y - ship.y) > 70 || (o.dead = true, burst(o.x, o.y, '#ccc', 4), false));
+    float(ship.x, ship.y - 30, '보호막이 막았어요!', '#8af0ff'); return;
+  }
+  state = 'dead'; deadT = 0; burst(ship.x, ship.y, '#ffb44a', 40, 260); burst(ship.x, ship.y, '#fff', 20, 160); shake = 16;
+  noise(.8, .18, 400); tone(160, .7, 'sawtooth', .07, -100);
+  const final = Math.floor(score), isBest = best.submit(final);
+  setTimeout(() => {
+    $('overLbl').textContent = isBest ? '🎉 최고 기록!' : `최고 기록 ${best.get() || 0}`;
+    $('finalScore').textContent = final.toLocaleString();
+    $('overText').textContent = `${T.toFixed(1)}초 버텼어요 · ${phase}단계 도달 · 별 보너스 ${starBonus}`;
+    Kit.show('overScreen'); state = 'over';
+  }, 900);
+}
+function updatePills() { $('shieldPill').hidden = !shield; $('slowPill').hidden = !(slowT > 0); }
+function hud() {
+  $('time').textContent = T.toFixed(1); $('score').textContent = Math.floor(score).toLocaleString(); $('phase').textContent = `${phase}단계`;
+}
+
+// ---------------------------------------------------------------- draw
+function rockPath(c, r, seed) {
+  c.beginPath(); const n = 9;
+  for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2, k = .82 + ((seed * (i + 3) * 9301 + 49297) % 233280) / 233280 * .3; c.lineTo(Math.cos(a) * r * k, Math.sin(a) * r * k); }
+  c.closePath();
+}
+function draw() {
+  const c = ctx, { dpr, scale, ox, oy, vw, vh } = F;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const g = c.createLinearGradient(0, 0, 0, vh); g.addColorStop(0, '#0a0d2a'); g.addColorStop(1, '#130a28'); c.fillStyle = g; c.fillRect(0, 0, vw, vh);
+  const sx = shake ? rand(-shake, shake) : 0, sy = shake ? rand(-shake, shake) : 0;
+  c.translate(ox + sx, oy + sy); c.scale(scale, scale);
+  // nebula & parallax stars (extend beyond the play area so wide screens look full)
+  for (const n of nebula) { const rg = c.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r); rg.addColorStop(0, `hsla(${n.h},80%,60%,.13)`); rg.addColorStop(1, `hsla(${n.h},80%,60%,0)`); c.fillStyle = rg; c.fillRect(n.x - n.r, n.y - n.r, n.r * 2, n.r * 2); }
+  const speedK = state === 'play' ? 1 + T * .01 : .4;
+  starsBg.forEach((L, l) => { for (const s of L) { s.y += (8 + l * 18) * speedK / 60 * (slowT > 0 ? .45 : 1); if (s.y > H + 200) { s.y = -200; s.x = rand(-40, W + 40); } c.globalAlpha = .4 + .5 * Math.abs(Math.sin(s.tw + TT * 2)); c.fillStyle = '#fff'; c.fillRect(s.x, s.y, s.r, s.r * (1 + l * .8)); } });
+  c.globalAlpha = 1;
+  // play-area frame (subtle)
+  c.strokeStyle = 'rgba(140,160,255,.12)'; c.lineWidth = 2; c.strokeRect(0, 0, W, H);
+  // beams
+  for (const b of beams) {
+    if (b.t < b.warn) { const k = b.t / b.warn; c.fillStyle = `rgba(255,60,90,${.08 + .12 * Math.abs(Math.sin(b.t * 18))})`; c.fillRect(b.x - b.w / 2, 0, b.w, H); c.strokeStyle = `rgba(255,90,120,${.5 + k * .5})`; c.setLineDash([10, 8]); c.lineWidth = 2; c.strokeRect(b.x - b.w / 2, -4, b.w, H + 8); c.setLineDash([]);
+      c.fillStyle = '#ff5a7a'; c.font = '900 22px "Pretendard Variable", sans-serif'; c.textAlign = 'center'; c.fillText('⚠', b.x, 40); }
+    else if (b.t < b.warn + b.fire) { const k = 1 - (b.t - b.warn) / b.fire, lg = c.createLinearGradient(b.x - b.w / 2, 0, b.x + b.w / 2, 0); lg.addColorStop(0, 'rgba(255,60,120,0)'); lg.addColorStop(.3, `rgba(255,90,140,${.8 * k})`); lg.addColorStop(.5, `rgba(255,255,255,${k})`); lg.addColorStop(.7, `rgba(255,90,140,${.8 * k})`); lg.addColorStop(1, 'rgba(255,60,120,0)'); c.fillStyle = lg; c.fillRect(b.x - b.w / 2 - 6, 0, b.w + 12, H); }
+  }
+  // items
+  for (const it of items) {
+    const y = it.y + Math.sin(it.bob) * 3; c.save(); c.translate(it.x, y);
+    const col = { shield: '#6ad8ff', slow: '#b08aff', bomb: '#ff9a4a', star: '#ffe06a' }[it.k];
+    const rg = c.createRadialGradient(0, 0, 2, 0, 0, 26); rg.addColorStop(0, col + 'aa'); rg.addColorStop(1, col + '00'); c.fillStyle = rg; c.beginPath(); c.arc(0, 0, 26, 0, 7); c.fill();
+    c.fillStyle = 'rgba(10,14,40,.8)'; c.strokeStyle = col; c.lineWidth = 2.5; c.beginPath(); c.arc(0, 0, 15, 0, 7); c.fill(); c.stroke();
+    c.font = '16px sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText({ shield: '🛡️', slow: '⏳', bomb: '💥', star: '⭐' }[it.k], 0, 1); c.textBaseline = 'alphabetic';
+    c.restore();
+  }
+  // rocks
+  for (const r of rocks) {
+    // fiery tail opposite to velocity
+    const sp = Math.hypot(r.vx, r.vy) || 1, tx = -r.vx / sp, ty = -r.vy / sp, tl = r.kind === 'comet' ? 46 : r.r * 2.2;
+    const tg = c.createLinearGradient(r.x, r.y, r.x + tx * tl, r.y + ty * tl);
+    const tc = r.kind === 'comet' ? '138,240,255' : r.kind === 'frag' ? '255,200,80' : r.kind === 'wall' ? '200,140,255' : '255,140,60';
+    tg.addColorStop(0, `rgba(${tc},.55)`); tg.addColorStop(1, `rgba(${tc},0)`); c.fillStyle = tg;
+    c.beginPath(); c.moveTo(r.x - ty * r.r * .8, r.y + tx * r.r * .8); c.lineTo(r.x + tx * tl, r.y + ty * tl); c.lineTo(r.x + ty * r.r * .8, r.y - tx * r.r * .8); c.fill();
+    c.save(); c.translate(r.x, r.y);
+    if (r.kind === 'comet' || r.kind === 'frag') {
+      const cg = c.createRadialGradient(0, 0, 1, 0, 0, r.r + 4); cg.addColorStop(0, '#fff'); cg.addColorStop(.5, r.kind === 'comet' ? '#8af0ff' : '#ffd24a'); cg.addColorStop(1, 'rgba(255,255,255,0)'); c.fillStyle = cg; c.beginPath(); c.arc(0, 0, r.r + 4, 0, 7); c.fill();
+    } else {
+      c.rotate(r.rot);
+      const base = r.kind === 'bomb' ? ['#ff8a4a', '#8a2a10'] : r.kind === 'wall' ? ['#a890d8', '#4a3a78'] : ['#b8907a', '#5a4038'];
+      const rg = c.createRadialGradient(-r.r * .35, -r.r * .35, 1, 0, 0, r.r * 1.1); rg.addColorStop(0, base[0]); rg.addColorStop(1, base[1]);
+      rockPath(c, r.r, r.seed); c.fillStyle = rg; c.fill(); c.strokeStyle = 'rgba(0,0,0,.35)'; c.lineWidth = 1.5; c.stroke();
+      c.fillStyle = 'rgba(0,0,0,.22)'; for (let i = 0; i < 3; i++) { const a = r.seed * (i + 1), d = r.r * .45; c.beginPath(); c.arc(Math.cos(a) * d, Math.sin(a) * d, r.r * (.16 + (i % 2) * .08), 0, 7); c.fill(); }
+      if (r.kind === 'bomb') { const k = Math.max(0, r.fuse); c.rotate(-r.rot); c.strokeStyle = `rgba(255,240,150,${.5 + .5 * Math.sin(TT * (k < .8 ? 30 : 12))})`; c.lineWidth = 3; c.beginPath(); c.arc(0, 0, r.r + 6, 0, 7); c.stroke(); }
+    }
+    c.restore();
+  }
+  // ship
+  if (state === 'play' || state === 'title') drawShip(c);
+  for (const p of parts) { c.globalAlpha = Math.min(1, p.life * 2); c.fillStyle = p.c; c.beginPath(); c.arc(p.x, p.y, p.r, 0, 7); c.fill(); } c.globalAlpha = 1;
+  for (const f of floaters) { c.globalAlpha = Math.min(1, f.life * 1.5); c.fillStyle = f.col; c.font = '800 15px "Pretendard Variable", sans-serif'; c.textAlign = 'center'; c.fillText(f.txt, f.x, f.y); } c.globalAlpha = 1;
+  if (slowT > 0) { c.fillStyle = `rgba(140,100,255,${.08 + .04 * Math.sin(TT * 4)})`; c.fillRect(-500, -500, W + 1000, H + 1000); }
+}
+function drawShip(c) {
+  const s = ship;
+  // trail
+  for (let i = 0; i < s.trail.length; i++) { const t = s.trail[i], k = 1 - i / s.trail.length; c.fillStyle = `rgba(120,220,255,${.35 * k})`; c.beginPath(); c.arc(t.x + rand(-1, 1), t.y + i * 2.5, 6 * k + 1, 0, 7); c.fill(); }
+  c.save(); c.translate(s.x, s.y); c.rotate(s.tilt * .25);
+  // flame
+  const fl = 14 + Math.sin(TT * 40) * 4; const fg = c.createLinearGradient(0, 10, 0, 10 + fl); fg.addColorStop(0, '#fff'); fg.addColorStop(.4, '#ffd24a'); fg.addColorStop(1, 'rgba(255,90,40,0)');
+  c.fillStyle = fg; c.beginPath(); c.moveTo(-6, 12); c.lineTo(0, 14 + fl); c.lineTo(6, 12); c.fill();
+  // wings
+  c.fillStyle = '#ff5a7a'; c.beginPath(); c.moveTo(-8, 2); c.lineTo(-20 + s.tilt * 3, 14); c.lineTo(-7, 12); c.closePath(); c.moveTo(8, 2); c.lineTo(20 + s.tilt * 3, 14); c.lineTo(7, 12); c.closePath(); c.fill();
+  // body
+  const bg = c.createLinearGradient(-10, 0, 10, 0); bg.addColorStop(0, '#c8d4ff'); bg.addColorStop(.45, '#ffffff'); bg.addColorStop(1, '#8a9ae8');
+  c.fillStyle = bg; c.beginPath(); c.moveTo(0, -22); c.bezierCurveTo(12, -12, 11, 8, 8, 13); c.lineTo(-8, 13); c.bezierCurveTo(-11, 8, -12, -12, 0, -22); c.fill();
+  c.strokeStyle = '#4a5ab8'; c.lineWidth = 1.5; c.stroke();
+  // window = hitbox core
+  const pulse = .7 + .3 * Math.sin(TT * 6);
+  const wg = c.createRadialGradient(0, -4, 1, 0, -4, 10); wg.addColorStop(0, '#ffffff'); wg.addColorStop(.5, `rgba(106,216,255,${pulse})`); wg.addColorStop(1, 'rgba(106,216,255,0)');
+  c.fillStyle = wg; c.beginPath(); c.arc(0, -4, 10, 0, 7); c.fill(); c.fillStyle = '#2a8ad8'; c.beginPath(); c.arc(0, -4, 5, 0, 7); c.fill(); c.fillStyle = '#fff'; c.beginPath(); c.arc(-1.5, -5.5, 1.8, 0, 7); c.fill();
+  c.restore();
+  if (shield) { c.strokeStyle = `rgba(138,240,255,${.55 + .25 * Math.sin(TT * 5)})`; c.lineWidth = 3; c.beginPath(); c.arc(s.x, s.y - 2, 28, 0, 7); c.stroke(); c.fillStyle = 'rgba(138,240,255,.08)'; c.fill(); }
+}
+
+// ---------------------------------------------------------------- input (relative drag)
+const keys = {};
+addEventListener('keydown', e => { keys[e.key.length === 1 ? e.key.toLowerCase() : e.key] = true; if (e.key.startsWith('Arrow')) e.preventDefault(); });
+addEventListener('keyup', e => { keys[e.key.length === 1 ? e.key.toLowerCase() : e.key] = false; });
+function moveShip(dx, dy) { ship.x = clamp(ship.x + dx, 14, W - 14); ship.y = clamp(ship.y + dy, 30, H - 26); ship.vx += dx; }
+let drag = null;
+cv.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY, id: e.pointerId }; cv.setPointerCapture(e.pointerId); });
+cv.addEventListener('pointermove', e => { if (!drag || state !== 'play') return; const k = 1.25 / F.scale; moveShip((e.clientX - drag.x) * k, (e.clientY - drag.y) * k); drag.x = e.clientX; drag.y = e.clientY; });
+addEventListener('pointerup', () => { drag = null; }); addEventListener('pointercancel', () => { drag = null; });
+
+function start() { Kit.initAudio(); reset(); state = 'play'; Kit.hide('startScreen', 'overScreen'); $('best').textContent = '최고 ' + (best.get() || 0).toLocaleString(); chord([523, 659, 784], .05, 'triangle', .05, .15); }
+$('startBtn').onclick = start; $('againBtn').onclick = start;
+Kit.bindMute($('muteBtn'));
+$('best').textContent = '최고 ' + (best.get() || 0).toLocaleString();
+
+let last = performance.now(), TT = 0;
+function frame(now) {
+  const dt = Math.min(.04, (now - last) / 1000); last = now; TT += dt;
+  if (state === 'play') score += dt * 10 * (1 + (phase - 1) * .25);
+  update(dt); draw(); requestAnimationFrame(frame);
+}
+reset(); requestAnimationFrame(frame);
+if (location.hash === '#test') window.__game = { s: () => ({ state, T, score: Math.floor(score), phase, rocks: rocks.length, shield }), ship: () => ship, rocks: () => rocks, beams: () => beams, items: () => items, setT: v => { T = v; }, god: v => { window.__god = v; } };
+})();
+</script>
+</body>
+</html>
