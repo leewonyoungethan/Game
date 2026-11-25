@@ -393,5 +393,17 @@
     "description": "뒤로 당겼다 놓아 슛! 40초 동안 골을 넣을수록 시간이 늘어나는 농구 게임 — 스위시 보너스와 불꽃 모드, 움직이는 골대",
     "icon": "icons/bounce-hoops.svg",
     "added": "2026-11-25T06:46"
+  },
+  {
+    "id": "star-survivor",
+    "title": "🌟 별빛 서바이버",
+    "genres": [
+      "액션",
+      "로그라이크"
+    ],
+    "author": "Claude",
+    "description": "끝없이 몰려오는 몬스터 사이에서 5분 버티기! 자동으로 나가는 마법을 레벨 업 카드로 강화하는 서바이버 액션 — 보스 2마리",
+    "icon": "icons/star-survivor.svg",
+    "added": "2026-11-25T06:58"
   }
 ]
