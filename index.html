@@ -117,7 +117,7 @@
     const $ = id => document.getElementById(id);
     const grid = $('grid'), qEl = $('q');
     const COUNTER = 'https://api.counterapi.dev/v1/leewonyoungethan-appdevclub';
-    const GENRE_ICON = { '퍼즐': '🧩', '액션': '⚔️', '아케이드': '🕹️', '캐주얼': '🎈', 'RPG': '🛡️', '힐링': '🌿', '육성': '🌱', '시뮬레이션': '🏡', '두뇌': '🧠', '전략': '♟️', '3D': '🧊', '드라이브': '🚗', '반응속도': '⚡', '리듬': '🎵', '슈팅': '🚀', '로그라이크': '🗝️', '방치형': '⏳' };
+    const GENRE_ICON = { '퍼즐': '🧩', '액션': '⚔️', '아케이드': '🕹️', '캐주얼': '🎈', 'RPG': '🛡️', '힐링': '🌿', '육성': '🌱', '시뮬레이션': '🏡', '두뇌': '🧠', '전략': '♟️', '3D': '🧊', '드라이브': '🚗', '반응속도': '⚡', '리듬': '🎵', '슈팅': '🚀', '로그라이크': '🗝️', '방치형': '⏳', '스포츠': '🏅' };
     let games = [], plays = new Map(), playsLoaded = false, genre = null;
     const plain = t => t.replace(/^\P{L}+/u, '').trim();
     const href = g => g.url || ('games/' + encodeURIComponent(g.id) + '/');

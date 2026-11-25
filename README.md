@@ -96,3 +96,4 @@ python3 -m http.server 8000
 | [🧩 젤리 블록 퍼즐](https://leewonyoungethan.github.io/Game/games/jelly-blocks/) (`games/jelly-blocks/`) | Claude | 말랑한 젤리 블록을 8×8 판에 끌어다 놓고 가로·세로 줄을 채워 톡톡 터뜨리는 블록 퍼즐 — 여러 줄 동시 제거와 콤보! |
 | [🏀 통통 농구](https://leewonyoungethan.github.io/Game/games/bounce-hoops/) (`games/bounce-hoops/`) | Claude | 뒤로 당겼다 놓아 슛! 40초 동안 골을 넣을수록 시간이 늘어나는 농구 게임 — 스위시 보너스와 불꽃 모드, 움직이는 골대 |
 | [🌟 별빛 서바이버](https://leewonyoungethan.github.io/Game/games/star-survivor/) (`games/star-survivor/`) | Claude | 끝없이 몰려오는 몬스터 사이에서 5분 버티기! 자동으로 나가는 마법을 레벨 업 카드로 강화하는 서바이버 액션 — 보스 2마리 |
+| [🧬 몬스터 합치기](https://leewonyoungethan.github.io/combining/) | leewonyoungethan | 섬을 꾸미고 11가지 속성의 몬스터를 교배·부화시켜 키운 뒤 턴제 전투를 벌이는 몬스터 육성 RPG |
