@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>통통 농구</title>
+<meta name="theme-color" content="#ff8a3a">
+<link rel="icon" href="../../icons/bounce-hoops.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../_shared/kit.css">
+<style>
+  :root { --bg: #1a1440; --a1: #ffb84a; --a2: #ff6a3a; --a3: #ff3a6a; --ink-on-grad: #3a1000; --glow: rgba(255,140,60,.35); }
+</style>
+</head>
+<body>
+<canvas class="stage" id="cv"></canvas>
+<div class="hud">
+  <div class="group">
+    <div class="box"><div class="lbl">점수</div><div class="big" id="score">0</div><div class="sub" id="best">최고 0</div></div>
+    <div class="box"><div class="lbl">시간</div><div class="big" id="time">40</div><div class="sub" id="streak">연속 0</div></div>
+  </div>
+  <div class="stack">
+    <a class="pill" href="../../">← 게임 센터</a>
+    <button class="pill" id="muteBtn" type="button"></button>
+  </div>
+</div>
+<div class="screen" id="startScreen">
+  <div class="card">
+    <div class="lbl">앱개발부 스포츠</div>
+    <h1>통통 <span>농구</span></h1>
+    <p>40초 동안 골을 최대한 많이 넣어요! 골을 넣을 때마다 시간이 늘어나요.</p>
+    <div class="rules">
+      <div><b>👆</b><span>화면을 누르고 <b>뒤로 당겼다가</b> 놓으면 슛!</span></div>
+      <div><b>✨</b><span>림에 안 닿는 깔끔한 골(스위시)은 점수 2배 + 시간 보너스</span></div>
+      <div><b>🔥</b><span>3골 연속이면 불꽃 모드! 점수가 더 올라요</span></div>
+      <div><b>🏀</b><span>점수가 오를수록 골대가 움직여요</span></div>
+    </div>
+    <button class="go" id="startBtn" type="button">경기 시작</button>
+  </div>
+</div>
+<div class="screen" id="overScreen" hidden>
+  <div class="card">
+    <div class="lbl" id="overLbl"></div>
+    <h2>삐익— 경기 종료!</h2>
+    <div class="final" id="finalScore">0</div>
+    <p id="overText"></p>
+    <button class="go" id="againBtn" type="button">한 판 더</button>
+  </div>
+</div>
+<script src="../_shared/kit.js"></script>
+<script>
+(() => {
+'use strict';
+const { $, rand, clamp, tone, noise, chord, toast, roundRect } = Kit;
+const W = 400, H = 700, R = 21, GRAV = 1500, FLOOR = 640;
+const cv = $('cv'), ctx = cv.getContext('2d');
+let F; function resize() { F = Kit.fit(cv, W, H, { top: 0, bottom: 0 }); } addEventListener('resize', resize); resize();
+const best = Kit.best('bh_best');
+
+let state = 'title', T = 40, score = 0, streak = 0, made = 0, shots = 0, swishes = 0, ball, hoop, aim = null, fx = [], TT = 0, flash = 0, crowd = [];
+const RIM_W = 78;
+function newBall() {
+  ball = { x: rand(70, 230), y: FLOOR - R - rand(0, 70), vx: 0, vy: 0, live: false, rot: 0, touched: false, scored: false, settle: 0, prevY: 0 };
+}
+function newGame() { T = 40; score = 0; streak = 0; made = 0; shots = 0; swishes = 0; fx = []; hoop = { x: 300, y: 250, base: 300, t: 0 }; newBall(); hud(); }
+const onFire = () => streak >= 3;
+
+// ---------------------------------------------------------------- physics
+function rimPts() { return [{ x: hoop.x - RIM_W / 2, y: hoop.y }, { x: hoop.x + RIM_W / 2, y: hoop.y }]; }
+function step(dt) {
+  if (!ball.live) return;
+  ball.prevY = ball.y;
+  ball.vy += GRAV * dt; ball.x += ball.vx * dt; ball.y += ball.vy * dt; ball.rot += ball.vx * dt * .03;
+  // rim points (small circles)
+  for (const p of rimPts()) {
+    const dx = ball.x - p.x, dy = ball.y - p.y, d = Math.hypot(dx, dy), m = R + 4;
+    if (d < m && d > 0) {
+      const nx = dx / d, ny = dy / d, vn = ball.vx * nx + ball.vy * ny;
+      ball.x = p.x + nx * m; ball.y = p.y + ny * m;
+      if (vn < 0) { ball.vx -= 1.6 * vn * nx; ball.vy -= 1.6 * vn * ny; ball.vx *= .92; ball.vy *= .92; }
+      if (!ball.touched || Math.abs(vn) > 120) tone(260 + rand(0, 40), .06, 'square', .03, -60);
+      ball.touched = true;
+    }
+  }
+  // backboard (vertical segment right of the rim)
+  const bx = hoop.x + RIM_W / 2 + 12, top = hoop.y - 110, bot = hoop.y + 12;
+  if (ball.y > top && ball.y < bot && ball.x + R > bx && ball.x - R < bx + 10 && ball.vx > 0 && ball.x < bx + 5) { ball.x = bx - R; ball.vx *= -.55; ball.touched = true; noise(.06, .05, 900); }
+  // basket: crossing the rim plane downward between the rim points
+  if (!ball.scored && ball.vy > 0 && ball.prevY < hoop.y && ball.y >= hoop.y && ball.x > hoop.x - RIM_W / 2 + 6 && ball.x < hoop.x + RIM_W / 2 - 6) basket();
+  // walls & floor
+  if (ball.x < R) { ball.x = R; ball.vx *= -.6; }
+  if (ball.x > W - R) { ball.x = W - R; ball.vx *= -.6; }
+  if (ball.y > FLOOR - R) { ball.y = FLOOR - R; if (Math.abs(ball.vy) > 140) tone(120, .05, 'sine', .04); ball.vy *= -.55; ball.vx *= .85; if (Math.abs(ball.vy) < 80) { ball.vy = 0; ball.settle += dt; } }
+  if (ball.y > H + 200) ball.settle = 1;
+  if (ball.settle > .25 || (ball.scored && ball.y > FLOOR - R - 2 && Math.abs(ball.vy) < 300)) endShot();
+}
+function basket() {
+  ball.scored = true; made++; streak++;
+  const swish = !ball.touched; if (swish) swishes++;
+  let pts = (swish ? 2 : 1) * (onFire() ? 2 : 1) * (1 + Math.floor(score / 40) * 0);
+  score += pts; T = Math.min(60, T + (swish ? 3 : 2));
+  fx.push({ k: 'txt', x: hoop.x, y: hoop.y - 40, t: (swish ? '✨ 스위시! ' : '') + `+${pts}`, c: swish ? '#ffe06a' : '#fff', life: 1.2 });
+  if (streak === 3) { fx.push({ k: 'txt', x: W / 2, y: 180, t: '🔥 불꽃 모드!', c: '#ff8a3a', life: 1.5, big: true }); chord([392, 523, 659, 784], .06, 'sawtooth', .04, .3); }
+  for (let i = 0; i < 16; i++) { const a = rand(0, 7), s = rand(60, 200); fx.push({ k: 'p', x: hoop.x, y: hoop.y + 20, vx: Math.cos(a) * s, vy: Math.sin(a) * s, c: onFire() ? '#ff8a3a' : '#ffe06a', life: .7 }); }
+  hoop.net = 1; flash = .25;
+  chord(swish ? [659, 880, 1175] : [523, 659], .05, 'triangle', .05, .2); noise(.25, .05, 3500);
+  crowd.forEach(c => (c.jump = rand(.3, .7)));
+  hud();
+}
+function endShot() {
+  if (!ball.scored) { streak = 0; fx.push({ k: 'txt', x: ball.x, y: FLOOR - 60, t: '아깝다!', c: '#bcd', life: .8 }); }
+  newBall(); hud();
+}
+function hud() {
+  $('score').textContent = score; $('best').textContent = '최고 ' + (best.get() || 0);
+  $('time').textContent = Math.ceil(Math.max(0, T)); $('streak').textContent = onFire() ? `🔥 연속 ${streak}` : `연속 ${streak}`;
+}
+function over() {
+  state = 'over'; noise(.6, .1, 1200); tone(880, .6, 'square', .04);
+  const isBest = best.submit(score);
+  $('overLbl').textContent = isBest ? '🎉 최고 기록!' : `최고 기록 ${best.get()}`; $('finalScore').textContent = score;
+  $('overText').textContent = `${shots}번 슛 · ${made}골 (성공률 ${shots ? Math.round(made / shots * 100) : 0}%) · 스위시 ${swishes}번`;
+  setTimeout(() => Kit.show('overScreen'), 400);
+}
+
+// ---------------------------------------------------------------- input: pull back & release
+const vpos = e => ({ x: (e.clientX - F.ox) / F.scale, y: (e.clientY - F.oy) / F.scale });
+cv.addEventListener('pointerdown', e => { if (state !== 'play' || ball.live) return; Kit.initAudio(); const v = vpos(e); aim = { sx: v.x, sy: v.y, x: v.x, y: v.y }; cv.setPointerCapture(e.pointerId); });
+cv.addEventListener('pointermove', e => { if (!aim) return; const v = vpos(e); aim.x = v.x; aim.y = v.y; });
+function launchVel() { const dx = aim.sx - aim.x, dy = aim.sy - aim.y, k = 5.2, m = Math.min(1, 1250 / (Math.hypot(dx, dy) * k || 1)); return { vx: dx * k * m, vy: dy * k * m, pow: Math.min(1, Math.hypot(dx, dy) * k / 1250) }; }
+addEventListener('pointerup', () => {
+  if (!aim) return; const v = launchVel(); const a = aim; aim = null;
+  if (Math.hypot(a.sx - a.x, a.sy - a.y) < 18) return;
+  ball.vx = v.vx; ball.vy = v.vy; ball.live = true; shots++; tone(300, .08, 'triangle', .04, 200);
+});
+
+// ---------------------------------------------------------------- draw
+for (let i = 0; i < 26; i++) crowd.push({ x: i * 16 + rand(-4, 4), y: rand(0, 10), c: `hsl(${rand(0, 360)},70%,${rand(45, 65)}%)`, jump: 0, ph: rand(0, 6) });
+function draw(dt) {
+  const c = ctx, { dpr, scale, ox, oy, vw, vh } = F;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const g = c.createLinearGradient(0, 0, 0, vh); g.addColorStop(0, '#2a1a5a'); g.addColorStop(1, '#5a2a6a'); c.fillStyle = g; c.fillRect(0, 0, vw, vh);
+  c.translate(ox, oy); c.scale(scale, scale);
+  // arena lights
+  for (let i = 0; i < 5; i++) { const lx = 40 + i * 80; const lg = c.createRadialGradient(lx, 40, 0, lx, 40, 120); lg.addColorStop(0, 'rgba(255,240,200,.35)'); lg.addColorStop(1, 'rgba(255,240,200,0)'); c.fillStyle = lg; c.fillRect(lx - 120, -80, 240, 240); c.fillStyle = '#fff6d0'; c.beginPath(); c.arc(lx, 30, 5, 0, 7); c.fill(); }
+  // crowd
+  c.fillStyle = '#1e1240'; c.fillRect(-200, 390, W + 400, 120);
+  for (const p of crowd) { p.jump = Math.max(0, p.jump - dt); const jy = p.jump > 0 ? -Math.abs(Math.sin(p.jump * 14)) * 10 : Math.sin(TT * 2 + p.ph) * 1.5; c.fillStyle = p.c; c.beginPath(); c.arc(p.x, 420 + p.y + jy, 9, 0, 7); c.fill(); c.fillRect(p.x - 8, 428 + p.y + jy, 16, 20); }
+  // court floor
+  const fg = c.createLinearGradient(0, 470, 0, H); fg.addColorStop(0, '#e8a060'); fg.addColorStop(1, '#c87a3a'); c.fillStyle = fg; c.fillRect(-200, 470, W + 400, H - 470 + 200);
+  c.strokeStyle = 'rgba(120,60,20,.25)'; c.lineWidth = 2; for (let x = -200; x < W + 200; x += 44) { c.beginPath(); c.moveTo(x, 470); c.lineTo(x - 40, H + 60); c.stroke(); }
+  c.strokeStyle = 'rgba(255,255,255,.7)'; c.lineWidth = 4; c.beginPath(); c.ellipse(320, FLOOR + 10, 150, 26, 0, Math.PI, 0); c.stroke();
+  // hoop: pole + backboard
+  const hx = hoop.x, hy = hoop.y, bx = hx + RIM_W / 2 + 12;
+  c.fillStyle = '#8a92a8'; c.fillRect(bx + 22, hy - 40, 10, FLOOR - hy + 40); c.fillStyle = '#5a6278'; c.fillRect(bx + 4, hy - 30, 22, 8);
+  c.fillStyle = 'rgba(255,255,255,.85)'; roundRect(c, bx, hy - 110, 12, 122, 4); c.fill(); c.fillStyle = 'rgba(255,255,255,.22)'; roundRect(c, bx - 64, hy - 110, 76, 90, 6); c.fill(); c.strokeStyle = 'rgba(255,255,255,.8)'; c.lineWidth = 3; c.stroke(); c.strokeStyle = '#ff5a2a'; c.lineWidth = 3; c.strokeRect(bx - 44, hy - 62, 36, 30);
+  // net back half + rim back
+  hoop.net = Math.max(0, (hoop.net || 0) - dt * 2);
+  drawNet(c, hx, hy, true);
+  c.strokeStyle = '#c83a1a'; c.lineWidth = 5; c.beginPath(); c.ellipse(hx, hy, RIM_W / 2, 8, 0, Math.PI, 0); c.stroke();
+  // trajectory preview
+  if (aim && state === 'play') {
+    const v = launchVel(); let x = ball.x, y = ball.y, vx = v.vx, vy = v.vy;
+    for (let i = 0; i < 16; i++) { for (let k = 0; k < 3; k++) { vy += GRAV / 60; x += vx / 60; y += vy / 60; } c.globalAlpha = (1 - i / 16) * .9; c.fillStyle = '#fff'; c.beginPath(); c.arc(x, y, 5 - i * .2, 0, 7); c.fill(); }
+    c.globalAlpha = 1;
+    c.strokeStyle = 'rgba(255,255,255,.5)'; c.lineWidth = 3; c.setLineDash([6, 6]); c.beginPath(); c.moveTo(aim.sx, aim.sy); c.lineTo(aim.x, aim.y); c.stroke(); c.setLineDash([]);
+    c.fillStyle = `hsl(${120 - v.pow * 120},90%,55%)`; roundRect(c, ball.x - 30, ball.y + R + 10, 60 * v.pow, 6, 3); c.fill();
+  }
+  // ball (drawn between rim back and rim front so it passes "through" the hoop)
+  drawBall(c, ball.x, ball.y);
+  drawNet(c, hx, hy, false);
+  c.strokeStyle = '#ff5a2a'; c.lineWidth = 6; c.beginPath(); c.ellipse(hx, hy, RIM_W / 2, 8, 0, 0, Math.PI); c.stroke();
+  // fx
+  for (const f of fx) { f.life -= dt;
+    if (f.k === 'p') { f.x += f.vx * dt; f.y += f.vy * dt; f.vy += 400 * dt; c.globalAlpha = clamp(f.life * 2, 0, 1); c.fillStyle = f.c; c.beginPath(); c.arc(f.x, f.y, 4, 0, 7); c.fill(); }
+    else { f.y -= 40 * dt; c.globalAlpha = clamp(f.life * 2, 0, 1); c.font = `900 ${f.big ? 34 : 24}px "Pretendard Variable", sans-serif`; c.textAlign = 'center'; c.lineWidth = 6; c.strokeStyle = 'rgba(40,10,40,.7)'; c.strokeText(f.t, f.x, f.y); c.fillStyle = f.c; c.fillText(f.t, f.x, f.y); } }
+  fx = fx.filter(f => f.life > 0); c.globalAlpha = 1;
+  if (flash > 0) { flash -= dt; c.fillStyle = `rgba(255,240,180,${flash})`; c.fillRect(-200, -200, W + 400, H + 400); }
+  if (state === 'play' && !ball.live && !aim && shots === 0) { c.fillStyle = 'rgba(0,0,0,.45)'; roundRect(c, 60, 520, 280, 46, 16); c.fill(); c.fillStyle = '#fff'; c.font = '800 16px "Pretendard Variable", sans-serif'; c.textAlign = 'center'; c.fillText('👆 아무 데나 누르고 뒤로 당겨요!', 200, 549); }
+}
+function drawNet(c, hx, hy, back) {
+  const sw = hoop.net ? Math.sin(TT * 30) * 3 * hoop.net : 0, depth = 52 + (hoop.net || 0) * 10;
+  c.strokeStyle = back ? 'rgba(255,255,255,.45)' : 'rgba(255,255,255,.9)'; c.lineWidth = 2;
+  for (let i = 0; i <= 6; i++) { const t = i / 6, x0 = hx - RIM_W / 2 + t * RIM_W, x1 = hx - RIM_W / 2 * .55 + t * RIM_W * .55 + sw; c.beginPath(); c.moveTo(x0, hy + (back ? -2 : 2)); c.lineTo(x1, hy + depth); c.stroke(); }
+  if (!back) for (let j = 1; j <= 3; j++) { const y = hy + depth * j / 3.2, w = RIM_W / 2 * (1 - j * .14); c.beginPath(); c.moveTo(hx - w + sw * j / 3, y); c.lineTo(hx + w + sw * j / 3, y); c.stroke(); }
+}
+function drawBall(c, x, y) {
+  if (onFire() && state === 'play') { for (let i = 0; i < 3; i++) { c.fillStyle = `rgba(255,${120 + i * 40},40,${.35 - i * .1})`; c.beginPath(); c.arc(x - ball.vx * .02 * i + Math.sin(TT * 20 + i) * 3, y - ball.vy * .02 * i + 4, R + 8 - i * 3, 0, 7); c.fill(); } }
+  c.fillStyle = 'rgba(0,0,0,.25)'; c.beginPath(); c.ellipse(x, FLOOR + 2, R * clamp(1 - (FLOOR - y) / 600, .3, 1), 5, 0, 0, 7); c.fill();
+  c.save(); c.translate(x, y); c.rotate(ball.rot);
+  const g = c.createRadialGradient(-7, -8, 3, 0, 0, R); g.addColorStop(0, '#ffc080'); g.addColorStop(.7, '#ff7a2a'); g.addColorStop(1, '#c8501a'); c.fillStyle = g; c.beginPath(); c.arc(0, 0, R, 0, 7); c.fill();
+  c.strokeStyle = '#4a1a0a'; c.lineWidth = 2.2; c.beginPath(); c.arc(0, 0, R, 0, 7); c.moveTo(-R, 0); c.lineTo(R, 0); c.moveTo(0, -R); c.lineTo(0, R); c.stroke();
+  c.beginPath(); c.arc(-R * 1.25, 0, R * .9, -.9, .9); c.stroke(); c.beginPath(); c.arc(R * 1.25, 0, R * .9, Math.PI - .9, Math.PI + .9); c.stroke();
+  c.restore();
+}
+
+// ---------------------------------------------------------------- loop
+function update(dt) {
+  if (state !== 'play') return;
+  T -= dt; if (T <= 0 && !ball.live) { T = 0; hud(); return over(); }
+  // the hoop starts to glide once you are scoring well
+  const lvl = score >= 30 ? 2 : score >= 12 ? 1 : 0;
+  hoop.t += dt; if (lvl) hoop.x = hoop.base + Math.sin(hoop.t * (lvl === 2 ? 1.5 : .9)) * (lvl === 2 ? 70 : 45) - (lvl === 2 ? 30 : 15);
+  const sub = 4; for (let i = 0; i < sub; i++) step(dt / sub);
+  if (Math.floor(T * 4) !== Math.floor((T + dt) * 4)) hud();
+}
+function start() { Kit.initAudio(); newGame(); state = 'play'; Kit.hide('startScreen', 'overScreen'); }
+$('startBtn').onclick = start; $('againBtn').onclick = start;
+Kit.bindMute($('muteBtn'));
+newGame();
+let last = performance.now();
+function frame(now) { const dt = Math.min(.033, (now - last) / 1000); last = now; TT += dt; update(dt); draw(dt); requestAnimationFrame(frame); }
+requestAnimationFrame(frame);
+if (location.hash === '#test') window.__game = { s: () => ({ state, score, made, shots, swishes, streak, T: Math.round(T) }), ball: () => ball, hoop: () => hoop, shoot: (vx, vy) => { ball.vx = vx; ball.vy = vy; ball.live = true; shots++; }, F: () => F, GRAV, setT: v => { T = v; } };
+})();
+</script>
+</body>
+</html>
