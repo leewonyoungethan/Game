@@ -73,27 +73,5 @@ python3 -m http.server 8000
 | [⚔️ 별빛 기사](https://claude.ai/artifact/VeBfTWMoEv4Ksm5jfUWHRs) | leewonyoungethan | 픽셀 액션 플랫포머 |
 | [맑은 하늘](https://claude.ai/artifact/NdVDGjGVbYmHWcLhPuET41) | leewonyoungethan | 9·11 아침을 가상으로 지키는 추모 시뮬레이션 |
 | [✈️ F16 스카이 스트라이커](https://mythoflee-aiden.github.io/f16-shooter/) ([저장소](https://github.com/mythoflee-aiden/f16-shooter)) | mythoflee-aiden | F16 전투기 슈팅 게임 |
-| [🪐 행성 합치기](https://leewonyoungethan.github.io/Game/games/planet-merge/) (`games/planet-merge/`) | Claude | 같은 행성을 합쳐 태양까지 키우는 물리 퍼즐 |
-| [🐸 개구리 연잎 점프](https://leewonyoungethan.github.io/Game/games/lily-hop/) (`games/lily-hop/`) | Claude | 타이밍 맞춰 탭해서 연잎을 건너는 원터치 아케이드 |
-| [🌟 별빛 브레이커](https://leewonyoungethan.github.io/Game/games/star-breaker/) (`games/star-breaker/`) | Claude | 밤하늘의 별빛 벽돌을 공으로 깨는 벽돌깨기 |
-| [🏝️ 보물섬 탐사](https://leewonyoungethan.github.io/Game/games/treasure-island/) (`games/treasure-island/`) | Claude | 숫자를 단서로 해적 함정을 피해 섬을 파헤치는 지뢰찾기 퍼즐 |
-| [🐧 펭귄 창고](https://leewonyoungethan.github.io/Game/games/penguin-warehouse/) (`games/penguin-warehouse/`) | Claude | 꼬마 펭귄이 생선 상자를 얼음 구멍으로 밀어 옮기는 상자 밀기 퍼즐 |
-| [🔨 두더지 팡팡](https://leewonyoungethan.github.io/Game/games/whack-mole/) (`games/whack-mole/`) | Claude | 60초 동안 튀어나오는 두더지를 잡는 반응속도 게임 |
-| [🍃 기억의 숲](https://leewonyoungethan.github.io/Game/games/memory-forest/) (`games/memory-forest/`) | Claude | 나뭇잎 카드 뒤에 숨은 숲속 친구들의 짝을 찾는 기억력 게임 |
-| [🐉 꼬마 용 꼬리잡기](https://leewonyoungethan.github.io/Game/games/dragon-snake/) (`games/dragon-snake/`) | Claude | 과일을 먹을수록 길어지는 꼬마 용의 꼬리잡기 |
-| [🎣 고요한 낚시터](https://leewonyoungethan.github.io/Game/games/quiet-pond/) (`games/quiet-pond/`) | Claude | 고양이 낚시꾼과 함께하는 힐링 낚시 |
-| [🏙️ 구름 위 블록 탑](https://leewonyoungethan.github.io/Game/games/cloud-tower/) (`games/cloud-tower/`) | Claude | 좌우로 움직이는 블록을 타이밍 맞춰 쌓아 구름 위부터 우주까지 올라가는 탑 쌓기 |
-| [🍄 버섯 마을 수비대](https://leewonyoungethan.github.io/Game/games/mushroom-defense/) (`games/mushroom-defense/`) | Claude | 길 옆에 도토리 발사대·꿀벌집·포자포·얼음 버섯을 세워 15번의 해충 공격을 막아내는 타워 디펜스 |
-| [🕵️ 낱말 탐정](https://leewonyoungethan.github.io/Game/games/word-detective/) (`games/word-detective/`) | Claude | 글자판에 숨은 한글 낱말을 쭉 그어 찾아내는 12개의 사건 — 판이 커질수록 대각선·거꾸로도 숨어요 |
-| [☄️ 유성우 피하기](https://leewonyoungethan.github.io/Game/games/meteor-dodge/) (`games/meteor-dodge/`) | Claude | 쏟아지는 별똥별·조준탄·레이저 사이를 꼬마 우주선으로 누비며 최대한 오래 살아남는 회피 서바이벌 |
-| [💡 불을 밝혀라](https://leewonyoungethan.github.io/Game/games/light-up/) (`games/light-up/`) | Claude | 전선 조각을 돌려 발전소의 전기를 마을의 모든 집까지 이어 주는 회로 퍼즐 — 18개 레벨 |
-| [🫧 말랑 슬라임 키우기](https://leewonyoungethan.github.io/Game/games/slime-pet/) (`games/slime-pet/`) | Claude | 밥 주고 씻기고 훈련시켜 불꽃·별빛·바람·하트 슬라임으로 진화! 모험에서 몬스터와 싸우고 모자로 꾸미는 육성 RPG (자동 저장) |
-| [🏮 등불 던전](https://leewonyoungethan.github.io/Game/games/lantern-dungeon/) (`games/lantern-dungeon/`) | Claude | 등불 하나 들고 매번 새로 만들어지는 던전으로! 턴제로 몬스터와 싸우고 장비를 모아 지하 10층의 그림자 용을 물리치는 로그라이크 |
-| [🌻 햇살 농장](https://leewonyoungethan.github.io/Game/games/sunny-farm/) (`games/sunny-farm/`) | Claude | 밭을 갈고 계절 작물을 심어 물 주고 수확! 돈을 모아 밭을 넓히고 닭·소를 키우는 농장 경영 RPG (자동 저장) |
-| [☕ 구름 카페](https://leewonyoungethan.github.io/Game/games/cloud-cafe/) (`games/cloud-cafe/`) | Claude | 동물 손님들의 주문을 재료를 골라 척척 만들어 내는 카페 경영 게임 — 새 메뉴 연구와 인테리어로 별 다섯 카페 만들기 (자동 저장) |
-| [⚔️ 용사 키우기](https://leewonyoungethan.github.io/Game/games/hero-idle/) (`games/hero-idle/`) | Claude | 알아서 싸우는 꼬마 용사를 금화로 강화하고, 스킬과 장비로 보스를 무찌르는 방치형 RPG — 환생·오프라인 보상까지 (자동 저장) |
-| [🔮 마법학교 3년](https://leewonyoungethan.github.io/Game/games/magic-school/) (`games/magic-school/`) | Claude | 수업마다 룬 그리기·물약·퀴즈·비행·결투 미니게임! 라이벌 카이와 겨루며 3년을 보내는 학원 육성 RPG — 11가지 졸업 엔딩 (자동 저장) |
-| [🧩 젤리 블록 퍼즐](https://leewonyoungethan.github.io/Game/games/jelly-blocks/) (`games/jelly-blocks/`) | Claude | 말랑한 젤리 블록을 8×8 판에 끌어다 놓고 가로·세로 줄을 채워 톡톡 터뜨리는 블록 퍼즐 — 여러 줄 동시 제거와 콤보! |
-| [🏀 통통 농구](https://leewonyoungethan.github.io/Game/games/bounce-hoops/) (`games/bounce-hoops/`) | Claude | 뒤로 당겼다 놓아 슛! 40초 동안 골을 넣을수록 시간이 늘어나는 농구 게임 — 스위시 보너스와 불꽃 모드, 움직이는 골대 |
-| [🌟 별빛 서바이버](https://leewonyoungethan.github.io/Game/games/star-survivor/) (`games/star-survivor/`) | Claude | 끝없이 몰려오는 몬스터 사이에서 5분 버티기! 자동으로 나가는 마법을 레벨 업 카드로 강화하는 서바이버 액션 — 보스 2마리 |
 | [🧬 몬스터 합치기](https://leewonyoungethan.github.io/combining/) | leewonyoungethan | 섬을 꾸미고 11가지 속성의 몬스터를 교배·부화시켜 키운 뒤 턴제 전투를 벌이는 몬스터 육성 RPG |
+| [✊ 결전의 가위바위보](https://leewonyoungethan.github.io/RSP/) | leewonyoungethan | 3D 손으로 겨루는 긴장감 넘치는 가위바위보 · 묵찌빠 · 참참참 — 내 버릇을 읽는 '검은 장갑'과 친구 온라인 대전 |
