@@ -143,5 +143,18 @@
     "icon": "icons/rsp.svg",
     "added": "2026-11-25T08:13",
     "url": "https://leewonyoungethan.github.io/RSP/"
+  },
+  {
+    "id": "defence-game",
+    "title": "🏰 디펜스 게임",
+    "genres": [
+      "전략",
+      "액션"
+    ],
+    "author": "leewonyoungethan",
+    "description": "풀밭에 20가지 타워를 세우고 업그레이드해 100 웨이브를 막아내는 타워 디펜스 — 5웨이브마다 👑 보스 등장",
+    "icon": "icons/defence-game.svg",
+    "added": "2026-11-25T12:20",
+    "url": "https://leewonyoungethan.github.io/defence-game/"
   }
 ]
