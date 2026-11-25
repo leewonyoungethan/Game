@@ -79,19 +79,6 @@
     "added": "2026-11-21T01:15"
   },
   {
-    "id": "nayul",
-    "title": "👶 나율이 키우기",
-    "genres": [
-      "육성",
-      "힐링"
-    ],
-    "author": "leewonyoungethan",
-    "description": "아기 나율이를 돌보고 놀아주며 백 살까지 키우는 육성 시뮬레이션",
-    "url": "https://claude.ai/artifact/5rvyqN2jFhFxz9HxUN83CT",
-    "icon": "icons/nayul.svg",
-    "added": "2026-11-21T01:16"
-  },
-  {
     "id": "starknight",
     "title": "⚔️ 별빛 기사",
     "genres": [
