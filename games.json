@@ -41,14 +41,14 @@
   },
   {
     "id": "rail-dash",
-    "title": "🚆 Rail Dash",
+    "title": "✉️ Letter Rush",
     "genres": [
       "러닝",
       "액션"
     ],
     "author": "leewonyoungethan",
-    "description": "노을 지는 기차 선로를 3분 동안 달리며 장애물을 피하고 코인을 모으는 러닝 게임",
-    "url": "https://claude.ai/artifact/WqVcJh2MKjki5b1KkkMJML",
+    "description": "등불 축제 날, 우편 기관차에서 쏟아진 초대장을 3분 안에 모아 축제 광장까지 달려가는 3D 러닝 게임",
+    "url": "https://leewonyoungethan.github.io/subway-surfers/",
     "icon": "icons/rail-dash.svg",
     "added": "2026-11-21T01:00"
   },
