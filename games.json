@@ -156,5 +156,18 @@
     "icon": "icons/defence-game.svg",
     "added": "2026-11-25T12:20",
     "url": "https://leewonyoungethan.github.io/defence-game/"
+  },
+  {
+    "id": "not-gambling",
+    "title": "🎰 NOT-GAMBLING",
+    "genres": [
+      "시뮬레이션",
+      "캐주얼"
+    ],
+    "author": "leewonyoungethan",
+    "description": "플레이머니로만 즐기는 카지노 시뮬레이터 — 룰렛·블랙잭·바카라·홀덤 등 9가지 게임으로 규칙과 하우스 에지를 체험해요 (실제 돈 거래 없음)",
+    "icon": "icons/not-gambling.svg",
+    "added": "2026-11-25T12:21",
+    "url": "https://raw.githack.com/leewonyoungethan/not-gambling/main/index.html"
   }
 ]
