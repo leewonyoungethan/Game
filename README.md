@@ -67,7 +67,7 @@ python3 -m http.server 8000
 | [🦊 여우의 달걀 도둑](https://leewonyoungethan.github.io/Rock/eggsteal.html) | leewonyoungethan | 잠든 새들의 알을 몰래 훔쳐 굴로 옮기는 잠입 게임 |
 | [🚗 Wander Road](https://leewonyoungethan.github.io/Road/) ([저장소](https://github.com/leewonyoungethan/Road)) | leewonyoungethan | 끝없는 절차적 도로를 달리는 힐링 드라이브 게임 |
 | [🚆 Rail Dash](https://claude.ai/artifact/WqVcJh2MKjki5b1KkkMJML) | leewonyoungethan | 기차 선로를 3분 동안 달리는 러닝 게임 |
-| [🚨 도둑차 대탈주](https://claude.ai/artifact/Th6Z3xiCuQwJPNAsSmBSsD) | leewonyoungethan | 경찰을 따돌리며 도시를 질주하는 추격전 게임 |
+| [🚨 도둑차 대탈주](https://leewonyoungethan.github.io/chase/) | leewonyoungethan | 경찰을 따돌리며 도시를 질주하는 추격전 게임 |
 | [🎹 건반 소나기](https://leewonyoungethan.github.io/piano-tiles/) ([저장소](https://github.com/leewonyoungethan/piano-tiles)) | leewonyoungethan | 떨어지는 건반을 눌러 곡을 연주하는 피아노 타일 게임 |
 | [⚔️ 별빛 기사](https://claude.ai/artifact/VeBfTWMoEv4Ksm5jfUWHRs) | leewonyoungethan | 픽셀 액션 플랫포머 |
 | [맑은 하늘](https://claude.ai/artifact/NdVDGjGVbYmHWcLhPuET41) | leewonyoungethan | 9·11 아침을 가상으로 지키는 추모 시뮬레이션 |
