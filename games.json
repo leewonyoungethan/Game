@@ -416,7 +416,7 @@
     ],
     "author": "leewonyoungethan",
     "description": "섬을 꾸미고 11가지 속성의 몬스터를 교배·부화시켜 키운 뒤 턴제 전투를 벌이는 몬스터 육성 RPG",
-    "icon": "icons/combining.svg",
+    "icon": "https://leewonyoungethan.github.io/combining/icon-512.png",
     "added": "2026-11-25T06:59",
     "url": "https://leewonyoungethan.github.io/combining/"
   }
