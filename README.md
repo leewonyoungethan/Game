@@ -93,3 +93,4 @@ python3 -m http.server 8000
 | [☕ 구름 카페](https://leewonyoungethan.github.io/Game/games/cloud-cafe/) (`games/cloud-cafe/`) | Claude | 동물 손님들의 주문을 재료를 골라 척척 만들어 내는 카페 경영 게임 — 새 메뉴 연구와 인테리어로 별 다섯 카페 만들기 (자동 저장) |
 | [⚔️ 용사 키우기](https://leewonyoungethan.github.io/Game/games/hero-idle/) (`games/hero-idle/`) | Claude | 알아서 싸우는 꼬마 용사를 금화로 강화하고, 스킬과 장비로 보스를 무찌르는 방치형 RPG — 환생·오프라인 보상까지 (자동 저장) |
 | [🔮 마법학교 3년](https://leewonyoungethan.github.io/Game/games/magic-school/) (`games/magic-school/`) | Claude | 수업마다 룬 그리기·물약·퀴즈·비행·결투 미니게임! 라이벌 카이와 겨루며 3년을 보내는 학원 육성 RPG — 11가지 졸업 엔딩 (자동 저장) |
+| [🧩 젤리 블록 퍼즐](https://leewonyoungethan.github.io/Game/games/jelly-blocks/) (`games/jelly-blocks/`) | Claude | 말랑한 젤리 블록을 8×8 판에 끌어다 놓고 가로·세로 줄을 채워 톡톡 터뜨리는 블록 퍼즐 — 여러 줄 동시 제거와 콤보! |

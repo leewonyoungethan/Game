@@ -369,5 +369,17 @@
     "description": "수업마다 룬 그리기·물약·퀴즈·비행·결투 미니게임! 라이벌 카이와 겨루며 3년을 보내는 학원 육성 RPG — 11가지 졸업 엔딩 (자동 저장)",
     "icon": "icons/magic-school.svg",
     "added": "2026-11-24T15:00"
+  },
+  {
+    "id": "jelly-blocks",
+    "title": "🧩 젤리 블록 퍼즐",
+    "genres": [
+      "퍼즐",
+      "캐주얼"
+    ],
+    "author": "Claude",
+    "description": "말랑한 젤리 블록을 8×8 판에 끌어다 놓고 가로·세로 줄을 채워 톡톡 터뜨리는 블록 퍼즐 — 여러 줄 동시 제거와 콤보!",
+    "icon": "icons/jelly-blocks.svg",
+    "added": "2026-11-25T00:22"
   }
 ]
