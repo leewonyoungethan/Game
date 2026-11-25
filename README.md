@@ -70,7 +70,7 @@ python3 -m http.server 8000
 | [🚨 도둑차 대탈주](https://leewonyoungethan.github.io/chase/) | leewonyoungethan | 경찰을 따돌리며 도시를 질주하는 추격전 게임 |
 | [🎹 건반 소나기](https://leewonyoungethan.github.io/piano-tiles/) ([저장소](https://github.com/leewonyoungethan/piano-tiles)) | leewonyoungethan | 떨어지는 건반을 눌러 곡을 연주하는 피아노 타일 게임 |
 | [⚔️ 별빛 기사](https://claude.ai/artifact/VeBfTWMoEv4Ksm5jfUWHRs) | leewonyoungethan | 픽셀 액션 플랫포머 |
-| [맑은 하늘](https://claude.ai/artifact/NdVDGjGVbYmHWcLhPuET41) | leewonyoungethan | 9·11 아침을 가상으로 지키는 추모 시뮬레이션 |
+| [맑은 하늘](https://leewonyoungethan.github.io/911/) | leewonyoungethan | 9·11 아침을 가상으로 지키는 추모 시뮬레이션 |
 | [✈️ F16 스카이 스트라이커](https://mythoflee-aiden.github.io/f16-shooter/) ([저장소](https://github.com/mythoflee-aiden/f16-shooter)) | mythoflee-aiden | F16 전투기 슈팅 게임 |
 | [🧬 몬스터 합치기](https://leewonyoungethan.github.io/combining/) | leewonyoungethan | 섬을 꾸미고 11가지 속성의 몬스터를 교배·부화시켜 키운 뒤 턴제 전투를 벌이는 몬스터 육성 RPG |
 | [✊ 결전의 가위바위보](https://leewonyoungethan.github.io/RSP/) | leewonyoungethan | 3D 손으로 겨루는 긴장감 넘치는 가위바위보 · 묵찌빠 · 참참참 — 내 버릇을 읽는 '검은 장갑'과 친구 온라인 대전 |
