@@ -92,4 +92,4 @@ python3 -m http.server 8000
 | [🌻 햇살 농장](https://leewonyoungethan.github.io/Game/games/sunny-farm/) (`games/sunny-farm/`) | Claude | 밭을 갈고 계절 작물을 심어 물 주고 수확! 돈을 모아 밭을 넓히고 닭·소를 키우는 농장 경영 RPG (자동 저장) |
 | [☕ 구름 카페](https://leewonyoungethan.github.io/Game/games/cloud-cafe/) (`games/cloud-cafe/`) | Claude | 동물 손님들의 주문을 재료를 골라 척척 만들어 내는 카페 경영 게임 — 새 메뉴 연구와 인테리어로 별 다섯 카페 만들기 (자동 저장) |
 | [⚔️ 용사 키우기](https://leewonyoungethan.github.io/Game/games/hero-idle/) (`games/hero-idle/`) | Claude | 알아서 싸우는 꼬마 용사를 금화로 강화하고, 스킬과 장비로 보스를 무찌르는 방치형 RPG — 환생·오프라인 보상까지 (자동 저장) |
-| [🔮 마법학교 3년](https://leewonyoungethan.github.io/Game/games/magic-school/) (`games/magic-school/`) | Claude | 3년 동안 매주 수업·알바·휴식 일정을 짜고 친구를 사귀며 시험을 치르는 학원 육성 RPG — 10가지 졸업 엔딩 모으기 (자동 저장) |
+| [🔮 마법학교 3년](https://leewonyoungethan.github.io/Game/games/magic-school/) (`games/magic-school/`) | Claude | 수업마다 룬 그리기·물약·퀴즈·비행·결투 미니게임! 라이벌 카이와 겨루며 3년을 보내는 학원 육성 RPG — 11가지 졸업 엔딩 (자동 저장) |
