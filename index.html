@@ -438,7 +438,7 @@
     });
     new IntersectionObserver(([e]) => $('tools').classList.toggle('stuck', e.intersectionRatio < 1), { threshold: [1], rootMargin: '-1px 0px 0px 0px' }).observe($('tools'));
 
-    fetch('games.json')
+    fetch('games.json', { cache: 'no-store' })
       .then(r => r.json())
       .then(data => {
         games = data;
