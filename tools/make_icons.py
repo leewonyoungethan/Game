@@ -14,7 +14,7 @@ from icons.common import dedupe  # noqa: E402
 
 OUT = ROOT.parent / "icons"
 ALL = ["rock", "eggsteal", "road", "rail-dash", "getaway", "piano-tiles",
-       "starknight", "f16", "rsp", "defence-game", "not-gambling", "default"]
+       "starknight", "f16", "rsp", "defence-game", "not-gambling", "blocade", "default"]
 
 def main(ids):
     OUT.mkdir(exist_ok=True)

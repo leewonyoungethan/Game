@@ -74,4 +74,5 @@ python3 -m http.server 8000
 | [🧬 몬스터 합치기](https://leewonyoungethan.github.io/combining/) | leewonyoungethan | 섬을 꾸미고 11가지 속성의 몬스터를 교배·부화시켜 키운 뒤 턴제 전투를 벌이는 몬스터 육성 RPG |
 | [✊ 결전의 가위바위보](https://leewonyoungethan.github.io/RSP/) | leewonyoungethan | 3D 손으로 겨루는 긴장감 넘치는 가위바위보 · 묵찌빠 · 참참참 — 내 버릇을 읽는 '검은 장갑'과 친구 온라인 대전 |
 | [🏰 디펜스 게임](https://leewonyoungethan.github.io/defence-game/) | leewonyoungethan | 풀밭에 20가지 타워를 세우고 업그레이드해 100 웨이브를 막아내는 타워 디펜스 — 5웨이브마다 👑 보스 등장 |
+| [🧱 Blockade](https://leewonyoungethan.github.io/blocade/) | leewonyoungethan | 말을 움직이거나 벽을 세워 상대의 길을 막는 9×9 2인 보드 게임 — 먼저 반대편 끝줄에 닿으면 승리 (CPU 3단계 · 2인 대전) |
 | [🎰 NOT-GAMBLING](https://raw.githack.com/leewonyoungethan/not-gambling/main/index.html) | leewonyoungethan | 플레이머니로만 즐기는 카지노 시뮬레이터 — 룰렛·블랙잭·바카라·홀덤 등 9가지 게임으로 규칙과 하우스 에지를 체험해요 (실제 돈 거래 없음) |

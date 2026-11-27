@@ -156,5 +156,19 @@
     "icon": "icons/not-gambling.svg",
     "added": "2026-11-25T12:21",
     "url": "https://raw.githack.com/leewonyoungethan/not-gambling/main/index.html"
+  },
+  {
+    "id": "blocade",
+    "title": "🧱 Blockade",
+    "genres": [
+      "보드게임",
+      "전략",
+      "두뇌"
+    ],
+    "author": "leewonyoungethan",
+    "description": "말을 움직이거나 벽을 세워 상대의 길을 막는 9×9 2인 보드 게임 — 먼저 반대편 끝줄에 닿으면 승리 (CPU 3단계 · 2인 대전)",
+    "icon": "icons/blocade.svg",
+    "added": "2026-11-27T13:14",
+    "url": "https://leewonyoungethan.github.io/blocade/"
   }
 ]
